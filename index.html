@@ -31,7 +31,65 @@
             <p class="text-slate-500 mt-1">Bienvenido a tu suite de gestión académica personal.</p>
         </header>
 
+       <!-- CUADRO GENERAL INDEPENDIENTE: Progreso de Carrera (Arriba) -->
+        <div class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm relative overflow-hidden group mb-8">
+            <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600"></div>
+            
+            <div class="flex justify-between items-start mb-2 mt-2">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800">Progreso de Carrera</h3>
+                    <p class="text-sm text-slate-400 mt-0.5">Porcentaje total avanzado de tus 8 semestres académicos (calculado día a día).</p>
+                </div>
+                <button onclick="toggleConfigCarrera(event)" class="text-slate-400 hover:text-slate-600 transition-colors text-lg"><i class="fa-solid fa-gear"></i></button>
+            </div>
+
+            <!-- Contenedor interno: Información del Semestre Activo -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-3.5 rounded-xl border border-slate-200/60 my-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-slate-200/50 p-2 rounded-lg text-slate-600 flex items-center justify-center w-9 h-9">
+                        <i class="fa-solid fa-calendar-days text-base"></i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Periodo Activo</span>
+                        <h4 id="hub-semestre-titulo" class="text-xs font-bold text-slate-700 uppercase">Calculando...</h4>
+                    </div>
+                </div>
+                <div class="flex items-center sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200/40">
+                    <div class="sm:text-right">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rango de Fechas</span>
+                        <span id="hub-semestre-fechas" class="text-xs font-bold text-slate-500 bg-white px-2.5 py-0.5 rounded border border-slate-200/80 inline-block mt-0.5">Cargando...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Barra de Progreso General -->
+            <div class="space-y-2 pt-2 border-t border-slate-100">
+                 <div class="flex justify-between items-baseline">
+                    <span id="carrera-semestre-calculado" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Calculando...</span>
+                    <span id="carrera-porcentaje" class="text-sm font-mono font-black text-slate-700">0.0000%</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                    <div id="carrera-barra" class="bg-slate-600 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Panel Oculto de Configuración -->
+            <div id="config-carrera-panel" class="absolute inset-x-0 bottom-0 bg-slate-900 text-white p-4 translate-y-full transition-transform duration-300 z-10">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Inicio de Carrera</h4>
+                    <button onclick="toggleConfigCarrera(event)" class="text-slate-400 hover:text-white">&times;</button>
+                </div>
+                <div class="flex gap-2">
+                    <input type="date" id="config-fecha-inicio" class="text-slate-800 p-1.5 rounded text-xs outline-none flex-grow">
+                    <button onclick="guardarConfigCarrera()" class="bg-indigo-600 hover:bg-indigo-500 px-3 py-1.5 rounded text-xs font-bold transition-colors">Fijar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- REJILLA DE MÓDULOS DE TRABAJO (Abajo) -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Módulo: Control de Notas -->
             <div onclick="cambiarVista('notas')" class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer relative overflow-hidden group">
                 <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600 group-hover:bg-indigo-600 transition-colors"></div>
                 <div class="flex justify-between items-start mb-4 mt-2">
@@ -57,57 +115,7 @@
                 </div>
             </div>
 
-            <div class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm relative overflow-hidden group md:col-span-2">
-                <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600"></div>
-                
-                <div class="flex justify-between items-start mb-2 mt-2">
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-800">Progreso de Carrera</h3>
-                        <p class="text-sm text-slate-400 mt-0.5">Porcentaje total avanzado de tus 8 semestres académicos (calculado día a día).</p>
-                    </div>
-                    <button onclick="toggleConfigCarrera(event)" class="text-slate-400 hover:text-slate-600 transition-colors text-lg"><i class="fa-solid fa-gear"></i></button>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-3.5 rounded-xl border border-slate-200/60 my-4">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-slate-200/50 p-2 rounded-lg text-slate-600 flex items-center justify-center w-9 h-9">
-                            <i class="fa-solid fa-calendar-days text-base"></i>
-                        </div>
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Periodo Activo</span>
-                            <h4 id="hub-semestre-titulo" class="text-xs font-bold text-slate-700 uppercase">Calculando...</h4>
-                        </div>
-                    </div>
-                    <div class="flex items-center sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200/40">
-                        <div class="sm:text-right">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rango de Fechas</span>
-                            <span id="hub-semestre-fechas" class="text-xs font-bold text-slate-500 bg-white px-2.5 py-0.5 rounded border border-slate-200/80 inline-block mt-0.5">Cargando...</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="space-y-2 pt-2 border-t border-slate-100">
-                     <div class="flex justify-between items-baseline">
-                        <span id="carrera-semestre-calculado" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Calculando...</span>
-                        <span id="carrera-porcentaje" class="text-sm font-mono font-black text-slate-700">0.0000%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                        <div id="carrera-barra" class="bg-slate-600 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
-                    </div>
-                </div>
-
-                <div id="config-carrera-panel" class="absolute inset-x-0 bottom-0 bg-slate-900 text-white p-4 translate-y-full transition-transform duration-300 z-10">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Inicio de Carrera</h4>
-                        <button onclick="toggleConfigCarrera(event)" class="text-slate-400 hover:text-white">&times;</button>
-                    </div>
-                    <div class="flex gap-2">
-                        <input type="date" id="config-fecha-inicio" class="text-slate-800 p-1.5 rounded text-xs outline-none flex-grow">
-                        <button onclick="guardarConfigCarrera()" class="bg-indigo-600 hover:bg-indigo-500 px-3 py-1.5 rounded text-xs font-bold transition-colors">Fijar</button>
-                    </div>
-                </div>
-            </div>
-
+            <!-- Módulo: Rastreador de Temas (Próximamente) -->
             <div class="border border-slate-200 bg-white/60 rounded-2xl p-6 shadow-sm relative overflow-hidden opacity-60 cursor-not-allowed">
                 <div class="flex justify-between items-start mb-2">
                     <h3 class="text-lg font-bold text-slate-500">Rastreador de Temas</h3>
@@ -117,6 +125,7 @@
                 <span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded absolute bottom-4 right-4 uppercase tracking-wider">Próximamente</span>
             </div>
 
+            <!-- Módulo: Agenda Universitaria (Próximamente) -->
             <div class="border border-slate-200 bg-white/60 rounded-2xl p-6 shadow-sm relative overflow-hidden opacity-60 cursor-not-allowed">
                 <div class="flex justify-between items-start mb-2">
                     <h3 class="text-lg font-bold text-slate-500">Agenda Universitaria</h3>
