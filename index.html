@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Académico Universitario</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <style>
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen">
+
+    <nav class="bg-slate-800 text-white p-4 shadow-md flex justify-between items-center">
+        <h1 class="text-2xl font-bold tracking-wide"><i class="fa-solid fa-graduation-cap mr-2"></i> Portal Universitario</h1>
+        <div class="text-sm font-semibold tracking-wider opacity-90" id="navbar-anio-texto">
+            SEMESTRE ACTIVO 2026
+        </div>
+    </nav>
+
+    <main id="vista-hub" class="max-w-6xl mx-auto p-4 mt-6 fade-in">
+        <header class="mb-8">
+            <h2 class="text-3xl font-black text-slate-700">¡Hola, Miguel!</h2>
+            <p class="text-slate-500 mt-1">Bienvenido a tu suite de gestión académica personal.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div onclick="cambiarVista('notas')" class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer relative overflow-hidden group">
+                <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600 group-hover:bg-indigo-600 transition-colors"></div>
+                <div class="flex justify-between items-start mb-4 mt-2">
+                    <h3 class="text-xl font-bold text-slate-800">Control de Notas</h3>
+                    <i class="fa-solid fa-chart-pie text-slate-600 text-2xl transition-colors group-hover:text-indigo-600"></i>
+                </div>
+                <p class="text-sm text-slate-400 mb-6">Gestiona tus cortes, parciales y revisa tu estado de competencia por materia.</p>
+                
+                <div class="space-y-3 pt-2 border-t border-slate-100">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Promedio Global</span>
+                        <span id="hub-promedio" class="text-lg font-black text-slate-700">0.00</span>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[11px] font-bold text-slate-400 mb-1">
+                            <span>RENDIMIENTO GENERAL</span>
+                            <span id="hub-porcentaje-texto">0.00%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                            <div id="hub-porcentaje-barra" class="bg-slate-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm relative overflow-hidden group">
+                <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600"></div>
+                <div class="flex justify-between items-start mb-4 mt-2">
+                    <h3 id="hub-semestre-titulo" class="text-xl font-bold text-slate-800">PRIMER SEMESTRE</h3>
+                    <i class="fa-solid fa-calendar-days text-slate-600 text-2xl"></i>
+                </div>
+                <p class="text-sm text-slate-400 mb-4">Temporada lectiva calculada de forma inteligente en base al calendario activo.</p>
+                <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Rango de Fechas</span>
+                    <span id="hub-semestre-fechas" class="text-sm font-bold text-slate-700 bg-slate-50 px-3 py-1 rounded-md border border-slate-200/50">Julio - Diciembre</span>
+                </div>
+            </div>
+
+            <div class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm relative overflow-hidden group">
+                <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600"></div>
+                <div class="flex justify-between items-start mb-4 mt-2">
+                    <h3 class="text-xl font-bold text-slate-800">Progreso de Carrera</h3>
+                    <button onclick="toggleConfigCarrera(event)" class="text-slate-400 hover:text-slate-600 transition-colors text-lg"><i class="fa-solid fa-gear"></i></button>
+                </div>
+                <p class="text-sm text-slate-400 mb-6">Porcentaje total avanzado de tus 8 semestres académicos (calculado día a día).</p>
+                
+                <div class="space-y-2 pt-2 border-t border-slate-100">
+                    <div class="flex justify-between items-baseline">
+                        <span id="carrera-semestre-calculado" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Calculando...</span>
+                        <span id="carrera-porcentaje" class="text-sm font-mono font-black text-slate-700">0.0000%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                        <div id="carrera-barra" class="bg-slate-600 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div id="config-carrera-panel" class="absolute inset-x-0 bottom-0 bg-slate-900 text-white p-4 translate-y-full transition-transform duration-300 z-10">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Inicio de Carrera</h4>
+                        <button onclick="toggleConfigCarrera(event)" class="text-slate-400 hover:text-white">&times;</button>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="date" id="config-fecha-inicio" class="text-slate-800 p-1.5 rounded text-xs outline-none flex-grow">
+                        <button onclick="guardarConfigCarrera()" class="bg-indigo-600 hover:bg-indigo-500 px-3 py-1.5 rounded text-xs font-bold transition-colors">Fijar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border border-slate-200 bg-white/60 rounded-2xl p-6 shadow-sm relative overflow-hidden opacity-60 cursor-not-allowed">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-lg font-bold text-slate-500">Rastreador de Temas</h3>
+                    <i class="fa-solid fa-book-bookmark text-slate-400 text-xl"></i>
+                </div>
+                <p class="text-xs text-slate-400">Repaso espaciado de conceptos y niveles de confianza de estudio.</p>
+                <span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded absolute bottom-4 right-4 uppercase tracking-wider">Próximamente</span>
+            </div>
+
+            <div class="border border-slate-200 bg-white/60 rounded-2xl p-6 shadow-sm relative overflow-hidden opacity-60 cursor-not-allowed">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-lg font-bold text-slate-500">Agenda Universitaria</h3>
+                    <i class="fa-solid fa-clock text-slate-400 text-xl"></i>
+                </div>
+                <p class="text-xs text-slate-400">Horarios de clases, salones y recordatorios de entregas finales.</p>
+                <span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded absolute bottom-4 right-4 uppercase tracking-wider">Próximamente</span>
+            </div>
+        </div>
+    </main>
+
+    <main id="vista-notas" class="max-w-6xl mx-auto p-4 mt-6 hidden fade-in">
+        <button onclick="cambiarVista('hub')" class="mb-6 bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow transition-colors">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Menú Principal
+        </button>
+
+        <section class="bg-white rounded-2xl shadow-md p-6 mb-8 border border-slate-200">
+            <h2 class="text-xl font-bold text-slate-700 mb-4 border-b pb-2"><i class="fa-solid fa-chart-pie mr-2 text-slate-600"></i> Rendimiento Global</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <p class="text-sm text-slate-500 font-semibold uppercase tracking-wider">Promedio Global Ponderado</p>
+                    <p class="text-4xl font-black text-slate-700 mt-1 transition-colors duration-300" id="promedio-global">0.00</p>
+                </div>
+                <div id="estado-global-card" class="p-4 rounded-xl border flex flex-col justify-center items-center transition-all duration-300">
+                    <p class="text-sm font-semibold uppercase tracking-wider mb-1">Estado Actual</p>
+                    <p class="text-xl font-bold" id="estado-global-texto">Calculando...</p>
+                </div>
+            </div>
+        </section>
+
+        <h2 class="text-xl font-bold text-slate-700 mb-4"><i class="fa-solid fa-book mr-2 text-slate-600"></i> Mis Materias</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="materias-grid"></div>
+    </main>
+
+    <div id="modal-notas" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50 p-4 fade-in">
+        <div id="modal-content" class="rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transition-all duration-300">
+            <div id="modal-header" class="p-4 flex justify-between items-center sticky top-0 z-10 text-white transition-colors duration-300">
+                <div>
+                    <h3 class="text-lg font-bold flex items-center gap-2">
+                        <i id="modal-materia-icono" class="fa-solid"></i>
+                        <span id="modal-materia-titulo">Materia</span>
+                    </h3>
+                    <p class="text-sm opacity-80" id="modal-materia-creditos">0 Créditos</p>
+                </div>
+                <button onclick="cerrarModal()" class="text-white hover:text-red-400 text-2xl transition">&times;</button>
+            </div>
+            
+            <div class="p-6">
+                <div id="modal-promedio-box" class="flex justify-between items-center mb-6 bg-white/70 backdrop-blur-sm p-4 rounded-lg border transition-all duration-300">
+                    <span class="font-semibold text-slate-600">Promedio Acumulado:</span>
+                    <span class="text-3xl font-black text-slate-700" id="modal-materia-promedio">0.00</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="corte-card border rounded-xl p-4 bg-white/90 shadow-sm transition-all duration-300">
+                        <h4 class="font-bold text-slate-700 mb-3 border-b pb-1">Corte 1 (30%)</h4>
+                        <div class="mb-3">
+                            <label class="block text-sm text-slate-600 mb-1">Parcial 1 <span class="text-xs font-bold text-slate-400">(20%)</span></label>
+                            <input type="number" min="0" max="5" step="0.1" id="input-p1" class="nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-600 mb-1">Taller 1 <span class="text-xs font-bold text-slate-400">(10%)</span></label>
+                            <input type="number" min="0" max="5" step="0.1" id="input-t1" class="nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all">
+                        </div>
+                    </div>
+                    <div class="corte-card border rounded-xl p-4 bg-white/90 shadow-sm transition-all duration-300">
+                        <h4 class="font-bold text-slate-700 mb-3 border-b pb-1">Corte 2 (30%)</h4>
+                        <div class="mb-3">
+                            <label class="block text-sm text-slate-600 mb-1">Parcial 2 <span class="text-xs font-bold text-slate-400">(20%)</span></label>
+                            <input type="number" min="0" max="5" step="0.1" id="input-p2" class="nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-600 mb-1">Taller 2 <span class="text-xs font-bold text-slate-400">(10%)</span></label>
+                            <input type="number" min="0" max="5" step="0.1" id="input-t2" class="nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all">
+                        </div>
+                    </div>
+                    <div class="corte-card border rounded-xl p-4 bg-white/90 shadow-sm transition-all duration-300">
+                        <h4 class="font-bold text-slate-700 mb-3 border-b pb-1">Corte 3 (40%)</h4>
+                        <div class="mb-3">
+                            <label class="block text-sm text-slate-600 mb-1">Examen Final <span class="text-xs font-bold text-slate-400">(30%)</span></label>
+                            <input type="number" min="0" max="5" step="0.1" id="input-ef" class="nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-600 mb-1">Proyecto Final <span class="text-xs font-bold text-slate-400">(10%)</span></label>
+                            <input type="number" min="0" max="5" step="0.1" id="input-pf" class="nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <button id="modal-save-btn" onclick="cerrarModal()" class="text-white px-6 py-2 rounded-lg shadow font-semibold transition-colors">
+                        <i class="fa-solid fa-check mr-2"></i> Guardar y Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =================================================================
+        // PASO 8: PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE REEMPLAZANDO ESTE OBJETO
+        // =================================================================
+         
+const firebaseConfig = {
+    apiKey: "AIzaSyB_Nz2qeJ5zgrCUQ-_vNBfP7e4Zpp8v7h4",
+    authDomain: "portal-de-estudio-2e489.firebaseapp.com",
+    projectId: "portal-de-estudio-2e489",
+    storageBucket: "portal-de-estudio-2e489.firebasestorage.app",
+    messagingSenderId: "117003428883",
+    appId: "1:117003428883:web:26c7c9cff03839f1970be6"
+  };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // --- PALETA DE COLORES ELEGANTES ---
+        const temasColor = {
+            violet: { cardBg: 'hover:border-purple-400/50', cardBgSoft: 'bg-purple-50/50', modalBgSoft: 'bg-purple-50/90', borderSoft: 'border-purple-200/40', borderAccent: 'bg-purple-700/70', borderStrong: 'border-purple-700/30', textAccent: 'text-purple-700/80', modalHeader: 'bg-purple-800/90', modalBtn: 'bg-purple-700/80 hover:bg-purple-800', focusRing: 'focus:ring-purple-200/60 focus:border-purple-400/60' },
+            rose: { cardBg: 'hover:border-rose-400/50', cardBgSoft: 'bg-rose-50/40', modalBgSoft: 'bg-rose-50/90', borderSoft: 'border-rose-200/40', borderAccent: 'bg-rose-600/60', borderStrong: 'border-rose-600/30', textAccent: 'text-rose-600/80', modalHeader: 'bg-rose-800/90', modalBtn: 'bg-rose-600/80 hover:bg-rose-700', focusRing: 'focus:ring-rose-200/60 focus:border-rose-400/60' },
+            amber: { cardBg: 'hover:border-amber-400/50', cardBgSoft: 'bg-amber-50/40', modalBgSoft: 'bg-amber-50/90', borderSoft: 'border-amber-200/40', borderAccent: 'bg-amber-600/60', borderStrong: 'border-amber-600/30', textAccent: 'text-amber-600/80', modalHeader: 'bg-amber-800/90', modalBtn: 'bg-amber-600/80 hover:bg-amber-700', focusRing: 'focus:ring-amber-200/60 focus:border-amber-400/60' },
+            teal: { cardBg: 'hover:border-teal-400/50', cardBgSoft: 'bg-teal-50/40', modalBgSoft: 'bg-teal-50/90', borderSoft: 'border-teal-200/40', borderAccent: 'bg-teal-600/60', borderStrong: 'border-teal-600/30', textAccent: 'text-teal-600/80', modalHeader: 'bg-teal-800/90', modalBtn: 'bg-teal-600/80 hover:bg-teal-700', focusRing: 'focus:ring-teal-200/60 focus:border-teal-400/60' },
+            sky: { cardBg: 'hover:border-sky-400/50', cardBgSoft: 'bg-sky-50/40', modalBgSoft: 'bg-sky-50/90', borderSoft: 'border-sky-200/40', borderAccent: 'bg-sky-600/60', borderStrong: 'border-sky-600/30', textAccent: 'text-sky-600/80', modalHeader: 'bg-sky-800/90', modalBtn: 'bg-sky-600/80 hover:bg-sky-700', focusRing: 'focus:ring-sky-200/60 focus:border-sky-400/60' },
+            emerald: { cardBg: 'hover:border-emerald-400/50', cardBgSoft: 'bg-emerald-50/40', modalBgSoft: 'bg-emerald-50/90', borderSoft: 'border-emerald-200/40', borderAccent: 'bg-emerald-600/60', borderStrong: 'border-emerald-600/30', textAccent: 'text-emerald-600/80', modalHeader: 'bg-emerald-800/90', modalBtn: 'bg-emerald-600/80 hover:bg-emerald-700', focusRing: 'focus:ring-emerald-200/60 focus:border-emerald-400/60' }
+        };
+
+        const estructuraBase = {
+            comunicacion: { nombre: "Comunicación Oral y Escrita", creditos: 4, color: "violet", icono: "fa-comments", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
+            ciudadana: { nombre: "Formación Ciudadana 1", creditos: 3, color: "rose", icono: "fa-handshake-angle", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
+            matematicas: { nombre: "Fundamentos en Matemáticas", creditos: 3, color: "amber", icono: "fa-calculator", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
+            digital: { nombre: "Entorno Digital", creditos: 3, color: "teal", icono: "fa-laptop-code", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
+            mercadeo: { nombre: "Fundamentos de Mercadeo", creditos: 3, color: "sky", icono: "fa-bullhorn", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
+            economia: { nombre: "Fundamentos de Economía", creditos: 2, color: "emerald", icono: "fa-chart-line", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } }
+        };
+
+        const pesos = { p1: 0.2, t1: 0.1, p2: 0.2, t2: 0.1, ef: 0.3, pf: 0.1 };
+        let materiasData = {};
+        let materiaActivaId = null;
+
+        function cambiarVista(vista) {
+            if (vista === 'hub') {
+                document.getElementById('vista-hub').classList.remove('hidden');
+                document.getElementById('vista-notas').classList.add('hidden');
+            } else {
+                document.getElementById('vista-hub').classList.add('hidden');
+                document.getElementById('vista-notas').classList.remove('hidden');
+            }
+        }
+
+        function calcularFechasYSemestres() {
+            const fecha = new Date();
+            const anioActual = fecha.getFullYear();
+            const mesActual = fecha.getMonth();
+            
+            document.getElementById('navbar-anio-texto').innerText = `SEMESTRE ACTIVO ${anioActual}`;
+
+            const tituloSemestre = document.getElementById('hub-semestre-titulo');
+            const fechasSemestre = document.getElementById('hub-semestre-fechas');
+
+            if (mesActual >= 6) {
+                tituloSemestre.innerText = "SEGUNDO SEMESTRE";
+                fechasSemestre.innerText = "Julio - Diciembre";
+            } else {
+                tituloSemestre.innerText = "PRIMER SEMESTRE";
+                fechasSemestre.innerText = "Enero - Junio";
+            }
+
+            let fechaInicioCarrera = localStorage.getItem('fecha_inicio_carrera') || "2026-07-27";
+            document.getElementById('config-fecha-inicio').value = fechaInicioCarrera;
+
+            const inicio = new Date(fechaInicioCarrera);
+            const totalDiasCarrera = 4 * 365;
+            const diffTiempo = Math.abs(fecha - inicio);
+            const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
+
+            let porcentajeProgreso = (diffDias / totalDiasCarrera) * 100;
+            if (porcentajeProgreso > 100) porcentajeProgreso = 100;
+            if (fecha < inicio) porcentajeProgreso = 0;
+
+            document.getElementById('carrera-porcentaje').innerText = porcentajeProgreso.toFixed(4) + "%";
+            document.getElementById('carrera-barra').style.width = porcentajeProgreso + "%";
+
+            let semestreActual = Math.ceil(diffDias / 182.5);
+            if (semestreActual > 8) semestreActual = 8;
+            if (fecha < inicio) semestreActual = 1;
+
+            document.getElementById('carrera-semestre-calculado').innerText = `${semestreActual}° SEMESTRE DE LA CARRERA`;
+        }
+
+        function toggleConfigCarrera(e) {
+            e.stopPropagation();
+            const panel = document.getElementById('config-carrera-panel');
+            panel.classList.toggle('translate-y-full');
+        }
+
+        function guardarConfigCarrera() {
+            const nuevaFecha = document.getElementById('config-fecha-inicio').value;
+            if (nuevaFecha) {
+                localStorage.setItem('fecha_inicio_carrera', nuevaFecha);
+                calcularFechasYSemestres();
+                document.getElementById('config-carrera-panel').classList.add('translate-y-full');
+            }
+        }
+
+        function calcularPromedioMateria(notas) {
+            let total = 0;
+            total += (Number(notas.p1) || 0) * pesos.p1;
+            total += (Number(notas.t1) || 0) * pesos.t1;
+            total += (Number(notas.p2) || 0) * pesos.p2;
+            total += (Number(notas.t2) || 0) * pesos.t2;
+            total += (Number(notas.ef) || 0) * pesos.ef;
+            total += (Number(notas.pf) || 0) * pesos.pf;
+            return total;
+        }
+
+        function obtenerEstilosRendimiento(prom) {
+            if (prom < 4.0) return { texto: 'FUERA DE COMP.', clasesCard: 'bg-red-50/90 border-red-200/60 text-red-800', clasesNum: 'text-red-700' };
+            if (prom < 4.5) return { texto: 'CASI EN COMP.', clasesCard: 'bg-amber-50/90 border-amber-200/60 text-amber-800', clasesNum: 'text-amber-700' };
+            if (prom < 5.0) return { texto: '¡EN COMPETENCIA!', clasesCard: 'bg-emerald-50/90 border-emerald-200/60 text-emerald-800', clasesNum: 'text-emerald-700' };
+            return { texto: '¡BECA ASEGURADA!', clasesCard: 'bg-emerald-800 text-white border-emerald-900 shadow-sm font-bold', clasesNum: 'text-emerald-900 font-black' };
+        }
+
+        function renderizarDashboard() {
+            const grid = document.getElementById('materias-grid');
+            grid.innerHTML = ''; 
+
+            let totalCreditos = 0;
+            let sumaPonderada = 0;
+
+            for (let id in materiasData) {
+                let mat = materiasData[id];
+                let prom = calcularPromedioMateria(mat.notas);
+                totalCreditos += mat.creditos;
+                sumaPonderada += (prom * mat.creditos);
+
+                let tema = temasColor[mat.color || 'violet'];
+                let est = obtenerEstilosRendimiento(prom);
+
+                let cardHTML = `
+                    <div class="border ${tema.borderSoft} rounded-xl p-5 shadow-sm ${tema.cardBg} hover:shadow-md transition-all cursor-pointer ${tema.cardBgSoft} relative overflow-hidden" onclick="abrirModal('${id}')">
+                        <div class="absolute top-0 left-0 right-0 h-1.5 ${tema.borderAccent}"></div>
+                        <div class="flex items-start justify-between mt-2">
+                            <h3 class="font-bold text-slate-800 text-lg line-clamp-2 pr-2">
+                                <i class="fa-solid ${mat.icono} ${tema.textAccent} mr-2"></i> ${mat.nombre}
+                            </h3>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-4 mt-1"><i class="fa-solid fa-coins mr-1"></i> ${mat.creditos} Créditos</p>
+                        <div class="flex justify-between items-end mt-4 pt-4 border-t ${tema.borderSoft}">
+                            <div>
+                                <p class="text-xs font-bold uppercase text-slate-400 tracking-wider">Promedio</p>
+                                <p class="text-3xl font-black ${est.clasesNum}">${prom.toFixed(2)}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-bold px-2.5 py-1 rounded border ${est.clasesCard}">
+                                    ${est.texto}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += cardHTML;
+            }
+
+            let promedioGlobal = totalCreditos > 0 ? (sumaPonderada / totalCreditos) : 0;
+            document.getElementById('promedio-global').innerText = promedioGlobal.toFixed(2);
+            document.getElementById('hub-promedio').innerText = promedioGlobal.toFixed(2);
+
+            let pctRendimiento = (promedioGlobal / 5.0) * 100;
+            document.getElementById('hub-porcentaje-texto').innerText = pctRendimiento.toFixed(2) + "%";
+            document.getElementById('hub-porcentaje-barra').style.width = pctRendimiento + "%";
+
+            let estGlobal = obtenerEstilosRendimiento(promedioGlobal);
+            let numGlobal = document.getElementById('promedio-global');
+            let cardGlobal = document.getElementById('estado-global-card');
+            let textoGlobal = document.getElementById('estado-global-texto');
+
+            cardGlobal.className = `p-4 rounded-xl border flex flex-col justify-center items-center transition-all duration-300 ${estGlobal.clasesCard}`;
+            textoGlobal.innerText = estGlobal.texto;
+            numGlobal.className = `text-4xl font-black mt-1 transition-colors duration-300 ${estGlobal.clasesNum}`;
+        }
+
+        function escucharBaseDeDatos() {
+            // Escuchamos los cambios del documento "materias" dentro de la colección "usuario_miguel"
+            db.collection('usuario_miguel').doc('materias').onSnapshot((doc) => {
+                if (doc.exists) {
+                    materiasData = doc.data();
+                } else {
+                    // Si es la primera vez que entras y está vacío, creamos la estructura base
+                    materiasData = JSON.parse(JSON.stringify(estructuraBase));
+                    db.collection('usuario_miguel').doc('materias').set(materiasData);
+                }
+                renderizarDashboard();
+            });
+        }
+        
+function abrirModal(id) {
+            materiaActivaId = id;
+            const mat = materiasData[id];
+            const tema = temasColor[mat.color || 'violet'];
+            
+            document.getElementById('modal-materia-titulo').innerText = mat.nombre;
+            document.getElementById('modal-materia-creditos').innerText = mat.creditos + " Créditos";
+            document.getElementById('modal-materia-icono').className = `fa-solid ${mat.icono}`;
+
+            document.getElementById('modal-header').className = `p-4 flex justify-between items-center sticky top-0 z-10 text-white transition-colors duration-300 ${tema.modalHeader}`;
+            document.getElementById('modal-content').className = `rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transition-all duration-300 ${tema.modalBgSoft}`;
+
+            const corteCards = document.querySelectorAll('.corte-card');
+            corteCards.forEach(card => card.className = `corte-card border rounded-xl p-4 bg-white/90 shadow-sm transition-all duration-300 ${tema.borderStrong}`);
+            document.getElementById('modal-promedio-box').className = `flex justify-between items-center mb-6 bg-white/70 backdrop-blur-sm p-4 rounded-lg border transition-all duration-300 ${tema.borderStrong}`;
+            document.getElementById('modal-save-btn').className = `text-white px-6 py-2 rounded-lg shadow font-semibold transition-colors ${tema.modalBtn}`;
+
+            const inputs = document.querySelectorAll('.nota-input');
+            inputs.forEach(input => input.className = "nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all " + tema.focusRing);
+
+            document.getElementById('input-p1').value = mat.notas.p1 === 0 ? 0 : (mat.notas.p1 || '');
+            document.getElementById('input-t1').value = mat.notas.t1 === 0 ? 0 : (mat.notas.t1 || '');
+            document.getElementById('input-p2').value = mat.notas.p2 === 0 ? 0 : (mat.notas.p2 || '');
+            document.getElementById('input-t2').value = mat.notas.t2 === 0 ? 0 : (mat.notas.t2 || '');
+            document.getElementById('input-ef').value = mat.notas.ef === 0 ? 0 : (mat.notas.ef || '');
+            document.getElementById('input-pf').value = mat.notas.pf === 0 ? 0 : (mat.notas.pf || '');
+
+            actualizarPromedioModal();
+            document.getElementById('modal-notas').style.display = 'flex';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal-notas').style.display = 'none';
+            if (materiaActivaId) {
+                // Guardamos todo el objeto actualizado de materias en Firestore
+                db.collection('usuario_miguel').doc('materias').set(materiasData);
+            }
+            materiaActivaId = null;
+        }
+
+        function configurarEventosInputs() {
+            const inputs = document.querySelectorAll('.nota-input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (materiaActivaId) {
+                        materiasData[materiaActivaId].notas.p1 = parseFloat(document.getElementById('input-p1').value) || 0;
+                        materiasData[materiaActivaId].notas.t1 = parseFloat(document.getElementById('input-t1').value) || 0;
+                        materiasData[materiaActivaId].notas.p2 = parseFloat(document.getElementById('input-p2').value) || 0;
+                        materiasData[materiaActivaId].notas.t2 = parseFloat(document.getElementById('input-t2').value) || 0;
+                        materiasData[materiaActivaId].notas.ef = parseFloat(document.getElementById('input-ef').value) || 0;
+                        materiasData[materiaActivaId].notas.pf = parseFloat(document.getElementById('input-pf').value) || 0;
+                    }
+                    actualizarPromedioModal();
+                });
+            });
+        }
+
+        function actualizarPromedioModal() {
+            if (!materiaActivaId) return;
+            let prom = calcularPromedioMateria(materiasData[materiaActivaId].notas);
+            let elementoPromedio = document.getElementById('modal-materia-promedio');
+            elementoPromedio.innerText = prom.toFixed(2);
+            
+            let estModal = obtenerEstilosRendimiento(prom);
+            elementoPromedio.className = "text-3xl font-black " + estModal.clasesNum;
+        }
+
+        window.onload = function() {
+            calcularFechasYSemestres();
+            escucharBaseDeDatos();
+            configurarEventosInputs();
+            setInterval(calcularFechasYSemestres, 60000);
+        };
+    </script>
+</body>
+</html>
