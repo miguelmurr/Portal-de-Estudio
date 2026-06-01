@@ -31,7 +31,7 @@
             <p class="text-slate-500 mt-1">Bienvenido a tu suite de gestión académica personal.</p>
         </header>
 
-       <!-- CUADRO GENERAL INDEPENDIENTE: Progreso de Carrera (Arriba) -->
+        <!-- CUADRO GENERAL INDEPENDIENTE: Progreso de Carrera (Arriba) -->
         <div class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm relative overflow-hidden group mb-8">
             <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600"></div>
             
@@ -89,6 +89,7 @@
         <!-- REJILLA DE MÓDULOS DE TRABAJO (Abajo) -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
+            <!-- Módulo 1: Control de Notas -->
             <div onclick="cambiarVista('notas')" class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer relative overflow-hidden group">
                 <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600 group-hover:bg-indigo-600 transition-colors"></div>
                 <div class="flex justify-between items-start mb-4 mt-2">
@@ -114,6 +115,7 @@
                 </div>
             </div>
 
+            <!-- Módulo 2: Agenda de Actividades -->
             <div onclick="cambiarVista('actividades')" class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer relative overflow-hidden group">
                 <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600 group-hover:bg-amber-600 transition-colors"></div>
                 <div class="flex justify-between items-start mb-4 mt-2">
@@ -128,6 +130,7 @@
                 </div>
             </div>
 
+            <!-- Módulo 3: Rastreador de Temas (Próximamente) -->
             <div class="border border-slate-200 bg-white/60 rounded-2xl p-6 shadow-sm relative overflow-hidden opacity-60 cursor-not-allowed">
                 <div class="flex justify-between items-start mb-2">
                     <h3 class="text-lg font-bold text-slate-500">Rastreador de Temas</h3>
@@ -135,32 +138,6 @@
                 </div>
                 <p class="text-xs text-slate-400">Repaso espaciado de conceptos y niveles de confianza de estudio.</p>
                 <span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded absolute bottom-4 right-4 uppercase tracking-wider">Próximamente</span>
-            </div>
-        </div>
-
-            <!-- Módulo: Rastreador de Temas (Próximamente) -->
-            <div class="border border-slate-200 bg-white/60 rounded-2xl p-6 shadow-sm relative overflow-hidden opacity-60 cursor-not-allowed">
-                <div class="flex justify-between items-start mb-2">
-                    <h3 class="text-lg font-bold text-slate-500">Rastreador de Temas</h3>
-                    <i class="fa-solid fa-book-bookmark text-slate-400 text-xl"></i>
-                </div>
-                <p class="text-xs text-slate-400">Repaso espaciado de conceptos y niveles de confianza de estudio.</p>
-                <span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded absolute bottom-4 right-4 uppercase tracking-wider">Próximamente</span>
-            </div>
-
-            <!-- Módulo: Agenda de Actividades -->
-            <div onclick="cambiarVista('actividades')" class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer relative overflow-hidden group">
-                <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600 group-hover:bg-amber-600 transition-colors"></div>
-                <div class="flex justify-between items-start mb-4 mt-2">
-                    <h3 class="text-xl font-bold text-slate-800">Agenda de Actividades</h3>
-                    <i class="fa-solid fa-clock text-slate-600 text-2xl transition-colors group-hover:text-amber-600"></i>
-                </div>
-                <p class="text-sm text-slate-400 mb-6">Controla tus tareas, fechas de asignación, entregas y días restantes ordenados por urgencia.</p>
-                
-                <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    <span>Tareas Activas</span>
-                    <span id="hub-total-actividades" class="text-sm font-black text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">0</span>
-                </div>
             </div>
         </div>
     </main>
