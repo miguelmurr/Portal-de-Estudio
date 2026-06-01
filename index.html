@@ -281,10 +281,11 @@
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
                             <tr class="border-b border-slate-200 text-slate-400 uppercase font-bold tracking-wider text-[10px]">
-                                <th class="pb-3 font-bold">Materia</th>
+                                 <th class="pb-3 font-bold">Materia</th>
                                 <th class="pb-3 font-bold">Actividad</th>
                                 <th class="pb-3 text-center font-bold">Fecha Entrega</th>
-                            </tr>
+                                <th class="pb-3 text-center font-bold">Acciones</th>
+                             </tr>
                         </thead>
                         <tbody id="tabla-historial-body" class="divide-y divide-slate-100 text-slate-600 font-medium">
                             <!-- Filas de entregados se inyectarán aquí -->
@@ -786,7 +787,18 @@ function abrirModal(id) {
             document.getElementById('modal-historial').style.display = 'none';
         }
 
-       function renderizarHistorial() {
+      function eliminarRegistroHistorial(idTarea) {
+            if (confirm("¿Estás seguro de que deseas eliminar permanentemente este registro del historial?")) {
+                listaActividades = listaActividades.filter(tarea => tarea.id !== idTarea);
+                db.collection('usuario_miguel').doc('actividades').set({ lista: listaActividades })
+                    .then(() => {
+                        // Forzamos el renderizado del historial para ver el cambio de inmediato
+                        renderizarHistorial();
+                    });
+            }
+        }
+
+        function renderizarHistorial() {
             const tbody = document.getElementById('tabla-historial-body');
             const mensajeVacio = document.getElementById('tabla-historial-vacia');
             const filtroMateria = document.getElementById('filtro-historial-materia').value;
@@ -794,15 +806,12 @@ function abrirModal(id) {
 
             tbody.innerHTML = '';
 
-            // 1. Extraemos únicamente las actividades marcadas como entregadas
             let entregadas = listaActividades.filter(tarea => tarea.estado === 'entregada');
 
-            // 2. Filtro Excel: Por Materia
             if (filtroMateria !== 'todas') {
                 entregadas = entregadas.filter(tarea => tarea.materiaId === filtroMateria);
             }
 
-            // 3. Filtro Excel: Por Orden de Antigüedad (Corregido sin caracteres extraños)
             entregadas.sort((a, b) => {
                 const fechaA = new Date(a.fechaEntrega + "T00:00:00");
                 const fechaB = new Date(b.fechaEntrega + "T00:00:00");
@@ -816,7 +825,6 @@ function abrirModal(id) {
                 mensajeVacio.classList.add('hidden');
             }
 
-            // 4. Inyección de datos en las 3 columnas reglamentarias
             entregadas.forEach(tarea => {
                 const infoMateria = estructuraBase[tarea.materiaId] || { nombre: "Desconocida", color: "slate" };
                 const tema = temasColor[infoMateria.color] || temasColor.violet;
@@ -829,6 +837,11 @@ function abrirModal(id) {
                         </td>
                         <td class="p-3 text-slate-600 font-medium">${tarea.nombre}</td>
                         <td class="p-3 text-center text-slate-500 font-mono">${tarea.fechaEntrega}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="eliminarRegistroHistorial('${tarea.id}')" class="text-red-400 hover:text-red-600 transition-colors p-1" title="Eliminar registro permanentemente">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </button>
+                        </td>
                     </tr>
                 `;
                 tbody.innerHTML += filaHTML;
