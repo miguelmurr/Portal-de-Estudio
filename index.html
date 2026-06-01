@@ -18,10 +18,14 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen">
 
-    <nav class="bg-slate-800 text-white p-4 shadow-md flex justify-between items-center">
+    <nav class="bg-slate-800 text-white p-4 shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
         <h1 class="text-2xl font-bold tracking-wide"><i class="fa-solid fa-graduation-cap mr-2"></i> Portal Universitario</h1>
-        <div class="text-sm font-semibold tracking-wider opacity-90" id="navbar-anio-texto">
-            SEMESTRE ACTIVO 2026
+        <div class="flex items-center gap-3">
+            <select id="selector-periodos" onchange="cambiarPeriodoActivo(this.value)" class="bg-slate-700 text-white text-xs font-bold uppercase p-2 rounded-lg outline-none border border-slate-600 focus:border-slate-400 cursor-pointer">
+                </select>
+            <div class="text-sm font-semibold tracking-wider opacity-90 bg-slate-900/40 px-3 py-2 rounded-lg border border-slate-700/50" id="navbar-anio-texto">
+                SEMESTRE ACTIVO 2026
+            </div>
         </div>
     </nav>
 
@@ -70,18 +74,6 @@
                 </div>
                 <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                     <div id="carrera-barra" class="bg-slate-600 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
-                </div>
-            </div>
-
-            <!-- Panel Oculto de Configuración -->
-            <div id="config-carrera-panel" class="absolute inset-x-0 bottom-0 bg-slate-900 text-white p-4 translate-y-full transition-transform duration-300 z-10">
-                <div class="flex justify-between items-center mb-2">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Inicio de Carrera</h4>
-                    <button onclick="toggleConfigCarrera(event)" class="text-slate-400 hover:text-white">&times;</button>
-                </div>
-                <div class="flex gap-2">
-                    <input type="date" id="config-fecha-inicio" class="text-slate-800 p-1.5 rounded text-xs outline-none flex-grow">
-                    <button onclick="guardarConfigCarrera()" class="bg-indigo-600 hover:bg-indigo-500 px-3 py-1.5 rounded text-xs font-bold transition-colors">Fijar</button>
                 </div>
             </div>
         </div>
@@ -402,16 +394,29 @@ const firebaseConfig = {
         };
 
         const pesos = { p1: 0.2, t1: 0.1, p2: 0.2, t2: 0.1, ef: 0.3, pf: 0.1 };
+        // --- VARIABLES DE CONTROL MULTI-SEMESTRE ---
         let materiasData = {};
+        let listaActividades = [];
         let materiaActivaId = null;
+        
+        let periodosLista = [];
+        let periodoActivoId = "PRIMER SEMESTRE";
+        let esPeriodoBloqueado = false;
+
+        // Desuscripciones en tiempo real de Firebase
+        let unsubscribeMaterias = null;
+        let unsubscribeActividades = null;
+
+        const nombresSemestres = [
+            "PRIMER SEMESTRE", "SEGUNDO SEMESTRE", "TERCER SEMESTRE", "CUARTO SEMESTRE",
+            "QUINTO SEMESTRE", "SEXTO SEMESTRE", "SÉPTIMO SEMESTRE", "OCTAVO SEMESTRE"
+        ];
 
         function cambiarVista(vista) {
-            // Ocultamos todas las pantallas primero
             document.getElementById('vista-hub').classList.add('hidden');
             document.getElementById('vista-notas').classList.add('hidden');
             document.getElementById('vista-actividades').classList.add('hidden');
 
-            // Mostramos únicamente la pantalla seleccionada
             if (vista === 'hub') {
                 document.getElementById('vista-hub').classList.remove('hidden');
             } else if (vista === 'notas') {
@@ -421,61 +426,195 @@ const firebaseConfig = {
             }
         }
 
-        function calcularFechasYSemestres() {
-            const fecha = new Date();
-            const anioActual = fecha.getFullYear();
-            const mesActual = fecha.getMonth();
+        // --- SISTEMA MAESTRO DE CONTROL TEMPORAL ---
+        function inicializarEstructuraPeriodos() {
+            db.collection('usuario_miguel').doc('config_periodos').onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    periodosLista = data.periodos || [];
+                    periodoActivoId = data.periodoActivoId || "PRIMER SEMESTRE";
+                } else {
+                    // Inicialización reglamentaria del Primer Semestre de Miguel
+                    periodosLista = [{
+                        id: "PRIMER SEMESTRE",
+                        fechaInicio: "2026-07-27",
+                        fechaFin: "2026-11-26"
+                    }];
+                    periodoActivoId = "PRIMER SEMESTRE";
+                    db.collection('usuario_miguel').doc('config_periodos').set({
+                        periodos: periodosLista,
+                        periodoActivoId: periodoActivoId
+                    });
+                }
+                renderizarSelectorPeriodos();
+                procesarPeriodoActual();
+            });
+        }
+
+        function renderizarSelectorPeriodos() {
+            const select = document.getElementById('selector-periodos');
+            select.innerHTML = '';
+
+            periodosLista.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.innerText = p.id;
+                if (p.id === periodoActivoId) opt.selected = true;
+                select.appendChild(opt);
+            });
+
+            const optNuevo = document.createElement('option');
+            optNuevo.value = "NUEVO_PERIODO";
+            optNuevo.innerText = "+ AGREGAR NUEVO PERIODO";
+            select.appendChild(optNuevo);
+        }
+
+        function cambiarPeriodoActivo(valor) {
+            if (valor === "NUEVO_PERIODO") {
+                // Volvemos a seleccionar el periodo activo en el diseño visual por si se cancela la acción
+                document.getElementById('selector-periodos').value = periodoActivoId;
+                crearNuevoPeriodo();
+                return;
+            }
             
-            document.getElementById('navbar-anio-texto').innerText = `SEMESTRE ACTIVO ${anioActual}`;
+            periodoActivoId = valor;
+            db.collection('usuario_miguel').doc('config_periodos').update({ periodoActivoId: periodoActivoId });
+        }
 
-            const tituloSemestre = document.getElementById('hub-semestre-titulo');
-            const fechasSemestre = document.getElementById('hub-semestre-fechas');
+        function crearNuevoPeriodo() {
+            // Buscamos el último periodo registrado para evaluar su candado de vencimiento
+            const ultimoPeriodo = periodosLista[periodosLista.length - 1];
+            const fechaFinVigente = new Date(ultimoPeriodo.fechaFin + "T23:59:59");
+            const ahora = new Date();
 
-            if (mesActual >= 6) {
-                tituloSemestre.innerText = "SEGUNDO SEMESTRE";
-                fechasSemestre.innerText = "Julio - Diciembre";
-            } else {
-                tituloSemestre.innerText = "PRIMER SEMESTRE";
-                fechasSemestre.innerText = "Enero - Junio";
+            if (ahora <= fechaFinVigente) {
+                alert("Bloqueo de seguridad: No puedes crear un nuevo semestre hasta que finalice el periodo actual vigente (" + ultimoPeriodo.fechaFin + " a las 11:59:59 PM).");
+                return;
             }
 
-            let fechaInicioCarrera = localStorage.getItem('fecha_inicio_carrera') || "2026-07-27";
-            document.getElementById('config-fecha-inicio').value = fechaInicioCarrera;
+            const siguienteIndice = periodosLista.length;
+            if (siguienteIndice >= nombresSemestres.length) {
+                alert("Has alcanzado el límite de semestres configurados en la carrera.");
+                return;
+            }
 
-            const inicio = new Date(fechaInicioCarrera);
-            const totalDiasCarrera = 4 * 365;
-            const diffTiempo = Math.abs(fecha - inicio);
-            const diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
+            const proximoNombre = nombresSemestres[siguienteIndice];
+            
+            const fechaInicioInput = prompt("Creando " + proximoNombre + ".\nIngresa la fecha de INICIO (Formato: AAAA-MM-DD):");
+            if (!fechaInicioInput) return;
+            
+            const fechaFinInput = prompt("Ingresa la fecha de FINALIZACIÓN (Formato: AAAA-MM-DD):");
+            if (!fechaFinInput) return;
 
-            let porcentajeProgreso = (diffDias / totalDiasCarrera) * 100;
-            if (porcentajeProgreso > 100) porcentajeProgreso = 100;
-            if (fecha < inicio) porcentajeProgreso = 0;
+            // Validación de formato básico de fechas
+            const regexFecha = /^\d{4}-\d{2}-\d{2}$/;
+            if (!regexFecha.test(fechaInicioInput) || !regexFecha.test(fechaFinInput)) {
+                alert("Error: Las fechas ingresadas no tienen un formato válido (AAAA-MM-DD). Inténtalo de nuevo.");
+                return;
+            }
+
+            const nuevoPeriodoObj = {
+                id: proximoNombre,
+                fechaInicio: fechaInicioInput,
+                fechaFin: fechaFinInput
+            };
+
+            periodosLista.push(nuevoPeriodoObj);
+            periodoActivoId = proximoNombre;
+
+            db.collection('usuario_miguel').doc('config_periodos').set({
+                periodos: periodosLista,
+                periodoActivoId: periodoActivoId
+            });
+            
+            alert(proximoNombre + " creado y seleccionado exitosamente con un entorno de datos limpio.");
+        }
+
+        function procesarPeriodoActual() {
+            const periodoActual = periodosLista.find(p => p.id === periodoActivoId);
+            if (!periodoActual) return;
+
+            const ahora = new Date();
+            const inicio = new Date(periodoActual.fechaInicio + "T00:00:00");
+            const fin = new Date(periodoActual.fechaFin + "T23:59:59");
+
+            // Evaluación estricta del candado de lectura
+            esPeriodoBloqueado = ahora > fin;
+
+            // Gestión de textos informativos en el Hub
+            const anioText = periodoActual.fechaInicio.split('-')[0];
+            document.getElementById('navbar-anio-texto').innerText = "PERIODO ACADÉMICO " + anioText;
+            document.getElementById('hub-semestre-titulo').innerText = periodoActual.id;
+            document.getElementById('hub-semestre-fechas').innerText = periodoActual.fechaInicio + " al " + periodoActual.fechaFin;
+            document.getElementById('carrera-semestre-calculado').innerText = periodoActual.id + " DE LA CARRERA";
+
+            // Cálculo matemático milimétrico del progreso por día del semestre seleccionado
+            let porcentajeProgreso = 0;
+            if (ahora > fin) {
+                porcentajeProgreso = 100;
+            } else if (ahora < inicio) {
+                porcentajeProgreso = 0;
+            } else {
+                const tiempoTotal = fin - inicio;
+                const tiempoTranscurrido = ahora - inicio;
+                porcentajeProgreso = (tiempoTranscurrido / tiempoTotal) * 100;
+            }
 
             document.getElementById('carrera-porcentaje').innerText = porcentajeProgreso.toFixed(4) + "%";
             document.getElementById('carrera-barra').style.width = porcentajeProgreso + "%";
 
-            let semestreActual = Math.ceil(diffDias / 182.5);
-            if (semestreActual > 8) semestreActual = 8;
-            if (fecha < inicio) semestreActual = 1;
+            // Aplicar protecciones visuales inmediatas en los formularios
+            gestionarBloqueosFormularios();
 
-            document.getElementById('carrera-semestre-calculado').innerText = `${semestreActual}° SEMESTRE DE LA CARRERA`;
+            // Reiniciar y reconectar los escuchas de datos con aislamiento
+            conectarEscuchasDatosPeriodo();
         }
 
-        function toggleConfigCarrera(e) {
-            e.stopPropagation();
-            const panel = document.getElementById('config-carrera-panel');
-            panel.classList.toggle('translate-y-full');
-        }
-
-        function guardarConfigCarrera() {
-            const nuevaFecha = document.getElementById('config-fecha-inicio').value;
-            if (nuevaFecha) {
-                localStorage.setItem('fecha_inicio_carrera', nuevaFecha);
-                calcularFechasYSemestres();
-                document.getElementById('config-carrera-panel').classList.add('translate-y-full');
+        function gestionarBloqueosFormularios() {
+            const formActividad = document.getElementById('form-actividad');
+            const inputsForm = formActividad.querySelectorAll('input, select, button');
+            
+            if (esPeriodoBloqueado) {
+                inputsForm.forEach(el => el.disabled = true);
+                formActividad.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                inputsForm.forEach(el => el.disabled = false);
+                formActividad.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
 
+        function conectarEscuchasDatosPeriodo() {
+            // Apagamos escuchas previos para evitar fugas de memoria o mezclas
+            if (unsubscribeMaterias) unsubscribeMaterias();
+            if (unsubscribeActividades) unsubscribeActividades();
+
+            // Aislamiento de documentos: El Primer Semestre mantiene compatibilidad, los siguientes se aíslan por sufijo
+            const docMateriasId = (periodoActivoId === "PRIMER SEMESTRE") ? "materias" : "materias_" + periodoActivoId.replace(/ /g, "_");
+            const docActividadesId = (periodoActivoId === "PRIMER SEMESTRE") ? "actividades" : "actividades_" + periodoActivoId.replace(/ /g, "_");
+
+            // Conexión aislada de Materias
+            unsubscribeMaterias = db.collection('usuario_miguel').doc(docMateriasId).onSnapshot((doc) => {
+                if (doc.exists) {
+                    materiasData = doc.data();
+                } else {
+                    materiasData = JSON.parse(JSON.stringify(estructuraBase));
+                    db.collection('usuario_miguel').doc(docMateriasId).set(materiasData);
+                }
+                renderizarDashboard();
+            });
+
+            // Conexión aislada de Actividades
+            unsubscribeActividades = db.collection('usuario_miguel').doc(docActividadesId).onSnapshot((doc) => {
+                if (doc.exists) {
+                    listaActividades = doc.data().lista || [];
+                } else {
+                    listaActividades = [];
+                }
+                renderizarTablaActividades();
+            });
+        }
+
+        // --- ADAPTACIÓN DE FUNCIONES DE NEGOCIO AL MODO SOLO LECTURA ---
         function calcularPromedioMateria(notas) {
             let total = 0;
             total += (Number(notas.p1) || 0) * pesos.p1;
@@ -500,7 +639,6 @@ const firebaseConfig = {
 
             let totalCreditos = 0;
             let sumaPonderada = 0;
-
             for (let id in materiasData) {
                 let mat = materiasData[id];
                 let prom = calcularPromedioMateria(mat.notas);
@@ -514,22 +652,22 @@ const firebaseConfig = {
                     <div class="border ${tema.borderSoft} rounded-xl p-5 shadow-sm ${tema.cardBg} hover:shadow-md transition-all cursor-pointer ${tema.cardBgSoft} relative overflow-hidden" onclick="abrirModal('${id}')">
                         <div class="absolute top-0 left-0 right-0 h-1.5 ${tema.borderAccent}"></div>
                         <div class="flex items-start justify-between mt-2">
-                            <h3 class="font-bold text-slate-800 text-lg line-clamp-2 pr-2">
+                             <h3 class="font-bold text-slate-800 text-lg line-clamp-2 pr-2">
                                 <i class="fa-solid ${mat.icono} ${tema.textAccent} mr-2"></i> ${mat.nombre}
                             </h3>
-                        </div>
+                         </div>
                         <p class="text-sm text-slate-500 mb-4 mt-1"><i class="fa-solid fa-coins mr-1"></i> ${mat.creditos} Créditos</p>
                         <div class="flex justify-between items-end mt-4 pt-4 border-t ${tema.borderSoft}">
-                            <div>
+                             <div>
                                 <p class="text-xs font-bold uppercase text-slate-400 tracking-wider">Promedio</p>
                                 <p class="text-3xl font-black ${est.clasesNum}">${prom.toFixed(2)}</p>
-                            </div>
+                             </div>
                             <div class="text-right">
                                 <span class="text-xs font-bold px-2.5 py-1 rounded border ${est.clasesCard}">
-                                    ${est.texto}
+                                     ${est.texto}
                                 </span>
                             </div>
-                        </div>
+                         </div>
                     </div>
                 `;
                 grid.innerHTML += cardHTML;
@@ -553,21 +691,7 @@ const firebaseConfig = {
             numGlobal.className = `text-4xl font-black mt-1 transition-colors duration-300 ${estGlobal.clasesNum}`;
         }
 
-        function escucharBaseDeDatos() {
-            // Escuchamos los cambios del documento "materias" dentro de la colección "usuario_miguel"
-            db.collection('usuario_miguel').doc('materias').onSnapshot((doc) => {
-                if (doc.exists) {
-                    materiasData = doc.data();
-                } else {
-                    // Si es la primera vez que entras y está vacío, creamos la estructura base
-                    materiasData = JSON.parse(JSON.stringify(estructuraBase));
-                    db.collection('usuario_miguel').doc('materias').set(materiasData);
-                }
-                renderizarDashboard();
-            });
-        }
-        
-function abrirModal(id) {
+        function abrirModal(id) {
             materiaActivaId = id;
             const mat = materiasData[id];
             const tema = temasColor[mat.color || 'violet'];
@@ -582,10 +706,21 @@ function abrirModal(id) {
             const corteCards = document.querySelectorAll('.corte-card');
             corteCards.forEach(card => card.className = `corte-card border rounded-xl p-4 bg-white/90 shadow-sm transition-all duration-300 ${tema.borderStrong}`);
             document.getElementById('modal-promedio-box').className = `flex justify-between items-center mb-6 bg-white/70 backdrop-blur-sm p-4 rounded-lg border transition-all duration-300 ${tema.borderStrong}`;
-            document.getElementById('modal-save-btn').className = `text-white px-6 py-2 rounded-lg shadow font-semibold transition-colors ${tema.modalBtn}`;
+
+            const btnGuardar = document.getElementById('modal-save-btn');
+            if (esPeriodoBloqueado) {
+                btnGuardar.className = `text-white px-6 py-2 rounded-lg shadow font-semibold transition-colors bg-slate-500 hover:bg-slate-600`;
+                btnGuardar.innerHTML = `<i class="fa-solid fa-lock mr-2"></i> Cerrar (Periodo Finalizado)`;
+            } else {
+                btnGuardar.className = `text-white px-6 py-2 rounded-lg shadow font-semibold transition-colors ${tema.modalBtn}`;
+                btnGuardar.innerHTML = `<i class="fa-solid fa-check mr-2"></i> Guardar y Cerrar`;
+            }
 
             const inputs = document.querySelectorAll('.nota-input');
-            inputs.forEach(input => input.className = "nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all " + tema.focusRing);
+            inputs.forEach(input => {
+                input.className = "nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all " + tema.focusRing;
+                input.disabled = esPeriodoBloqueado; // Candado estricto en notas
+            });
 
             document.getElementById('input-p1').value = mat.notas.p1 === 0 ? 0 : (mat.notas.p1 || '');
             document.getElementById('input-t1').value = mat.notas.t1 === 0 ? 0 : (mat.notas.t1 || '');
@@ -600,9 +735,9 @@ function abrirModal(id) {
 
         function cerrarModal() {
             document.getElementById('modal-notas').style.display = 'none';
-            if (materiaActivaId) {
-                // Guardamos todo el objeto actualizado de materias en Firestore
-                db.collection('usuario_miguel').doc('materias').set(materiasData);
+            if (materiaActivaId && !esPeriodoBloqueado) {
+                const docMateriasId = (periodoActivoId === "PRIMER SEMESTRE") ? "materias" : "materias_" + periodoActivoId.replace(/ /g, "_");
+                db.collection('usuario_miguel').doc(docMateriasId).set(materiasData);
             }
             materiaActivaId = null;
         }
@@ -611,7 +746,7 @@ function abrirModal(id) {
             const inputs = document.querySelectorAll('.nota-input');
             inputs.forEach(input => {
                 input.addEventListener('input', function() {
-                    if (materiaActivaId) {
+                    if (materiaActivaId && !esPeriodoBloqueado) {
                         materiasData[materiaActivaId].notas.p1 = parseFloat(document.getElementById('input-p1').value) || 0;
                         materiasData[materiaActivaId].notas.t1 = parseFloat(document.getElementById('input-t1').value) || 0;
                         materiasData[materiaActivaId].notas.p2 = parseFloat(document.getElementById('input-p2').value) || 0;
@@ -634,23 +769,13 @@ function abrirModal(id) {
             elementoPromedio.className = "text-3xl font-black " + estModal.clasesNum;
         }
 
-        // --- MOTOR AUTOMÁTICO DE LA AGENDA DE ACTIVIDADES (LÓGICA EXCEL) ---
-        let listaActividades = [];
-
-        function escucharActividades() {
-            // Escuchamos los cambios de la colección de actividades en Firestore
-            db.collection('usuario_miguel').doc('actividades').onSnapshot((doc) => {
-                if (doc.exists) {
-                    listaActividades = doc.data().lista || [];
-                } else {
-                    listaActividades = [];
-                }
-                renderizarTablaActividades();
-            });
-        }
-
         function agregarNuevaActividad(e) {
             e.preventDefault();
+            if (esPeriodoBloqueado) {
+                alert("Este semestre ha finalizado. No se permiten añadir nuevas actividades.");
+                return;
+            }
+
             const materiaId = document.getElementById('reg-materia').value;
             const nombreActividad = document.getElementById('reg-actividad').value.trim();
             const fechaAsignacion = document.getElementById('reg-fecha-asignacion').value;
@@ -666,7 +791,8 @@ function abrirModal(id) {
             };
             listaActividades.push(nuevaTarea);
 
-            db.collection('usuario_miguel').doc('actividades').set({ lista: listaActividades })
+            const docActividadesId = (periodoActivoId === "PRIMER SEMESTRE") ? "actividades" : "actividades_" + periodoActivoId.replace(/ /g, "_");
+            db.collection('usuario_miguel').doc(docActividadesId).set({ lista: listaActividades })
                 .then(() => {
                     document.getElementById('form-actividad').reset();
                 })
@@ -674,21 +800,29 @@ function abrirModal(id) {
         }
 
         function eliminarActividad(idTarea) {
+            if (esPeriodoBloqueado) {
+                alert("Acción denegada: El periodo es de solo lectura.");
+                return;
+            }
             if (confirm("¿Estás seguro de que deseas eliminar permanentemente esta actividad?")) {
                 listaActividades = listaActividades.filter(tarea => tarea.id !== idTarea);
-                db.collection('usuario_miguel').doc('actividades').set({ lista: listaActividades });
+                const docActividadesId = (periodoActivoId === "PRIMER SEMESTRE") ? "actividades" : "actividades_" + periodoActivoId.replace(/ /g, "_");
+                db.collection('usuario_miguel').doc(docActividadesId).set({ lista: listaActividades });
             }
         }
 
         function marcarComoEntregada(idTarea) {
+            if (esPeriodoBloqueado) {
+                alert("Acción denegada: El periodo es de solo lectura.");
+                return;
+            }
             if (confirm("¿Estás seguro de que deseas marcar esta actividad como entregada?")) {
                 listaActividades = listaActividades.map(tarea => {
-                    if (tarea.id === idTarea) {
-                        return { ...tarea, estado: 'entregada' };
-                    }
+                    if (tarea.id === idTarea) return { ...tarea, estado: 'entregada' };
                     return tarea;
                 });
-                db.collection('usuario_miguel').doc('actividades').set({ lista: listaActividades });
+                const docActividadesId = (periodoActivoId === "PRIMER SEMESTRE") ? "actividades" : "actividades_" + periodoActivoId.replace(/ /g, "_");
+                db.collection('usuario_miguel').doc(docActividadesId).set({ lista: listaActividades });
             }
         }
 
@@ -698,8 +832,6 @@ function abrirModal(id) {
             const contadorHub = document.getElementById('hub-total-actividades');
             
             tbody.innerHTML = '';
-            
-            // Filtramos para que la tabla principal solo tome las pendientes
             let tareasPendientes = listaActividades.filter(tarea => tarea.estado !== 'entregada');
             contadorHub.innerText = tareasPendientes.length;
 
@@ -714,10 +846,8 @@ function abrirModal(id) {
                 const hoy = new Date();
                 hoy.setHours(0,0,0,0);
                 const entrega = new Date(tarea.fechaEntrega + "T00:00:00");
-                
                 const diffTiempo = entrega - hoy;
                 const diasRestantes = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
-           
                 return { ...tarea, diasRestantes: diasRestantes };
             });
 
@@ -744,6 +874,18 @@ function abrirModal(id) {
                     textoDias = `${tarea.diasRestantes} días`;
                 }
 
+                // Deshabilitamos visualmente las acciones si el periodo está congelado
+                const btnCheckHTML = esPeriodoBloqueado ? '' : `
+                    <button onclick="marcarComoEntregada('${tarea.id}')" class="text-emerald-500 hover:text-emerald-700 transition-colors mr-3" title="Marcar como entregada">
+                        <i class="fa-solid fa-circle-check text-base"></i>
+                    </button>
+                `;
+                const btnTrashHTML = esPeriodoBloqueado ? '<span class="text-xs text-slate-400 font-bold">Bloqueado</span>' : `
+                    <button onclick="eliminarActividad('${tarea.id}')" class="text-red-400 hover:text-red-600 transition-colors" title="Eliminar actividad">
+                        <i class="fa-solid fa-trash-can text-base"></i>
+                    </button>
+                `;
+
                 const filaHTML = `
                     <tr class="hover:bg-slate-50/80 transition-colors">
                         <td class="p-4 font-bold text-slate-700">
@@ -759,25 +901,19 @@ function abrirModal(id) {
                             </span>
                         </td>
                         <td class="p-4 text-center whitespace-nowrap">
-                            <button onclick="marcarComoEntregada('${tarea.id}')" class="text-emerald-500 hover:text-emerald-700 transition-colors mr-3" title="Marcar como entregada">
-                                <i class="fa-solid fa-circle-check text-base"></i>
-                            </button>
-                            <button onclick="eliminarActividad('${tarea.id}')" class="text-red-400 hover:text-red-600 transition-colors" title="Eliminar actividad">
-                                <i class="fa-solid fa-trash-can text-base"></i>
-                            </button>
+                            ${btnCheckHTML}
+                            ${btnTrashHTML}
                         </td>
                     </tr>
                 `;
                 tbody.innerHTML += filaHTML;
             });
             
-            // Si el historial está abierto, reaplicamos sus filtros en tiempo real
             if (document.getElementById('modal-historial').style.display === 'flex') {
                 renderizarHistorial();
             }
         }
 
-        // --- CONTROLADORES DEL PANEL FLOTANTE DE HISTORIAL (SOLO LECTURA) ---
         function abrirHistorial() {
             document.getElementById('modal-historial').style.display = 'flex';
             renderizarHistorial();
@@ -787,12 +923,16 @@ function abrirModal(id) {
             document.getElementById('modal-historial').style.display = 'none';
         }
 
-      function eliminarRegistroHistorial(idTarea) {
+        function eliminarRegistroHistorial(idTarea) {
+            if (esPeriodoBloqueado) {
+                alert("Acción denegada: El periodo es de solo lectura.");
+                return;
+            }
             if (confirm("¿Estás seguro de que deseas eliminar permanentemente este registro del historial?")) {
                 listaActividades = listaActividades.filter(tarea => tarea.id !== idTarea);
-                db.collection('usuario_miguel').doc('actividades').set({ lista: listaActividades })
+                const docActividadesId = (periodoActivoId === "PRIMER SEMESTRE") ? "actividades" : "actividades_" + periodoActivoId.replace(/ /g, "_");
+                db.collection('usuario_miguel').doc(docActividadesId).set({ lista: listaActividades })
                     .then(() => {
-                        // Forzamos el renderizado del historial para ver el cambio de inmediato
                         renderizarHistorial();
                     });
             }
@@ -805,7 +945,6 @@ function abrirModal(id) {
             const filtroOrden = document.getElementById('filtro-historial-orden').value;
 
             tbody.innerHTML = '';
-
             let entregadas = listaActividades.filter(tarea => tarea.estado === 'entregada');
 
             if (filtroMateria !== 'todas') {
@@ -829,6 +968,12 @@ function abrirModal(id) {
                 const infoMateria = estructuraBase[tarea.materiaId] || { nombre: "Desconocida", color: "slate" };
                 const tema = temasColor[infoMateria.color] || temasColor.violet;
 
+                const btnEliminarHistorial = esPeriodoBloqueado ? '<span class="text-slate-400 font-bold">Congelado</span>' : `
+                    <button onclick="eliminarRegistroHistorial('${tarea.id}')" class="text-red-400 hover:text-red-600 transition-colors p-1" title="Eliminar registro permanentemente">
+                        <i class="fa-solid fa-trash-can text-sm"></i>
+                    </button>
+                `;
+
                 const filaHTML = `
                     <tr class="hover:bg-slate-50/80 transition-colors border-b border-slate-100">
                         <td class="p-3 font-bold text-slate-700">
@@ -838,9 +983,7 @@ function abrirModal(id) {
                         <td class="p-3 text-slate-600 font-medium">${tarea.nombre}</td>
                         <td class="p-3 text-center text-slate-500 font-mono">${tarea.fechaEntrega}</td>
                         <td class="p-3 text-center">
-                            <button onclick="eliminarRegistroHistorial('${tarea.id}')" class="text-red-400 hover:text-red-600 transition-colors p-1" title="Eliminar registro permanentemente">
-                                <i class="fa-solid fa-trash-can text-sm"></i>
-                            </button>
+                            ${btnEliminarHistorial}
                         </td>
                     </tr>
                 `;
@@ -848,13 +991,12 @@ function abrirModal(id) {
             });
         }
 
-        // CONTROLADOR DE INICIO DE LA PÁGINA (CONEXIÓN SIMULTÁNEA)
+        // --- CONTROLADOR DE INICIO ADAPTADO ---
         window.onload = function() {
-            calcularFechasYSemestres();
-            escucharBaseDeDatos();
-            escucharActividades(); // Activamos el nuevo escucha de actividades
+            inicializarEstructuraPeriodos();
             configurarEventosInputs();
-            setInterval(calcularFechasYSemestres, 60000);
+            // Monitoreo constante del reloj del sistema para la barra de progreso diaria
+            setInterval(procesarPeriodoActual, 60000);
         };
     </script>
 </body>
