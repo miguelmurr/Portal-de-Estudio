@@ -786,7 +786,7 @@ function abrirModal(id) {
             document.getElementById('modal-historial').style.display = 'none';
         }
 
-        function renderizarHistorial() {
+       function renderizarHistorial() {
             const tbody = document.getElementById('tabla-historial-body');
             const mensajeVacio = document.getElementById('tabla-historial-vacia');
             const filtroMateria = document.getElementById('filtro-historial-materia').value;
@@ -802,11 +802,11 @@ function abrirModal(id) {
                 entregadas = entregadas.filter(tarea => tarea.materiaId === filtroMateria);
             }
 
-            // 3. Filtro Excel: Por Orden de Antigüedad
+            // 3. Filtro Excel: Por Orden de Antigüedad (Corregido sin caracteres extraños)
             entregadas.sort((a, b) => {
                 const fechaA = new Date(a.fechaEntrega + "T00:00:00");
                 const fechaB = new Date(b.fechaEntrega + "T00:00:00");
-                return filtroOrden === 'recientes' ?編  fechaB - fechaA : fechaA - fechaB;
+                return filtroOrden === 'recientes' ? fechaB - fechaA : fechaA - fechaB;
             });
 
             if (entregadas.length === 0) {
