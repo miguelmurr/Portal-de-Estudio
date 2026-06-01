@@ -125,14 +125,19 @@
                 <span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded absolute bottom-4 right-4 uppercase tracking-wider">Próximamente</span>
             </div>
 
-            <!-- Módulo: Agenda Universitaria (Próximamente) -->
-            <div class="border border-slate-200 bg-white/60 rounded-2xl p-6 shadow-sm relative overflow-hidden opacity-60 cursor-not-allowed">
-                <div class="flex justify-between items-start mb-2">
-                    <h3 class="text-lg font-bold text-slate-500">Agenda Universitaria</h3>
-                    <i class="fa-solid fa-clock text-slate-400 text-xl"></i>
+            <!-- Módulo: Agenda de Actividades -->
+            <div onclick="cambiarVista('actividades')" class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer relative overflow-hidden group">
+                <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600 group-hover:bg-amber-600 transition-colors"></div>
+                <div class="flex justify-between items-start mb-4 mt-2">
+                    <h3 class="text-xl font-bold text-slate-800">Agenda de Actividades</h3>
+                    <i class="fa-solid fa-clock text-slate-600 text-2xl transition-colors group-hover:text-amber-600"></i>
                 </div>
-                <p class="text-xs text-slate-400">Horarios de clases, salones y recordatorios de entregas finales.</p>
-                <span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded absolute bottom-4 right-4 uppercase tracking-wider">Próximamente</span>
+                <p class="text-sm text-slate-400 mb-6">Controla tus tareas, fechas de asignación, entregas y días restantes ordenados por urgencia.</p>
+                
+                <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <span>Tareas Activas</span>
+                    <span id="hub-total-actividades" class="text-sm font-black text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">0</span>
+                </div>
             </div>
         </div>
     </main>
@@ -158,6 +163,80 @@
 
         <h2 class="text-xl font-bold text-slate-700 mb-4"><i class="fa-solid fa-book mr-2 text-slate-600"></i> Mis Materias</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="materias-grid"></div>
+    </main>
+
+    <!-- FASE 2: NUEVA VISTA DE AGENDA DE ACTIVIDADES -->
+    <main id="vista-actividades" class="max-w-6xl mx-auto p-4 mt-6 hidden fade-in">
+        <button onclick="cambiarVista('hub')" class="mb-6 bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow transition-colors">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Menú Principal
+        </button>
+
+        <!-- SECCIÓN 1: FORMULARIO DE REGISTRO (ENTRADA MANUAL) -->
+        <section class="bg-white rounded-2xl shadow-md p-6 mb-8 border border-slate-200">
+            <h2 class="text-xl font-bold text-slate-700 mb-4 border-b pb-2">
+                <i class="fa-solid fa-pen-to-square mr-2 text-amber-600"></i> Registrar Nueva Actividad
+            </h2>
+            <form id="form-actividad" onsubmit="agregarNuevaActividad(event)" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Materia</label>
+                    <select id="reg-materia" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-amber-200 text-sm font-semibold text-slate-700">
+                        <option value="" disabled selected>Selecciona una materia</option>
+                        <option value="comunicacion">Comunicación Oral y Escrita</option>
+                        <option value="ciudadana">Formación Ciudadana 1</option>
+                        <option value="matematicas">Fundamentos en Matemáticas</option>
+                        <option value="digital">Entorno Digital</option>
+                        <option value="mercadeo">Fundamentos de Mercadeo</option>
+                        <option value="economia">Fundamentos de Economía</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre de la Actividad</label>
+                    <input type="text" id="reg-actividad" placeholder="Ej: Taller de derivadas" required class="w-full p-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-amber-200 text-sm text-slate-700">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fecha Asignación</label>
+                    <input type="date" id="reg-fecha-asignacion" required class="w-full p-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-amber-200 text-sm text-slate-700">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fecha Entrega</label>
+                    <input type="date" id="reg-fecha-entrega" required class="w-full p-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-amber-200 text-sm text-slate-700">
+                </div>
+                <div class="lg:col-span-4 flex justify-end mt-2">
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2.5 rounded-xl font-semibold shadow transition-colors text-sm w-full sm:w-auto">
+                        <i class="fa-solid fa-plus mr-2"></i> Añadir a la Agenda
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- SECCIÓN 2: TABLA DE ORDEN DE ENTREGA (AUTOMATIZADA COMO EXCEL) -->
+        <h2 class="text-xl font-bold text-slate-700 mb-4">
+            <i class="fa-solid fa-list-ol mr-2 text-slate-600"></i> Orden de Entrega Inteligente
+        </h2>
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-800 text-white text-xs uppercase tracking-wider font-bold">
+                            <th class="p-4">Materia</th>
+                            <th class="p-4">Actividad</th>
+                            <th class="p-4">Fecha Asignación</th>
+                            <th class="p-4">Fecha Entrega</th>
+                            <th class="p-4 text-center">Días Restantes</th>
+                            <th class="p-4 text-center">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-actividades-body" class="divide-y divide-slate-100 text-sm">
+                        <!-- Las filas ordenadas del Excel se renderizarán aquí dinámicamente con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- Mensaje por si no hay tareas pendientes -->
+            <div id="tabla-actividades-vacia" class="hidden p-8 text-center text-slate-400 font-medium">
+                <i class="fa-solid fa-clipboard-check text-3xl block mb-2 text-slate-300"></i>
+                No tienes actividades pendientes. ¡Al día!
+            </div>
+        </div>
     </main>
 
     <div id="modal-notas" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50 p-4 fade-in">
@@ -266,12 +345,18 @@ const firebaseConfig = {
         let materiaActivaId = null;
 
         function cambiarVista(vista) {
+            // Ocultamos todas las pantallas primero
+            document.getElementById('vista-hub').classList.add('hidden');
+            document.getElementById('vista-notas').classList.add('hidden');
+            document.getElementById('vista-actividades').classList.add('hidden');
+
+            // Mostramos únicamente la pantalla seleccionada
             if (vista === 'hub') {
                 document.getElementById('vista-hub').classList.remove('hidden');
-                document.getElementById('vista-notas').classList.add('hidden');
-            } else {
-                document.getElementById('vista-hub').classList.add('hidden');
+            } else if (vista === 'notas') {
                 document.getElementById('vista-notas').classList.remove('hidden');
+            } else if (vista === 'actividades') {
+                document.getElementById('vista-actividades').classList.remove('hidden');
             }
         }
 
@@ -488,9 +573,139 @@ function abrirModal(id) {
             elementoPromedio.className = "text-3xl font-black " + estModal.clasesNum;
         }
 
+        // --- MOTOR AUTOMÁTICO DE LA AGENDA DE ACTIVIDADES (LÓGICA EXCEL) ---
+        let listaActividades = [];
+
+        function escucharActividades() {
+            // Escuchamos los cambios de la colección de actividades en Firestore
+            db.collection('usuario_miguel').doc('actividades').onSnapshot((doc) => {
+                if (doc.exists) {
+                    listaActividades = doc.data().lista || [];
+                } else {
+                    listaActividades = [];
+                }
+                renderizarTablaActividades();
+            });
+        }
+
+        function agregarNuevaActividad(e) {
+            e.preventDefault();
+
+            const materiaId = document.getElementById('reg-materia').value;
+            const nombreActividad = document.getElementById('reg-actividad').value.trim();
+            const fechaAsignacion = document.getElementById('reg-fecha-asignacion').value;
+            const fechaEntrega = document.getElementById('reg-fecha-entrega').value;
+
+            // Creamos el objeto de la nueva tarea con un ID único basado en tiempo
+            const nuevaTarea = {
+                id: Date.now().toString(),
+                materiaId: materiaId,
+                nombre: nombreActividad,
+                fechaAsignacion: fechaAsignacion,
+                fechaEntrega: fechaEntrega
+            };
+
+            listaActividades.push(nuevaTarea);
+
+            // Guardamos inmediatamente en la base de datos de Firestore
+            db.collection('usuario_miguel').doc('actividades').set({ lista: listaActividades })
+                .then(() => {
+                    document.getElementById('form-actividad').reset();
+                })
+                .catch((error) => console.error("Error al guardar actividad: ", error));
+        }
+
+        function eliminarActividad(idTarea) {
+            // Filtramos la lista para remover el elemento seleccionado
+            listaActividades = listaActividades.filter(tarea => tarea.id !== idTarea);
+            db.collection('usuario_miguel').doc('actividades').set({ lista: listaActividades });
+        }
+
+        function renderizarTablaActividades() {
+            const tbody = document.getElementById('tabla-actividades-body');
+            const mensajeVacio = document.getElementById('tabla-actividades-vacia');
+            const contadorHub = document.getElementById('hub-total-actividades');
+            
+            tbody.innerHTML = '';
+            contadorHub.innerText = listaActividades.length;
+
+            if (listaActividades.length === 0) {
+                mensajeVacio.classList.remove('hidden');
+                return;
+            } else {
+                mensajeVacio.classList.add('hidden');
+            }
+
+            // Mapeo local para calcular los días restantes en tiempo real (Lógica de Excel)
+            let actividadesProcesadas = listaActividades.map(tarea => {
+                const hoy = new Date();
+                hoy.setHours(0,0,0,0);
+                const entrega = new Date(tarea.fechaEntrega + "T00:00:00");
+                
+                // Resta matemática de fechas para obtener los días restantes
+                const diffTiempo = entrega - hoy;
+                const diasRestantes = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
+                
+                return { ...tarea, diasRestantes: diasRestantes };
+            });
+
+            // EQUIVALENTE A LA FÓRMULA EXCEL: =SORT(B4:E57, 4, 1)
+            // Ordenamos la lista de forma ascendente según los días restantes (las más urgentes primero)
+            actividadesProcesadas.sort((a, b) => a.diasRestantes - b.diasRestantes);
+
+            // Dibujamos las filas en la tabla web
+            actividadesProcesadas.forEach(tarea => {
+                const infoMateria = estructuraBase[tarea.materiaId] || { nombre: "Desconocida", color: "slate" };
+                const tema = temasColor[infoMateria.color] || temasColor.violet;
+
+                // Definimos el estilo visual del indicador de urgencia según los días restantes
+                let badgeClase = "";
+                let textoDias = "";
+
+                if (tarea.diasRestantes < 0) {
+                    badgeClase = "bg-red-100 text-red-800 border-red-200 animate-pulse font-bold";
+                    textoDias = `Vencida (${Math.abs(tarea.diasRestantes)} d)`;
+                } else if (tarea.diasRestantes === 0) {
+                    badgeClase = "bg-red-500 text-white border-red-600 font-black animate-bounce";
+                    textoDias = "¡ENTREGA HOY!";
+                } else if (tarea.diasRestantes <= 3) {
+                    badgeClase = "bg-amber-100 text-amber-800 border-amber-200 font-bold";
+                    textoDias = `${tarea.diasRestantes} días`;
+                } else {
+                    badgeClase = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                    textoDias = `${tarea.diasRestantes} días`;
+                }
+
+                const filaHTML = `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="p-4 font-bold text-slate-700">
+                            <span class="inline-block w-2.5 h-2.5 rounded-full ${tema.borderAccent} mr-2"></span>
+                            ${infoMateria.nombre}
+                        </td>
+                        <td class="p-4 text-slate-600 font-medium">${tarea.nombre}</td>
+                        <td class="p-4 text-slate-500 font-mono text-xs">${tarea.fechaAsignacion}</td>
+                        <td class="p-4 text-slate-500 font-mono text-xs">${tarea.fechaEntrega}</td>
+                        <td class="p-4 text-center">
+                            <span class="px-2.5 py-1 text-xs rounded-full border ${badgeClase}">
+                                ${textoDias}
+                            </span>
+                        </td>
+                        <td class="p-4 text-center">
+                            <button onclick="eliminarActividad('${tarea.id}')" class="text-red-400 hover:text-red-600 transition-colors p-1" title="Eliminar actividad">
+                                <i class="fa-solid fa-trash-can text-base"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += filaHTML;
+            });
+        }
+
+        // CONTROLADOR DE INICIO DE LA PÁGINA (CONEXIÓN SIMULTÁNEA)
         window.onload = function() {
             calcularFechasYSemestres();
             escucharBaseDeDatos();
+            escucharActividades(); // Activamos el nuevo escucha de actividades
             configurarEventosInputs();
             setInterval(calcularFechasYSemestres, 60000);
         };
