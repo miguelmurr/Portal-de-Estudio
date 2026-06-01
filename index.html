@@ -650,24 +650,21 @@ function abrirModal(id) {
 
         function agregarNuevaActividad(e) {
             e.preventDefault();
-
             const materiaId = document.getElementById('reg-materia').value;
             const nombreActividad = document.getElementById('reg-actividad').value.trim();
             const fechaAsignacion = document.getElementById('reg-fecha-asignacion').value;
             const fechaEntrega = document.getElementById('reg-fecha-entrega').value;
 
-            // Creamos el objeto de la nueva tarea con un ID único basado en tiempo
             const nuevaTarea = {
                 id: Date.now().toString(),
                 materiaId: materiaId,
                 nombre: nombreActividad,
                 fechaAsignacion: fechaAsignacion,
-                fechaEntrega: fechaEntrega
+                fechaEntrega: fechaEntrega,
+                estado: 'pendiente'
             };
-
             listaActividades.push(nuevaTarea);
 
-            // Guardamos inmediatamente en la base de datos de Firestore
             db.collection('usuario_miguel').doc('actividades').set({ lista: listaActividades })
                 .then(() => {
                     document.getElementById('form-actividad').reset();
@@ -676,9 +673,22 @@ function abrirModal(id) {
         }
 
         function eliminarActividad(idTarea) {
-            // Filtramos la lista para remover el elemento seleccionado
-            listaActividades = listaActividades.filter(tarea => tarea.id !== idTarea);
-            db.collection('usuario_miguel').doc('actividades').set({ lista: listaActividades });
+            if (confirm("¿Estás seguro de que deseas eliminar permanentemente esta actividad?")) {
+                listaActividades = listaActividades.filter(tarea => tarea.id !== idTarea);
+                db.collection('usuario_miguel').doc('actividades').set({ lista: listaActividades });
+            }
+        }
+
+        function marcarComoEntregada(idTarea) {
+            if (confirm("¿Estás seguro de que deseas marcar esta actividad como entregada?")) {
+                listaActividades = listaActividades.map(tarea => {
+                    if (tarea.id === idTarea) {
+                        return { ...tarea, estado: 'entregada' };
+                    }
+                    return tarea;
+                });
+                db.collection('usuario_miguel').doc('actividades').set({ lista: listaActividades });
+            }
         }
 
         function renderizarTablaActividades() {
@@ -687,38 +697,35 @@ function abrirModal(id) {
             const contadorHub = document.getElementById('hub-total-actividades');
             
             tbody.innerHTML = '';
-            contadorHub.innerText = listaActividades.length;
+            
+            // Filtramos para que la tabla principal solo tome las pendientes
+            let tareasPendientes = listaActividades.filter(tarea => tarea.estado !== 'entregada');
+            contadorHub.innerText = tareasPendientes.length;
 
-            if (listaActividades.length === 0) {
+            if (tareasPendientes.length === 0) {
                 mensajeVacio.classList.remove('hidden');
                 return;
             } else {
                 mensajeVacio.classList.add('hidden');
             }
 
-            // Mapeo local para calcular los días restantes en tiempo real (Lógica de Excel)
-            let actividadesProcesadas = listaActividades.map(tarea => {
+            let actividadesProcesadas = tareasPendientes.map(tarea => {
                 const hoy = new Date();
                 hoy.setHours(0,0,0,0);
                 const entrega = new Date(tarea.fechaEntrega + "T00:00:00");
                 
-                // Resta matemática de fechas para obtener los días restantes
                 const diffTiempo = entrega - hoy;
                 const diasRestantes = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
-                
+           
                 return { ...tarea, diasRestantes: diasRestantes };
             });
 
-            // EQUIVALENTE A LA FÓRMULA EXCEL: =SORT(B4:E57, 4, 1)
-            // Ordenamos la lista de forma ascendente según los días restantes (las más urgentes primero)
             actividadesProcesadas.sort((a, b) => a.diasRestantes - b.diasRestantes);
 
-            // Dibujamos las filas en la tabla web
             actividadesProcesadas.forEach(tarea => {
                 const infoMateria = estructuraBase[tarea.materiaId] || { nombre: "Desconocida", color: "slate" };
                 const tema = temasColor[infoMateria.color] || temasColor.violet;
 
-                // Definimos el estilo visual del indicador de urgencia según los días restantes
                 let badgeClase = "";
                 let textoDias = "";
 
@@ -750,11 +757,78 @@ function abrirModal(id) {
                                 ${textoDias}
                             </span>
                         </td>
-                        <td class="p-4 text-center">
-                            <button onclick="eliminarActividad('${tarea.id}')" class="text-red-400 hover:text-red-600 transition-colors p-1" title="Eliminar actividad">
+                        <td class="p-4 text-center whitespace-nowrap">
+                            <button onclick="marcarComoEntregada('${tarea.id}')" class="text-emerald-500 hover:text-emerald-700 transition-colors mr-3" title="Marcar como entregada">
+                                <i class="fa-solid fa-circle-check text-base"></i>
+                            </button>
+                            <button onclick="eliminarActividad('${tarea.id}')" class="text-red-400 hover:text-red-600 transition-colors" title="Eliminar actividad">
                                 <i class="fa-solid fa-trash-can text-base"></i>
                             </button>
                         </td>
+                    </tr>
+                `;
+                tbody.innerHTML += filaHTML;
+            });
+            
+            // Si el historial está abierto, reaplicamos sus filtros en tiempo real
+            if (document.getElementById('modal-historial').style.display === 'flex') {
+                renderizarHistorial();
+            }
+        }
+
+        // --- CONTROLADORES DEL PANEL FLOTANTE DE HISTORIAL (SOLO LECTURA) ---
+        function abrirHistorial() {
+            document.getElementById('modal-historial').style.display = 'flex';
+            renderizarHistorial();
+        }
+
+        function cerrarHistorial() {
+            document.getElementById('modal-historial').style.display = 'none';
+        }
+
+        function renderizarHistorial() {
+            const tbody = document.getElementById('tabla-historial-body');
+            const mensajeVacio = document.getElementById('tabla-historial-vacia');
+            const filtroMateria = document.getElementById('filtro-historial-materia').value;
+            const filtroOrden = document.getElementById('filtro-historial-orden').value;
+
+            tbody.innerHTML = '';
+
+            // 1. Extraemos únicamente las actividades marcadas como entregadas
+            let entregadas = listaActividades.filter(tarea => tarea.estado === 'entregada');
+
+            // 2. Filtro Excel: Por Materia
+            if (filtroMateria !== 'todas') {
+                entregadas = entregadas.filter(tarea => tarea.materiaId === filtroMateria);
+            }
+
+            // 3. Filtro Excel: Por Orden de Antigüedad
+            entregadas.sort((a, b) => {
+                const fechaA = new Date(a.fechaEntrega + "T00:00:00");
+                const fechaB = new Date(b.fechaEntrega + "T00:00:00");
+                return filtroOrden === 'recientes' ?編  fechaB - fechaA : fechaA - fechaB;
+            });
+
+            if (entregadas.length === 0) {
+                mensajeVacio.classList.remove('hidden');
+                return;
+            } else {
+                mensajeVacio.classList.add('hidden');
+            }
+
+            // 4. Inyección de datos en las 3 columnas reglamentarias
+            entregadas.forEach(tarea => {
+                const infoMateria = estructuraBase[tarea.materiaId] || { nombre: "Desconocida", color: "slate" };
+                const tema = temasColor[infoMateria.color] || temasColor.violet;
+
+                const filaHTML = `
+                    <tr class="hover:bg-slate-50/80 transition-colors border-b border-slate-100">
+                        <td class="p-3 font-bold text-slate-700">
+                            <span class="inline-block w-2.5 h-2.5 rounded-full ${tema.borderAccent} mr-2"></span>
+                            ${infoMateria.nombre}
+                        </td>
+                        <td class="p-3 text-slate-600 font-medium">${tarea.nombre}</td>
+                        <td class="p-3 text-center text-slate-500 font-mono">${tarea.fechaEntrega}</td>
                     </tr>
                 `;
                 tbody.innerHTML += filaHTML;
