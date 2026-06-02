@@ -309,40 +309,11 @@
                     <span class="text-3xl font-black text-slate-700" id="modal-materia-promedio">0.00</span>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="corte-card border rounded-xl p-4 bg-white/90 shadow-sm transition-all duration-300">
-                        <h4 class="font-bold text-slate-700 mb-3 border-b pb-1">Corte 1 (30%)</h4>
-                        <div class="mb-3">
-                            <label class="block text-sm text-slate-600 mb-1">Parcial 1 <span class="text-xs font-bold text-slate-400">(20%)</span></label>
-                            <input type="number" min="0" max="5" step="0.1" id="input-p1" class="nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all">
-                        </div>
-                        <div>
-                            <label class="block text-sm text-slate-600 mb-1">Taller 1 <span class="text-xs font-bold text-slate-400">(10%)</span></label>
-                            <input type="number" min="0" max="5" step="0.1" id="input-t1" class="nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all">
-                        </div>
-                    </div>
-                    <div class="corte-card border rounded-xl p-4 bg-white/90 shadow-sm transition-all duration-300">
-                        <h4 class="font-bold text-slate-700 mb-3 border-b pb-1">Corte 2 (30%)</h4>
-                        <div class="mb-3">
-                            <label class="block text-sm text-slate-600 mb-1">Parcial 2 <span class="text-xs font-bold text-slate-400">(20%)</span></label>
-                            <input type="number" min="0" max="5" step="0.1" id="input-p2" class="nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all">
-                        </div>
-                        <div>
-                            <label class="block text-sm text-slate-600 mb-1">Taller 2 <span class="text-xs font-bold text-slate-400">(10%)</span></label>
-                            <input type="number" min="0" max="5" step="0.1" id="input-t2" class="nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all">
-                        </div>
-                    </div>
-                    <div class="corte-card border rounded-xl p-4 bg-white/90 shadow-sm transition-all duration-300">
-                        <h4 class="font-bold text-slate-700 mb-3 border-b pb-1">Corte 3 (40%)</h4>
-                        <div class="mb-3">
-                            <label class="block text-sm text-slate-600 mb-1">Examen Final <span class="text-xs font-bold text-slate-400">(30%)</span></label>
-                            <input type="number" min="0" max="5" step="0.1" id="input-ef" class="nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all">
-                        </div>
-                        <div>
-                            <label class="block text-sm text-slate-600 mb-1">Proyecto Final <span class="text-xs font-bold text-slate-400">(10%)</span></label>
-                            <input type="number" min="0" max="5" step="0.1" id="input-pf" class="nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all">
-                        </div>
-                    </div>
+               <!-- Contenedor para la alerta matemática del 100% -->
+                <div id="alerta-porcentaje-contenedor"></div>
+                <!-- Rejilla dinámica de tareas entregadas con Inputs -->
+                <div id="contenedor-notas-dinamicas" class="space-y-3 mt-4 max-h-[50vh] overflow-y-auto pr-2 pb-4">
+                    <!-- JavaScript dibujará las tareas aquí automáticamente -->
                 </div>
 
                 <div class="mt-6 flex justify-end">
@@ -581,16 +552,13 @@ const firebaseConfig = {
             }
         }
 
-        function conectarEscuchasDatosPeriodo() {
-            // Apagamos escuchas previos para evitar fugas de memoria o mezclas
+       function conectarEscuchasDatosPeriodo() {
             if (unsubscribeMaterias) unsubscribeMaterias();
             if (unsubscribeActividades) unsubscribeActividades();
 
-            // Aislamiento de documentos: El Primer Semestre mantiene compatibilidad, los siguientes se aíslan por sufijo
             const docMateriasId = (periodoActivoId === "PRIMER SEMESTRE") ? "materias" : "materias_" + periodoActivoId.replace(/ /g, "_");
             const docActividadesId = (periodoActivoId === "PRIMER SEMESTRE") ? "actividades" : "actividades_" + periodoActivoId.replace(/ /g, "_");
 
-            // Conexión aislada de Materias
             unsubscribeMaterias = db.collection('usuario_miguel').doc(docMateriasId).onSnapshot((doc) => {
                 if (doc.exists) {
                     materiasData = doc.data();
@@ -601,7 +569,7 @@ const firebaseConfig = {
                 renderizarDashboard();
             });
 
-            // Conexión aislada de Actividades
+            // Al escuchar las actividades, actualizamos ambas pantallas para tener conexión en tiempo real
             unsubscribeActividades = db.collection('usuario_miguel').doc(docActividadesId).onSnapshot((doc) => {
                 if (doc.exists) {
                     listaActividades = doc.data().lista || [];
@@ -609,19 +577,25 @@ const firebaseConfig = {
                     listaActividades = [];
                 }
                 renderizarTablaActividades();
+                renderizarDashboard(); // MAGIA: Si completas una tarea, tu nota global se recalcula al instante.
             });
         }
 
-        // --- ADAPTACIÓN DE FUNCIONES DE NEGOCIO AL MODO SOLO LECTURA ---
-        function calcularPromedioMateria(notas) {
+        // --- NUEVO MOTOR DE CÁLCULO DINÁMICO DE NOTAS ---
+        function calcularPromedioMateria(idMateria) {
             let total = 0;
-            total += (Number(notas.p1) || 0) * pesos.p1;
-            total += (Number(notas.t1) || 0) * pesos.t1;
-            total += (Number(notas.p2) || 0) * pesos.p2;
-            total += (Number(notas.t2) || 0) * pesos.t2;
-            total += (Number(notas.ef) || 0) * pesos.ef;
-            total += (Number(notas.pf) || 0) * pesos.pf;
-            return total;
+            let sumaPorcentajes = 0;
+            
+            // Filtramos únicamente las tareas entregadas de la materia que estamos analizando
+            let actividadesMateria = listaActividades.filter(t => t.materiaId === idMateria && t.estado === 'entregada');
+            
+            actividadesMateria.forEach(tarea => {
+                let nota = parseFloat(tarea.nota) || 0;
+                let porcentaje = parseFloat(tarea.porcentaje) || 0;
+                total += nota * (porcentaje / 100);
+                sumaPorcentajes += porcentaje;
+            });
+            return { promedio: total, sumaPorcentajes: sumaPorcentajes };
         }
 
         function obtenerEstilosRendimiento(prom) {
@@ -639,7 +613,11 @@ const firebaseConfig = {
             let sumaPonderada = 0;
             for (let id in materiasData) {
                 let mat = materiasData[id];
-                let prom = calcularPromedioMateria(mat.notas);
+                
+                // Extraemos el cálculo dinámico en tiempo real
+                let calc = calcularPromedioMateria(id);
+                let prom = calc.promedio;
+                
                 totalCreditos += mat.creditos;
                 sumaPonderada += (prom * mat.creditos);
 
@@ -689,6 +667,7 @@ const firebaseConfig = {
             numGlobal.className = `text-4xl font-black mt-1 transition-colors duration-300 ${estGlobal.clasesNum}`;
         }
 
+        // --- EL NUEVO MODAL INTELIGENTE DE NOTAS ---
         function abrirModal(id) {
             materiaActivaId = id;
             const mat = materiasData[id];
@@ -700,9 +679,6 @@ const firebaseConfig = {
 
             document.getElementById('modal-header').className = `p-4 flex justify-between items-center sticky top-0 z-10 text-white transition-colors duration-300 ${tema.modalHeader}`;
             document.getElementById('modal-content').className = `rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transition-all duration-300 ${tema.modalBgSoft}`;
-
-            const corteCards = document.querySelectorAll('.corte-card');
-            corteCards.forEach(card => card.className = `corte-card border rounded-xl p-4 bg-white/90 shadow-sm transition-all duration-300 ${tema.borderStrong}`);
             document.getElementById('modal-promedio-box').className = `flex justify-between items-center mb-6 bg-white/70 backdrop-blur-sm p-4 rounded-lg border transition-all duration-300 ${tema.borderStrong}`;
 
             const btnGuardar = document.getElementById('modal-save-btn');
@@ -714,32 +690,104 @@ const firebaseConfig = {
                 btnGuardar.innerHTML = `<i class="fa-solid fa-check mr-2"></i> Guardar y Cerrar`;
             }
 
-            const inputs = document.querySelectorAll('.nota-input');
-            inputs.forEach(input => {
-                input.className = "nota-input w-full p-2 border border-slate-200 rounded-lg outline-none transition-all " + tema.focusRing;
-                input.disabled = esPeriodoBloqueado; // Candado estricto en notas
-            });
+            // LIMPIAR Y RELLENAR CONTENEDOR DINÁMICO
+            const contenedorNotas = document.getElementById('contenedor-notas-dinamicas');
+            contenedorNotas.innerHTML = '';
 
-            document.getElementById('input-p1').value = mat.notas.p1 === 0 ? 0 : (mat.notas.p1 || '');
-            document.getElementById('input-t1').value = mat.notas.t1 === 0 ? 0 : (mat.notas.t1 || '');
-            document.getElementById('input-p2').value = mat.notas.p2 === 0 ? 0 : (mat.notas.p2 || '');
-            document.getElementById('input-t2').value = mat.notas.t2 === 0 ? 0 : (mat.notas.t2 || '');
-            document.getElementById('input-ef').value = mat.notas.ef === 0 ? 0 : (mat.notas.ef || '');
-            document.getElementById('input-pf').value = mat.notas.pf === 0 ? 0 : (mat.notas.pf || '');
+            let actividadesMateria = listaActividades.filter(t => t.materiaId === id && t.estado === 'entregada');
+            
+            // Ordenar: las más recientes arriba (basado en el ID de tiempo)
+            actividadesMateria.sort((a, b) => b.id - a.id);
+
+            if (actividadesMateria.length === 0) {
+                contenedorNotas.innerHTML = `<div class="text-center p-6 text-slate-400 font-medium border rounded-xl ${tema.borderSoft} bg-white/50"><i class="fa-solid fa-box-open text-2xl block mb-2 opacity-50"></i>No has entregado actividades para esta materia aún. Dirígete a la Agenda para completar tareas.</div>`;
+            } else {
+                actividadesMateria.forEach(tarea => {
+                    let notaVal = tarea.nota !== undefined ? tarea.nota : '';
+                    let porcVal = tarea.porcentaje !== undefined ? tarea.porcentaje : '';
+                    const disabledAttr = esPeriodoBloqueado ? 'disabled' : '';
+
+                    contenedorNotas.innerHTML += `
+                        <div class="flex flex-col sm:flex-row justify-between items-center bg-white/90 p-4 rounded-xl shadow-sm border ${tema.borderStrong} gap-4 transition-all hover:shadow-md fade-in">
+                            <div class="flex-grow w-full">
+                                <p class="font-bold text-slate-700 text-sm line-clamp-1">${tarea.nombre}</p>
+                                <p class="text-[10px] text-slate-400 font-mono mt-0.5"><i class="fa-regular fa-calendar mr-1"></i> Entregada: ${tarea.fechaEntrega}</p>
+                            </div>
+                            <div class="flex gap-3 w-full sm:w-auto">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nota (0-5)</label>
+                                    <input type="number" min="0" max="5" step="0.1" 
+                                        oninput="guardarNotaTemporal('${tarea.id}', 'nota', this.value)" 
+                                        value="${notaVal}" 
+                                        ${disabledAttr}
+                                        class="w-20 p-2 text-sm border border-slate-200 rounded-lg outline-none font-bold text-slate-700 text-center ${tema.focusRing}">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">% Valor</label>
+                                    <div class="relative">
+                                        <input type="number" min="0" max="100" step="1" 
+                                            oninput="guardarNotaTemporal('${tarea.id}', 'porcentaje', this.value)" 
+                                            value="${porcVal}" 
+                                            ${disabledAttr}
+                                            class="w-20 p-2 pr-5 text-sm border border-slate-200 rounded-lg outline-none font-bold text-slate-700 text-center ${tema.focusRing}">
+                                        <span class="absolute right-2 top-2 text-xs font-bold text-slate-400">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
 
             actualizarPromedioModal();
             document.getElementById('modal-notas').style.display = 'flex';
         }
 
+        function guardarNotaTemporal(idTarea, campo, valor) {
+            let valNum = parseFloat(valor);
+            if (isNaN(valNum)) valNum = 0;
+            
+            let tarea = listaActividades.find(t => t.id === idTarea);
+            if (tarea) {
+                tarea[campo] = valNum;
+            }
+            actualizarPromedioModal();
+        }
+
+        function actualizarPromedioModal() {
+            if (!materiaActivaId) return;
+            let calc = calcularPromedioMateria(materiaActivaId);
+            let prom = calc.promedio;
+            let sumaPorc = calc.sumaPorcentajes;
+            
+            let elementoPromedio = document.getElementById('modal-materia-promedio');
+            elementoPromedio.innerText = prom.toFixed(2);
+            
+            let estModal = obtenerEstilosRendimiento(prom);
+            elementoPromedio.className = "text-3xl font-black " + estModal.clasesNum;
+
+            // Motor inteligente de centinela del 100%
+            const contenedorAlerta = document.getElementById('alerta-porcentaje-contenedor');
+            if (sumaPorc > 100) {
+                contenedorAlerta.innerHTML = `<div class="w-full mb-4 text-xs font-bold text-center rounded-lg p-2 bg-red-100 text-red-700 border border-red-200 fade-in"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ¡Alerta! La suma supera el 100% (Actual: ${sumaPorc}%)</div>`;
+            } else if (sumaPorc > 0 && sumaPorc < 100) {
+                contenedorAlerta.innerHTML = `<div class="w-full mb-4 text-xs font-bold text-center rounded-lg p-2 bg-amber-100 text-amber-700 border border-amber-200 fade-in"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Falta para el 100% (Actual: ${sumaPorc}%)</div>`;
+            } else if (sumaPorc === 100) {
+                contenedorAlerta.innerHTML = `<div class="w-full mb-4 text-xs font-bold text-center rounded-lg p-2 bg-emerald-100 text-emerald-700 border border-emerald-200 fade-in"><i class="fa-solid fa-check-double mr-1"></i> Porcentajes perfectos (100%)</div>`;
+            } else {
+                contenedorAlerta.innerHTML = '';
+            }
+        }
+
         function cerrarModal() {
             document.getElementById('modal-notas').style.display = 'none';
             if (materiaActivaId && !esPeriodoBloqueado) {
-                const docMateriasId = (periodoActivoId === "PRIMER SEMESTRE") ? "materias" : "materias_" + periodoActivoId.replace(/ /g, "_");
-                db.collection('usuario_miguel').doc(docMateriasId).set(materiasData);
+                // Ahora lo que guardamos en la base de datos al cerrar son las ACTIVIDADES con sus notas incrustadas
+                const docActividadesId = (periodoActivoId === "PRIMER SEMESTRE") ? "actividades" : "actividades_" + periodoActivoId.replace(/ /g, "_");
+                db.collection('usuario_miguel').doc(docActividadesId).set({ lista: listaActividades });
             }
             materiaActivaId = null;
         }
-
         function configurarEventosInputs() {
             const inputs = document.querySelectorAll('.nota-input');
             inputs.forEach(input => {
@@ -992,7 +1040,7 @@ const firebaseConfig = {
         // --- CONTROLADOR DE INICIO ADAPTADO ---
         window.onload = function() {
             inicializarEstructuraPeriodos();
-            configurarEventosInputs();
+           
             // Monitoreo constante del reloj del sistema para la barra de progreso diaria
             setInterval(procesarPeriodoActual, 60000);
         };
