@@ -471,8 +471,8 @@ const firebaseConfig = {
             cuerpoChat.scrollTop = cuerpoChat.scrollHeight;
 
             try {
-                // 4. Hacer la petición HTTP directa a la API oficial de Google AI Studio
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+                // 4. Hacer la petición HTTP directa a la API oficial de Google AI Studio (Versión Estable v1)
+                const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
                 const respuesta = await fetch(url, {
                     method: 'POST',
                     headers: {
