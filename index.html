@@ -788,32 +788,7 @@ const firebaseConfig = {
             }
             materiaActivaId = null;
         }
-        function configurarEventosInputs() {
-            const inputs = document.querySelectorAll('.nota-input');
-            inputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    if (materiaActivaId && !esPeriodoBloqueado) {
-                        materiasData[materiaActivaId].notas.p1 = parseFloat(document.getElementById('input-p1').value) || 0;
-                        materiasData[materiaActivaId].notas.t1 = parseFloat(document.getElementById('input-t1').value) || 0;
-                        materiasData[materiaActivaId].notas.p2 = parseFloat(document.getElementById('input-p2').value) || 0;
-                        materiasData[materiaActivaId].notas.t2 = parseFloat(document.getElementById('input-t2').value) || 0;
-                        materiasData[materiaActivaId].notas.ef = parseFloat(document.getElementById('input-ef').value) || 0;
-                        materiasData[materiaActivaId].notas.pf = parseFloat(document.getElementById('input-pf').value) || 0;
-                    }
-                    actualizarPromedioModal();
-                });
-            });
-        }
-
-        function actualizarPromedioModal() {
-            if (!materiaActivaId) return;
-            let prom = calcularPromedioMateria(materiasData[materiaActivaId].notas);
-            let elementoPromedio = document.getElementById('modal-materia-promedio');
-            elementoPromedio.innerText = prom.toFixed(2);
-            
-            let estModal = obtenerEstilosRendimiento(prom);
-            elementoPromedio.className = "text-3xl font-black " + estModal.clasesNum;
-        }
+        
 
         function agregarNuevaActividad(e) {
             e.preventDefault();
