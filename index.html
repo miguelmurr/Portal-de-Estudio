@@ -18,8 +18,42 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen">
 
+    <!-- PANEL DE CHAT VERTICAL GEMINI (PASO 1) -->
+    <div id="panel-chat-gemini" class="fixed top-0 left-0 h-full w-80 bg-white shadow-2xl border-r border-slate-200 z-50 transform -translate-x-full transition-transform duration-300 flex flex-col">
+        <!-- Encabezado del Chat con Logo -->
+        <div class="p-4 bg-slate-800 text-white flex justify-between items-center border-b border-slate-700">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-sparkles text-indigo-400 animate-pulse"></i>
+                <span class="font-bold text-sm tracking-wide">Asistente Gemini</span>
+            </div>
+            <button onclick="toggleChatGemini()" class="text-slate-400 hover:text-white text-xl font-black">&times;</button>
+        </div>
+        
+        <!-- Cuerpo del Chat (Mensajes de muestra) -->
+        <div class="flex-grow p-4 overflow-y-auto space-y-3 bg-slate-50 text-xs" id="cuerpo-chat-gemini">
+            <div class="bg-indigo-50 border border-indigo-100 text-slate-700 p-3 rounded-xl max-w-[85%] self-start shadow-sm">
+                ¡Hola, Miguel! Soy tu asistente exclusivo del <strong>Portal de Estudio</strong>. ¿En qué te puedo colaborar hoy? ✨
+            </div>
+        </div>
+        
+        <!-- Input del Chat (Deshabilitado temporalmente para el Paso 1) -->
+        <div class="p-3 bg-white border-t border-slate-100 flex gap-2">
+            <input type="text" placeholder="Pregúntame algo... (Conexión en Paso 2)" class="flex-grow p-2 border border-slate-200 rounded-lg outline-none text-xs focus:border-indigo-500 bg-slate-50 cursor-not-allowed" disabled>
+            <button class="bg-indigo-600 text-white px-3 py-2 rounded-lg text-xs font-bold opacity-50 cursor-not-allowed" disabled>
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- BARRA DE NAVEGACIÓN MODIFICADA CON BOTÓN SUPERIOR IZQUIERDO -->
     <nav class="bg-slate-800 text-white p-4 shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
-        <h1 class="text-2xl font-bold tracking-wide"><i class="fa-solid fa-graduation-cap mr-2"></i> Portal Universitario</h1>
+        <div class="flex items-center gap-3 w-full sm:w-auto justify-start">
+            <!-- El Logo Destello de Gemini como Botón de apertura -->
+            <button onclick="toggleChatGemini()" class="text-indigo-400 hover:text-indigo-300 transition-all text-base p-1.5 bg-slate-700/60 hover:bg-slate-700 rounded-lg border border-slate-600/50 flex items-center justify-center w-9 h-9 shadow-sm" title="Abrir Asistente Gemini">
+                <i class="fa-solid fa-sparkles animate-pulse"></i>
+            </button>
+            <h1 class="text-2xl font-bold tracking-wide"><i class="fa-solid fa-graduation-cap mr-2"></i> Portal Universitario</h1>
+        </div>
         <div class="flex items-center gap-3">
             <select id="selector-periodos" onchange="cambiarPeriodoActivo(this.value)" class="bg-slate-700 text-white text-xs font-bold uppercase p-2 rounded-lg outline-none border border-slate-600 focus:border-slate-400 cursor-pointer">
                 </select>
@@ -393,6 +427,11 @@ const firebaseConfig = {
             } else if (vista === 'actividades') {
                 document.getElementById('vista-actividades').classList.remove('hidden');
             }
+        }
+
+        function toggleChatGemini() {
+            const panel = document.getElementById('panel-chat-gemini');
+            panel.classList.toggle('-translate-x-full');
         }
 
         // --- SISTEMA MAESTRO DE CONTROL TEMPORAL ---
