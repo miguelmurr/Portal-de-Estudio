@@ -1487,12 +1487,15 @@ const firebaseConfig = {
         function abrirTimeline(idDia) {
             diaTimelineActivo = idDia;
             document.getElementById('timeline-dia-nombre').innerText = diasNombresCortos[idDia];
-            document.getElementById('form-timeline-dia-label').innerText = diasNombresCortos[idDia];
             
             // UX: Inicializa selectores fijos y oculta el campo manual previo
             poblarSelectoresHorasTimeline();
-            document.getElementById('wrapper-materia-manual').classList.add('hidden');
-            document.getElementById('time-materia').value = "comunicacion";
+            if (document.getElementById('wrapper-materia-manual')) {
+                document.getElementById('wrapper-materia-manual').classList.add('hidden');
+            }
+            if (document.getElementById('time-materia')) {
+                document.getElementById('time-materia').value = "comunicacion";
+            }
             
             renderizarTimelineHorizontal();
             document.getElementById('modal-timeline').style.display = 'flex';
