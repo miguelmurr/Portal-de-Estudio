@@ -126,14 +126,19 @@
                 </div>
             </div>
 
-            <!-- Módulo 3: Rastreador de Temas (Próximamente) -->
-            <div class="border border-slate-200 bg-white/60 rounded-2xl p-6 shadow-sm relative overflow-hidden opacity-60 cursor-not-allowed">
-                <div class="flex justify-between items-start mb-2">
-                    <h3 class="text-lg font-bold text-slate-500">Rastreador de Temas</h3>
-                    <i class="fa-solid fa-book-bookmark text-slate-400 text-xl"></i>
+            <!-- Módulo 3: Horario de Clases Semanal -->
+            <div onclick="cambiarVista('horario')" class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer relative overflow-hidden group">
+                <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600 group-hover:bg-sky-600 transition-colors"></div>
+                <div class="flex justify-between items-start mb-4 mt-2">
+                    <h3 class="text-xl font-bold text-slate-800">Horario de Clases</h3>
+                    <i class="fa-solid fa-calendar-days text-slate-600 text-2xl transition-colors group-hover:text-sky-600"></i>
                 </div>
-                <p class="text-xs text-slate-400">Repaso espaciado de conceptos y niveles de confianza de estudio.</p>
-                <span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded absolute bottom-4 right-4 uppercase tracking-wider">Próximamente</span>
+                <p class="text-sm text-slate-400 mb-6">Visualiza tu jornada universitaria diaria, salones asignados y enlaces de clases.</p>
+                
+                <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <span>Estado Actual</span>
+                    <span id="hub-estado-clase" class="text-xs font-bold text-sky-700 bg-sky-50 border border-sky-100 px-2.5 py-0.5 rounded-md">Fuera de horario</span>
+                </div>
             </div>
         </div>
     </main>
@@ -295,6 +300,70 @@
         </div>
     </main>
 
+    <!-- FASE 3: NUEVA VISTA DE HORARIO DE CLASES INTERACTIVO -->
+    <main id="vista-horario" class="max-w-6xl mx-auto p-4 mt-6 hidden fade-in">
+        <div class="flex flex-wrap gap-3 mb-6">
+            <button onclick="cambiarVista('hub')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow transition-colors flex items-center">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Menú Principal
+            </button>
+        </div>
+
+        <!-- SECCIÓN 1: FORMULARIO DE REGISTRO DE BLOQUES -->
+        <section class="bg-white rounded-2xl shadow-md p-6 mb-8 border border-slate-200">
+            <h2 class="text-xl font-bold text-slate-700 mb-4 border-b pb-2">
+                <i class="fa-solid fa-calendar-plus mr-2 text-sky-600"></i> Asignar Bloque de Clase
+            </h2>
+            <form id="form-horario" onsubmit="agregarBloqueHorario(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Materia</label>
+                    <select id="hor-materia" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
+                        <option value="" disabled selected>Selecciona materia</option>
+                        <option value="comunicacion">Comunicación Oral y Escrita</option>
+                        <option value="ciudadana">Formación Ciudadana 1</option>
+                        <option value="matematicas">Fundamentos en Matemáticas</option>
+                        <option value="digital">Entorno Digital</option>
+                        <option value="mercadeo">Fundamentos de Mercadeo</option>
+                        <option value="economia">Fundamentos de Economía</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Día de la Semana</label>
+                    <select id="hor-dia" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
+                        <option value="" disabled selected>Selecciona día</option>
+                        <option value="1">Lunes</option>
+                        <option value="2">Martes</option>
+                        <option value="3">Miércoles</option>
+                        <option value="4">Jueves</option>
+                        <option value="5">Viernes</option>
+                        <option value="6">Sábado</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Hora de Inicio</label>
+                    <input type="time" id="hor-inicio" required class="w-full p-2 border border-slate-200 rounded-lg outline-none text-sm text-slate-700 focus:ring-2 focus:ring-sky-200">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Ubicación / Salón</label>
+                    <input type="text" id="hor-ubicacion" placeholder="Ej: Aula 302 / Teams" required class="w-full p-2 border border-slate-200 rounded-lg outline-none text-sm text-slate-700 focus:ring-2 focus:ring-sky-200">
+                </div>
+                <div class="sm:col-span-2 lg:col-span-1">
+                    <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-xl font-semibold shadow transition-colors text-sm w-full">
+                        <i class="fa-solid fa-plus mr-1"></i> Fijar Bloque
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- SECCIÓN 2: GRID DE LA AGENDA SEMANAL COMPLETA -->
+        <h2 class="text-xl font-bold text-slate-700 mb-4">
+            <i class="fa-solid fa-calendar-week mr-2 text-slate-600"></i> Mi Agenda Universitaria Semanal
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4" id="contenedor-grid-semanal">
+            <!-- Cada columna representará un día (Lunes a Sábado). Se poblará vía JavaScript de forma ordenada -->
+        </div>
+    </main>
+
     <div id="modal-notas" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50 p-4 fade-in">
         <div id="modal-content" class="rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transition-all duration-300">
             <div id="modal-header" class="p-4 flex justify-between items-center sticky top-0 z-10 text-white transition-colors duration-300">
@@ -386,10 +455,16 @@ const firebaseConfig = {
             "QUINTO SEMESTRE", "SEXTO SEMESTRE", "SÉPTIMO SEMESTRE", "OCTAVO SEMESTRE"
         ];
 
+        // Variables globales añadidas para el Horario de Clases (Paso 3)
+        let listaHorarios = [];
+        let unsubscribeHorario = null;
+        const diasNombresCortos = ["", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+
         function cambiarVista(vista) {
             document.getElementById('vista-hub').classList.add('hidden');
             document.getElementById('vista-notas').classList.add('hidden');
             document.getElementById('vista-actividades').classList.add('hidden');
+            document.getElementById('vista-horario').classList.add('hidden');
 
             if (vista === 'hub') {
                 document.getElementById('vista-hub').classList.remove('hidden');
@@ -397,6 +472,9 @@ const firebaseConfig = {
                 document.getElementById('vista-notas').classList.remove('hidden');
             } else if (vista === 'actividades') {
                 document.getElementById('vista-actividades').classList.remove('hidden');
+            } else if (vista === 'horario') {
+                document.getElementById('vista-horario').classList.remove('hidden');
+                renderizarEstructuraHorario();
             }
         }
 
@@ -577,7 +655,7 @@ const firebaseConfig = {
             });
 
             // Al escuchar las actividades, actualizamos ambas pantallas para tener conexión en tiempo real
-            unsubscribeActividades = db.collection('usuario_miguel').doc(docActividadesId).onSnapshot((doc) => {
+           unsubscribeActividades = db.collection('usuario_miguel').doc(docActividadesId).onSnapshot((doc) => {
                 if (doc.exists) {
                     listaActividades = doc.data().lista || [];
                 } else {
@@ -585,6 +663,22 @@ const firebaseConfig = {
                 }
                 renderizarTablaActividades();
                 renderizarDashboard(); // MAGIA: Si completas una tarea, tu nota global se recalcula al instante.
+            });
+
+            // ESCUCHA EN TIEMPO REAL DEL HORARIO SEMANAL (PASO 3)
+            if (unsubscribeHorario) unsubscribeHorario();
+            const docHorarioId = (periodoActivoId === "PRIMER SEMESTRE") ? "horario" : "horario_" + periodoActivoId.replace(/ /g, "_");
+            
+            unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapshot((doc) => {
+                if (doc.exists) {
+                    listaHorarios = doc.data().lista || [];
+                } else {
+                    listaHorarios = [];
+                }
+                if (!document.getElementById('vista-horario').classList.contains('hidden')) {
+                    renderizarEstructuraHorario();
+                }
+                evaluarClaseActualHub();
             });
         }
 
@@ -1025,7 +1119,188 @@ const firebaseConfig = {
            
             // Monitoreo constante del reloj del sistema para la barra de progreso diaria
             setInterval(procesarPeriodoActual, 60000);
+            // Monitoreo del estado de clases en vivo cada minuto
+            setInterval(evaluarClaseActualHub, 60000);
         };
+
+        // =================================================================
+        // MOTOR LÓGICO DEL HORARIO SEMANAL DE CLASES (PASO 3)
+        // =================================================================
+        function agregarBloqueHorario(e) {
+            e.preventDefault();
+            if (esPeriodoBloqueado) {
+                alert("Este semestre ha finalizado. No se permiten añadir ni modificar bloques horarios.");
+                return;
+            }
+
+            const materiaId = document.getElementById('hor-materia').value;
+            const diaId = document.getElementById('hor-dia').value;
+            const horaInicio = document.getElementById('hor-inicio').value;
+            const ubicacion = document.getElementById('hor-ubicacion').value.trim();
+
+            const nuevoBloque = {
+                id: Date.now().toString(),
+                materiaId: materiaId,
+                dia: diaId,
+                inicio: horaInicio,
+                ubicacion: ubicacion
+            };
+
+            listaHorarios.push(nuevoBloque);
+
+            const docHorarioId = (periodoActivoId === "PRIMER SEMESTRE") ? "horario" : "horario_" + periodoActivoId.replace(/ /g, "_");
+            db.collection('usuario_miguel').doc(docHorarioId).set({ lista: listaHorarios })
+                .then(() => {
+                    document.getElementById('form-horario').reset();
+                })
+                .catch((error) => console.error("Error al guardar en horario: ", error));
+        }
+
+        function eliminarBloqueHorario(idBloque) {
+            if (esPeriodoBloqueado) {
+                alert("Acción denegada: El periodo es de solo lectura.");
+                return;
+            }
+            if (confirm("¿Deseas remover esta clase de tu horario?")) {
+                listaHorarios = listaHorarios.filter(b => b.id !== idBloque);
+                const docHorarioId = (periodoActivoId === "PRIMER SEMESTRE") ? "horario" : "horario_" + periodoActivoId.replace(/ /g, "_");
+                db.collection('usuario_miguel').doc(docHorarioId).set({ lista: listaHorarios });
+            }
+        }
+
+        function renderizarEstructuraHorario() {
+            const contenedor = document.getElementById('contenedor-grid-semanal');
+            contenedor.innerHTML = '';
+
+            const ahora = new Date();
+            const diaActualSemana = ahora.getDay(); // 1 = Lunes, 2 = Martes...
+
+            // Dibujar las columnas de Lunes (1) a Sábado (6)
+            for (let d = 1; d <= 6; d++) {
+                let clasesDelDia = listaHorarios.filter(b => parseInt(b.dia) === d);
+                
+                // Ordenar cronológicamente por hora de inicio
+                clasesDelDia.sort((a, b) => a.inicio.localeCompare(b.inicio));
+
+                let esHoy = (d === diaActualSemana);
+                let bgColumna = esHoy ? 'bg-slate-50 border-sky-300 shadow-sm' : 'bg-white border-slate-200';
+                let badgeHoy = esHoy ? '<span class="text-[9px] bg-sky-500 text-white px-1.5 py-0.5 rounded-full font-black uppercase tracking-wider animate-pulse">Hoy</span>' : '';
+
+                let columnaHTML = `
+                    <div class="border-2 ${bgColumna} rounded-2xl p-4 flex flex-col gap-3 min-h-[300px] transition-all">
+                        <div class="flex justify-between items-center border-b pb-2 mb-1 border-slate-100">
+                            <h3 class="font-bold text-slate-700 text-sm tracking-wide uppercase">${diasNombresCortos[d]}</h3>
+                            ${badgeHoy}
+                        </div>
+                        <div class="flex flex-col gap-3 flex-grow overflow-y-auto" id="columna-dia-${d}">
+                            <!-- Bloques de clase inyectados aquí -->
+                        </div>
+                    </div>
+                `;
+                contenedor.innerHTML += columnaHTML;
+
+                const contenedorDia = document.getElementById(`columna-dia-${d}`);
+
+                if (clasesDelDia.length === 0) {
+                    contenedorDia.innerHTML = `
+                        <div class="flex flex-col items-center justify-center text-center p-4 border border-dashed border-slate-200 rounded-xl bg-slate-50/50 my-auto py-8">
+                            <i class="fa-solid fa-bed text-slate-300 text-lg mb-1.5"></i>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Libre</span>
+                        </div>
+                    `;
+                } else {
+                    clasesDelDia.forEach(bloque => {
+                        const mat = estructuraBase[bloque.materiaId] || { nombre: "Desconocida", color: "slate", icono: "fa-book" };
+                        const tema = temasColor[mat.color || 'violet'];
+                        
+                        // Evaluar si esta clase en específico está sucediendo en vivo
+                        let esClaseEnVivo = false;
+                        if (esHoy) {
+                            let horaClase = parseInt(bloque.inicio.split(':')[0]);
+                            let minClase = parseInt(bloque.inicio.split(':')[1]);
+                            let horaActual = ahora.getHours();
+                            let minActual = ahora.getMinutes();
+                            
+                            let tiempoClase = (horaClase * 60) + minClase;
+                            let tiempoActual = (horaActual * 60) + minActual;
+                            
+                            // Asumimos una duración estándar universitaria de 120 minutos (2 horas) por bloque
+                            if (tiempoActual >= tiempoClase && tiempoActual < (tiempoClase + 120)) {
+                                esClaseEnVivo = true;
+                            }
+                        }
+
+                        let liveBorde = esClaseEnVivo ? 'ring-2 ring-sky-500 ring-offset-1 shadow-md scale-[1.02]' : '';
+                        let liveBadge = esClaseEnVivo ? '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping mr-1"></span>' : '';
+                        let btnBorrar = esPeriodoBloqueado ? '' : `
+                            <button onclick="eliminarBloqueHorario('${bloque.id}')" class="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-500 text-[11px] p-0.5 ml-1" title="Quitar bloque">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        `;
+
+                        let bloqueHTML = `
+                            <div class="group border ${tema.borderStrong} ${tema.cardBgSoft} p-3 rounded-xl relative overflow-hidden transition-all duration-300 ${liveBorde}">
+                                <div class="absolute top-0 left-0 bottom-0 w-1 ${tema.borderAccent}"></div>
+                                <div class="flex justify-between items-start gap-1">
+                                    <h4 class="font-bold text-slate-800 text-xs leading-tight line-clamp-2">${mat.nombre}</h4>
+                                    ${btnBorrar}
+                                </div>
+                                <div class="mt-2 space-y-1 text-[10px] font-semibold text-slate-500">
+                                    <div class="flex items-center gap-1 text-slate-600">
+                                        <i class="fa-regular fa-clock text-[9px]"></i> <span>${bloque.inicio}</span>
+                                        <span class="ml-auto flex items-center text-[9px] font-bold uppercase tracking-wider text-sky-700">${liveBadge}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1 text-slate-400 font-medium">
+                                        <i class="fa-solid fa-location-dot text-[9px]"></i> <span class="line-clamp-1">${bloque.ubicacion}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        contenedorDia.innerHTML += bloqueHTML;
+                    });
+                }
+            }
+        }
+
+        function evaluarClaseActualHub() {
+            const elEstadoHub = document.getElementById('hub-estado-clase');
+            if (!elEstadoHub) return;
+
+            const ahora = new Date();
+            const diaHoy = ahora.getDay();
+            if (diaHoy === 0 || listaHorarios.length === 0) {
+                elEstadoHub.className = "text-xs font-bold text-slate-500 bg-slate-50 border border-slate-100 px-2.5 py-0.5 rounded-md";
+                elEstadoHub.innerText = "Fuera de horario";
+                return;
+            }
+
+            let horaActual = ahora.getHours();
+            let minActual = ahora.getMinutes();
+            let tiempoActual = (horaActual * 60) + minActual;
+
+            let claseActual = null;
+
+            listaHorarios.forEach(bloque => {
+                if (parseInt(bloque.dia) === diaHoy) {
+                    let hClase = parseInt(bloque.inicio.split(':')[0]);
+                    let mClase = parseInt(bloque.inicio.split(':')[1]);
+                    let tClase = (hClase * 60) + mClase;
+
+                    if (tiempoActual >= tClase && tiempoActual < (tClase + 120)) {
+                        claseActual = bloque;
+                    }
+                }
+            });
+
+            if (claseActual) {
+                const mat = estructuraBase[claseActual.materiaId] || { nombre: "Clase" };
+                elEstadoHub.className = "text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 rounded-md animate-pulse flex items-center gap-1";
+                elEstadoHub.innerHTML = `<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> En curso: ${mat.nombre}`;
+            } else {
+                elEstadoHub.className = "text-xs font-bold text-slate-500 bg-slate-50 border border-slate-100 px-2.5 py-0.5 rounded-md";
+                elEstadoHub.innerText = "Fuera de horario";
+            }
+        }
     </script>
 </body>
 </html>
