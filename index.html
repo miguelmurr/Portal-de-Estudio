@@ -40,18 +40,21 @@
     <!-- BARRA DE NAVEGACIÓN MODIFICADA CON BOTÓN SUPERIOR IZQUIERDO -->
     <nav class="bg-slate-800 text-white p-4 shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
        <div class="flex items-center gap-3 w-full sm:w-auto justify-start">
-            <h1 class="text-2xl font-bold tracking-wide"><i class="fa-solid fa-graduation-cap mr-2"></i> Portal Universitario</h1>
+      
+       <h1 class="text-2xl font-bold tracking-wide"><i class="fa-solid fa-graduation-cap mr-2"></i> Portal Universitario</h1>
         </div>
         <div class="flex items-center gap-3">
             <button type="button" onclick="toggleFiltroBrillo()" title="Atenuar brillo ocular" class="bg-slate-700 hover:bg-slate-600 text-slate-200 hover:text-white p-2 rounded-lg border border-slate-600 transition-colors flex items-center justify-center w-8 h-8 cursor-pointer">
                 <i class="fa-solid fa-eye-low-vision text-sm"></i>
             </button>
-            <select id="selector-periodos" onchange="cambiarPeriodoActivo(this.value)" class="bg-slate-700 text-white text-xs font-bold uppercase p-2 rounded-lg outline-none border border-slate-600 focus:border-slate-400 cursor-pointer">
+    
+         <select id="selector-periodos" onchange="cambiarPeriodoActivo(this.value)" class="bg-slate-700 text-white text-xs font-bold uppercase p-2 rounded-lg outline-none border border-slate-600 focus:border-slate-400 cursor-pointer">
                 </select>
             <div class="text-sm font-semibold tracking-wider opacity-90 bg-slate-900/40 px-3 py-2 rounded-lg border border-slate-700/50" id="navbar-anio-texto">
                 SEMESTRE ACTIVO 2026
             </div>
         </div>
+ 
     </nav>
 
     <main id="vista-hub" class="max-w-6xl mx-auto p-4 mt-6 fade-in">
@@ -59,6 +62,19 @@
             <h2 class="text-3xl font-black text-slate-700">¡Hola, Miguel!</h2>
             <p class="text-slate-500 mt-1">Bienvenido a tu suite de gestión académica personal.</p>
         </header>
+
+        <div id="banco-alertas-contenedor" class="hidden border border-amber-200/70 bg-amber-50/40 rounded-2xl p-5 shadow-[0_15px_30px_rgba(245,158,11,0.03)] relative overflow-hidden group mb-8 fade-in">
+            <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-500 to-cyan-500"></div>
+            <div class="flex items-center gap-3 mb-3 mt-1">
+                <div class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                </div>
+                <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Centro de Recordatorios Importantes</h3>
+            </div>
+            <div id="banco-alertas-lista" class="space-y-2.5">
+                </div>
+        </div>
 
        <!-- CUADRO GENERAL INDEPENDIENTE: Progreso del Semestre Activo (Arriba) -->
         <div class="border border-slate-200/80 bg-white rounded-2xl p-6 shadow-[0_20px_40px_rgba(15,23,42,0.04)] relative overflow-hidden group mb-8">
@@ -836,14 +852,16 @@ const firebaseConfig = {
             });
 
             // Al escuchar las actividades, actualizamos ambas pantallas para tener conexión en tiempo real
-           unsubscribeActividades = db.collection('usuario_miguel').doc(docActividadesId).onSnapshot((doc) => {
+          unsubscribeActividades = db.collection('usuario_miguel').doc(docActividadesId).onSnapshot((doc) => {
                 if (doc.exists) {
                     listaActividades = doc.data().lista || [];
                 } else {
+            
                     listaActividades = [];
                 }
                 renderizarTablaActividades();
                 renderizarDashboard(); // MAGIA: Si completas una tarea, tu nota global se recalcula al instante.
+                evaluarAlertasInmediatas(); // Sincronización instantánea del banner de alertas
             });
 
             // ESCUCHA EN TIEMPO REAL DEL HORARIO SEMANAL (PASO 3)
@@ -1308,13 +1326,86 @@ const firebaseConfig = {
             }
         }
 
+        // --- SISTEMA INTELIGENTE DE ALERTAS INMEDIATAS ("BANCO DE NOTIFICACIONES") ---
+        function evaluarAlertasInmediatas() {
+            const contenedor = document.getElementById('banco-alertas-contenedor');
+            const listaAlertas = document.getElementById('banco-alertas-lista');
+            if (!contenedor || !listaAlertas) return;
+
+            listaAlertas.innerHTML = '';
+            let alertasHTML = '';
+
+            // Obtener fecha local exacta en formato YYYY-MM-DD
+            const ahora = new Date();
+            const anio = ahora.getFullYear();
+            const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+            const dia = String(ahora.getDate()).padStart(2, '0');
+            const fechaHoyStr = `${anio}-${mes}-${dia}`;
+
+            // 1. ESCANEO DE TAREAS CRÍTICAS (Vencen hoy y no están en estado 'entregada')
+            let tareasUrgentes = listaActividades.filter(t => t.fechaEntrega === fechaHoyStr && t.estado !== 'entregada');
+            
+            tareasUrgentes.forEach(tarea => {
+                const infoMateria = estructuraBase[tarea.materiaId] || { nombre: "Materia" };
+                alertasHTML += `
+                    <div class="flex items-center justify-between bg-white border border-slate-200/60 p-3 rounded-xl shadow-sm gap-4">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-500 flex-shrink-0"></i>
+                            <p class="text-xs text-slate-600 font-medium truncate">
+                                <span class="font-bold text-slate-800">[Tarea para HOY]</span> en <span class="font-bold">${infoMateria.nombre}</span>: ${tarea.nombre}
+                            </p>
+                        </div>
+                        <span class="text-[9px] bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0">Crítico</span>
+                    </div>
+                `;
+            });
+
+            // 2. ESCANEO DE EVENTOS Y CLASES (Ventana de los 20 minutos previos al inicio)
+            const diaHoySemana = ahora.getDay(); // 1=Lunes, 2=Martes...
+            const tiempoActualMinutos = (ahora.getHours() * 60) + ahora.getMinutes();
+
+            let clasesDeHoy = listaHorarios.filter(b => parseInt(b.dia) === diaHoySemana);
+
+            clasesDeHoy.forEach(bloque => {
+                if (!bloque.inicio) return;
+                const [hIni, mIni] = bloque.inicio.split(':').map(Number);
+                const tiempoClaseMinutos = (hIni * 60) + mIni;
+
+                const diferencia = tiempoClaseMinutos - tiempoActualMinutos;
+
+                if (diferencia > 0 && diferencia <= 20) {
+                    const infoMateria = estructuraBase[bloque.materiaId] || { nombre: bloque.nombrePersonalizado || "Clase" };
+                    alertasHTML += `
+                        <div class="flex items-center justify-between bg-white border border-slate-200/60 p-3 rounded-xl shadow-sm gap-4">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <i class="fa-solid fa-clock text-cyan-500 flex-shrink-0"></i>
+                                <p class="text-xs text-slate-600 font-medium truncate">
+                                    <span class="font-bold text-slate-800">[Próxima Clase]</span> <span class="font-bold">${infoMateria.nombre}</span> comienza en <span class="font-bold text-cyan-600">${diferencia} min</span> (${bloque.inicio}) en ${bloque.ubicacion}.
+                                </p>
+                            </div>
+                            <span class="text-[9px] bg-cyan-50 text-cyan-700 border border-cyan-100 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0 animate-pulse">Entrando</span>
+                        </div>
+                    `;
+                }
+            });
+
+            // VISIBILIDAD DINÁMICA: Mostrar si hay elementos, ocultar completamente si está vacío
+            if (alertasHTML !== '') {
+                listaAlertas.innerHTML = alertasHTML;
+                contenedor.classList.remove('hidden');
+            } else {
+                contenedor.classList.add('hidden');
+            }
+        }
+
         // --- CONTROLADOR DE INICIO CON INTEGRACIÓN DE CONFORT VISUAL Y PWA ---
         window.onload = function() {
-            aplicarPreferenciaBrillo(); // Aplica tu nivel de brillo cómodo de inmediato antes de pintar la web
+            aplicarPreferenciaBrillo();
             inicializarEstructuraPeriodos();
             poblarSelectoresHorasTimeline(); 
             setInterval(procesarPeriodoActual, 60000);
             setInterval(evaluarClaseActualHub, 60000);
+            setInterval(evaluarAlertasInmediatas, 60000); // Auto-escaneo en bucle cada 60s
         };
 
         // =================================================================
