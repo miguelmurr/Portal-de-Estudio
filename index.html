@@ -19,6 +19,12 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        /* Filtro protector uniforme para mitigar la fotosensibilidad */
+        body.baja-luminosidad { 
+            filter: brightness(0.75) sepia(0.12) !important; 
+            transition: filter 0.3s ease; 
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px), radial-gradient(at 0% 0%, rgba(186, 230, 253, 0.25) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(233, 213, 255, 0.25) 0px, transparent 50%); background-size: 24px 24px, 100% 100%, 100% 100%; background-attachment: fixed;">
@@ -30,6 +36,9 @@
             <h1 class="text-2xl font-bold tracking-wide"><i class="fa-solid fa-graduation-cap mr-2"></i> Portal Universitario</h1>
         </div>
         <div class="flex items-center gap-3">
+            <button type="button" onclick="toggleFiltroBrillo()" title="Atenuar brillo ocular" class="bg-slate-700 hover:bg-slate-600 text-slate-200 hover:text-white p-2 rounded-lg border border-slate-600 transition-colors flex items-center justify-center w-8 h-8 cursor-pointer">
+                <i class="fa-solid fa-eye-low-vision text-sm"></i>
+            </button>
             <select id="selector-periodos" onchange="cambiarPeriodoActivo(this.value)" class="bg-slate-700 text-white text-xs font-bold uppercase p-2 rounded-lg outline-none border border-slate-600 focus:border-slate-400 cursor-pointer">
                 </select>
             <div class="text-sm font-semibold tracking-wider opacity-90 bg-slate-900/40 px-3 py-2 rounded-lg border border-slate-700/50" id="navbar-anio-texto">
@@ -1279,18 +1288,26 @@ const firebaseConfig = {
         }
 
         // --- CONTROLADOR DE INICIO ADAPTADO CON SOPORTE PWA ---
+        // --- LÓGICA DEL FILTRO PROTECTOR PARA FOTOSENSIBILIDAD ---
+        function toggleFiltroBrillo() {
+            const activo = document.body.classList.toggle('baja-luminosidad');
+            localStorage.setItem('filtroFotosensibilidad', activo ? 'activado' : 'desactivado');
+        }
+
+        function aplicarPreferenciaBrillo() {
+            const preferencia = localStorage.getItem('filtroFotosensibilidad');
+            if (preferencia === 'activado') {
+                document.body.classList.add('baja-luminosidad');
+            }
+        }
+
+        // --- CONTROLADOR DE INICIO CON INTEGRACIÓN DE CONFORT VISUAL Y PWA ---
         window.onload = function() {
+            aplicarPreferenciaBrillo(); // Aplica tu nivel de brillo cómodo de inmediato antes de pintar la web
             inicializarEstructuraPeriodos();
-            poblarSelectoresHorasTimeline();
+            poblarSelectoresHorasTimeline(); 
             setInterval(procesarPeriodoActual, 60000);
             setInterval(evaluarClaseActualHub, 60000);
-
-            // Registro del Service Worker para habilitar la instalación como App
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('sw.js')
-                    .then(() => console.log('Motor PWA activado con éxito.'))
-                    .catch(err => console.error('Error al activar motor PWA:', err));
-            }
         };
 
         // =================================================================
