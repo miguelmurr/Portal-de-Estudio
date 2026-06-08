@@ -876,8 +876,15 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
                 if (!document.getElementById('vista-horario').classList.contains('hidden')) {
                     renderizarEstructuraHorario();
                 }
+                
+                // Si tienes el planificador Gantt abierto al recibir cambios de la DB, actualizar tarjetas al instante
+                const modalTimeline = document.getElementById('modal-timeline');
+                if (modalTimeline && modalTimeline.style.display === 'flex') {
+                    renderizarTimelineHorizontal();
+                }
+                
                 evaluarClaseActualHub();
-                evaluarAlertasInmediatas(); // Sincronización reactiva por cambio de horarios (Arregla bug de reinicio)
+                evaluarAlertasInmediatas();
             });
         }
 
@@ -1439,9 +1446,19 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
             aplicarPreferenciaBrillo();
             inicializarEstructuraPeriodos();
             poblarSelectoresHorasTimeline(); 
-            setInterval(procesarPeriodoActual, 60000);
-            setInterval(evaluarClaseActualHub, 60000);
-            setInterval(evaluarAlertasInmediatas, 60000); // Auto-escaneo en bucle cada 60s
+            
+            // Ciclo maestro de sincronización forzada cada 60 segundos (1 minuto)
+            setInterval(() => {
+                procesarPeriodoActual();
+                evaluarClaseActualHub();
+                evaluarAlertasInmediatas();
+                
+                // Si el planificador Gantt está abierto en el día de hoy, desplazar la brújula en tiempo real
+                const modalTimeline = document.getElementById('modal-timeline');
+                if (modalTimeline && modalTimeline.style.display === 'flex') {
+                    renderizarTimelineHorizontal();
+                }
+            }, 60000);
         };
 
         // =================================================================
@@ -1734,108 +1751,181 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
             return h.toString().padStart(2, '0') + ":" + minuto;
         }
 
-        function renderizarTimelineHorizontal() {
+       function renderizarTimelineHorizontal() {
             const wrapper = document.getElementById('wrapper-timeline-horizontal');
+            if (!wrapper) return;
             wrapper.innerHTML = '';
 
+            // Reconfigurar contenedor para asegurar comportamiento de scroll horizontal nativo y fluido
+            wrapper.className = "overflow-x-auto pb-4 relative select-none block bg-slate-50 rounded-2xl border border-slate-200/50 p-2.5 shadow-inner";
+            wrapper.style.scrollbarWidth = "thin";
+
             let clasesDelDia = listaHorarios.filter(b => b.dia === diaTimelineActivo);
-            let targetScrollElementId = null;
+            let targetScrollLeft = 0;
 
             const ahora = new Date();
             const horaActualSistema = ahora.getHours();
-            const diaActualSistema = ahora.getDay(); 
+            const minActualSistema = ahora.getMinutes();
+            const diaActualSistema = ahora.getDay().toString();
 
-            // Construir slots de una hora (De 6:00 AM a 10:00 PM)
-            for (let h = 6; h <= 21; h++) {
-                let horaStr = h.toString().padStart(2, '0') + ':00';
-                let currentSlotMin = h * 60;
+            // Configuración matemática del lienzo: 16 horas de cobertura (6:00 AM a 10:00 PM) = 960 minutos. 
+            // Escalado: 2px por cada minuto. Ancho total del lienzo = 1920px.
+            const pixelesPorMinuto = 2;
+            const horaInicioRuler = 6;
+            const horaFinRuler = 22;
+            const totalMinutosTimeline = (horaFinRuler - horaInicioRuler) * 60;
+            const anchoTotalTimeline = totalMinutosTimeline * pixelesPorMinuto;
 
-                // Solo activar el marcador de scroll si coincide con el día de hoy real
-                if (parseInt(diaTimelineActivo) === diaActualSistema && h === horaActualSistema) {
-                    targetScrollElementId = `slot-timeline-${h}`;
-                } else if (parseInt(diaTimelineActivo) === diaActualSistema && h === 6 && horaActualSistema < 6) {
-                    targetScrollElementId = `slot-timeline-6`;
-                } else if (parseInt(diaTimelineActivo) === diaActualSistema && h === 21 && horaActualSistema > 21) {
-                    targetScrollElementId = `slot-timeline-21`;
-                }
+            // Instanciar lienzo maestro relativo donde se posicionarán las capas
+            const lienzo = document.createElement('div');
+            lienzo.className = "relative h-40";
+            lienzo.style.width = `${anchoTotalTimeline}px`;
 
-                let bloqueOcupado = clasesDelDia.find(b => {
-                    if (!b.inicio) return false;
-                    let [hIni, mIni] = b.inicio.split(':').map(Number);
-                    let hFin, mFin;
-                    if (b.fin) {
-                        [hFin, mFin] = b.fin.split(':').map(Number);
-                    } else {
-                        hFin = hIni + 2; mFin = mIni;
-                    }
-                    let eventStartMin = (hIni * 60) + mIni;
-                    let eventEndMin = (hFin * 60) + mFin;
-                    
-                    let slotStartMin = h * 60;
-                    let slotEndMin = (h + 1) * 60;
-                    
-                    // Nueva condición de intersección matemática horaria
-                    return eventStartMin < slotEndMin && eventEndMin > slotStartMin;
-                });
+            // --- FASE 1: RENDERIZADO DE LA REGLA GRADUADA (CADA 15 MINUTOS) ---
+            let rulerHTML = `<div class="absolute top-0 left-0 right-0 h-9 border-b border-slate-200/80 bg-slate-100/60 rounded-t-xl flex relative">`;
+            
+            for (let min = 0; min <= totalMinutosTimeline; min += 15) {
+                let leftPos = min * pixelesPorMinuto;
+                let currentTotalMin = (horaInicioRuler * 60) + min;
+                let h = Math.floor(currentTotalMin / 60);
+                let m = currentTotalMin % 60;
+                
+                let ampm = h >= 12 ? 'PM' : 'AM';
+                let h12 = h % 12 === 0 ? 12 : h % 12;
+                let minStr = m.toString().padStart(2, '0');
 
-                if (bloqueOcupado) {
-                    let esOtro = bloqueOcupado.materiaId === 'otro';
-                    let nombreMostrar = esOtro ? bloqueOcupado.nombrePersonalizado : (estructuraBase[bloqueOcupado.materiaId]?.nombre || "Materia");
-                    let colorClase = esOtro ? 'slate' : (estructuraBase[bloqueOcupado.materiaId]?.color || 'violet');
-                    let tema = temasColor[colorClase] || temasColor.violet;
-                    let esFijo = bloqueOcupado.repetir !== false;
-
-                    wrapper.innerHTML += `
-                        <div id="slot-timeline-${h}" class="flex-shrink-0 w-44 border border-slate-200 bg-white p-3 rounded-xl flex flex-col justify-between relative overflow-hidden min-h-[96px] shadow-sm">
-                            <div class="absolute top-0 left-0 bottom-0 w-1 ${tema.borderAccent}"></div>
-                            <div>
-                                <div class="flex justify-between items-center gap-1">
-                                    <span class="font-mono font-black text-sky-700 text-[10px] bg-sky-50 px-1.5 py-0.5 rounded shadow-sm border border-sky-100" title="Duración exacta de la actividad">${bloqueOcupado.inicio} - ${bloqueOcupado.fin}</span>
-                                    <span class="text-[8px] font-black uppercase tracking-wider ${esFijo ? 'text-indigo-600 bg-indigo-50 border border-indigo-100' : 'text-amber-600 bg-amber-50 border border-amber-100'} px-1.5 py-0.5 rounded">
-                                        ${esFijo ? 'Fijo' : 'Evento'}
-                                    </span>
-                                </div>
-                                <h4 class="font-bold text-slate-800 text-[11px] leading-tight mt-2 line-clamp-2">${nombreMostrar}</h4>
-                            </div>
-                            <div class="text-[9px] font-bold text-slate-400 mt-2 flex items-center justify-between border-t border-slate-50 pt-1.5">
-                                <span class="line-clamp-1 text-slate-500 font-medium"><i class="fa-solid fa-location-dot text-[8px] text-slate-300 mr-0.5"></i> ${bloqueOcupado.ubicacion}</span>
-                                <button type="button" onclick="event.stopPropagation(); eliminarBloqueHorario('${bloqueOcupado.id}');" class="text-slate-300 hover:text-red-500 transition-colors text-[10px] p-0.5" title="Remover bloque">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
+                if (min % 60 === 0) {
+                    // Marcador de hora en punto (Línea extendida y texto completo)
+                    rulerHTML += `
+                        <div class="absolute top-0 flex flex-col items-center" style="left: ${leftPos}px; transform: translateX(-50%);">
+                            <div class="w-0.5 h-2.5 bg-slate-400/80"></div>
+                            <span class="text-[9px] font-black text-slate-500 mt-1 tracking-tighter">${h12}:${minStr} ${ampm}</span>
                         </div>
                     `;
                 } else {
-                    wrapper.innerHTML += `
-                        <div id="slot-timeline-${h}" onclick="prepararFormularioTimeline('${horaStr}')" class="flex-shrink-0 w-44 border border-dashed border-slate-200 bg-slate-50/50 hover:bg-sky-50/30 hover:border-sky-300/60 p-3 rounded-xl flex flex-col justify-between items-center text-center cursor-pointer transition-all min-h-[96px] group shadow-inner">
-                            <span class="font-mono font-bold text-slate-400 text-[10px] bg-white px-1.5 py-0.5 rounded border border-slate-100">${horaStr}</span>
-                            <div class="my-auto py-1">
-                                <i class="fa-solid fa-calendar-plus text-slate-300 group-hover:text-sky-500 text-sm transition-colors block mb-0.5"></i>
-                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-sky-600 transition-colors">Hora Libre</span>
-                            </div>
+                    // Marcador de cuartos de hora (Línea corta y solo minutos para evitar amontonamiento)
+                    rulerHTML += `
+                        <div class="absolute top-0 flex flex-col items-center" style="left: ${leftPos}px; transform: translateX(-50%);">
+                            <div class="w-px h-1.5 bg-slate-300"></div>
+                            <span class="text-[8px] font-bold text-slate-400/60 mt-1">:${minStr}</span>
                         </div>
                     `;
                 }
             }
+            rulerHTML += `</div>`;
+            lienzo.innerHTML += rulerHTML;
 
-            // REPARACIÓN DEFINITIVA DEL BUG DE SCROLL RESIDUAL (PUNTO 2)
+            // --- FASE 2: CAPA DE BLOQUES DINÁMICOS PROPORCIONALES ---
+            let eventosHTML = `<div class="absolute top-10 bottom-0 left-0 right-0 relative">`;
+            
+            // Renderizar áreas clicables de fondo ("Horas Libres") en las zonas vacías se procesa al hacer clic en el lienzo, 
+            // pero para conservar la creación rápida de bloques, hacemos que todo el fondo del lienzo permita abrir el picker
+            lienzo.setAttribute('onclick', `prepararFormularioDesdeCoordenada(event, ${horaInicioRuler}, ${pixelesPorMinuto})`);
+
+            clasesDelDia.forEach(bloque => {
+                if (!bloque.inicio || !bloque.fin) return;
+                
+                let [hIni, mIni] = bloque.inicio.split(':').map(Number);
+                let [hFin, mFin] = bloque.fin.split(':').map(Number);
+                
+                let totalMinInicio = (hIni * 60) + mIni;
+                let totalMinFin = (hFin * 60) + mFin;
+                
+                let minRelInicio = totalMinInicio - (horaInicioRuler * 60);
+                let minRelFin = totalMinFin - (horaInicioRuler * 60);
+                
+                // Forzar contención dentro de los límites de la regla (6AM a 10PM)
+                if (minRelInicio < 0) minRelInicio = 0;
+                if (minRelFin > totalMinutosTimeline) minRelFin = totalMinutosTimeline;
+                
+                let leftBlock = minRelInicio * pixelesPorMinuto;
+                let widthBlock = (minRelFin - minRelInicio) * pixelesPorMinuto;
+                
+                let esOtro = bloque.materiaId === 'otro';
+                let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (estructuraBase[bloque.materiaId]?.nombre || "Materia");
+                let colorClase = esOtro ? 'slate' : (estructuraBase[bloque.materiaId]?.color || 'violet');
+                let tema = temasColor[colorClase] || temasColor.violet;
+                let esFijo = bloque.repetir !== false;
+
+                // Añadimos stopPropagation para que hacer clic en la tarjeta no dispare el picker de hora libre del lienzo
+                eventosHTML += `
+                    <div class="absolute border ${tema.borderStrong} bg-white p-2 rounded-xl flex flex-col justify-between shadow-sm overflow-hidden h-24 transition-all hover:shadow-md group/card" 
+                         onclick="event.stopPropagation();"
+                         style="left: ${leftBlock}px; width: ${widthBlock}px; top: 6px;">
+                        <div class="absolute top-0 left-0 bottom-0 w-1 ${tema.borderAccent}"></div>
+                        <div class="min-w-0">
+                            <div class="flex justify-between items-center gap-1">
+                                <span class="text-[8px] font-mono font-black text-sky-700 bg-sky-50 px-1 rounded border border-sky-100">${bloque.inicio} - ${bloque.fin}</span>
+                                <button type="button" onclick="event.stopPropagation(); eliminarBloqueHorario('${bloque.id}');"
+                                        class="opacity-0 group-hover/card:opacity-100 transition-opacity text-slate-300 hover:text-red-500 text-[10px] p-0.5" title="Remover bloque">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-[10px] leading-tight mt-1 truncate">${nombreMostrar}</h4>
+                        </div>
+                        <div class="text-[8px] font-semibold text-slate-400 flex items-center gap-0.5 border-t border-slate-50 pt-1 truncate">
+                            <i class="fa-solid fa-location-dot text-[7px] text-slate-300"></i>
+                            <span class="truncate">${bloque.ubicacion}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            eventosHTML += `</div>`;
+            lienzo.innerHTML += eventosHTML;
+
+            // --- FASE 3: LA BRÚJULA (MARCADOR CRÍTICO DE TIEMPO REAL COINCIDENTE) ---
+            if (diaTimelineActivo === diaActualSistema) {
+                let totalMinActual = (horaActualSistema * 60) + minActualSistema;
+                let minRelActual = totalMinActual - (horaInicioRuler * 60);
+
+                if (minRelActual >= 0 && minRelActual <= totalMinutosTimeline) {
+                    let leftMarker = minRelActual * pixelesPorMinuto;
+                    
+                    let markerHTML = `
+                        <div id="timeline-live-marker" class="absolute top-0 bottom-0 z-30 pointer-events-none flex flex-col items-center" style="left: ${leftMarker}px;">
+                            <div class="w-2.5 h-2.5 rounded-full bg-amber-500 ring-2 ring-white shadow-md animate-pulse" style="margin-top: 3px;"></div>
+                            <div class="w-0.5 flex-grow bg-amber-500 border-l border-white/30 shadow-sm"></div>
+                        </div>
+                    `;
+                    lienzo.innerHTML += markerHTML;
+                    
+                    // Centrar matemáticamente la pantalla en la posición de la brújula
+                    targetScrollLeft = leftMarker - (wrapper.clientWidth / 2);
+                }
+            }
+
+            wrapper.appendChild(lienzo);
+
+            // --- FASE 4: ENCAPSULAMIENTO ESTRICTO DEL SCROLL RESIDUAL ---
             const elIndicador = document.getElementById('txt-indicador-hoy');
-            if (targetScrollElementId) {
+            if (diaTimelineActivo === diaActualSistema) {
                 if (elIndicador) elIndicador.classList.remove('hidden');
                 setTimeout(() => {
-                    const elSlot = document.getElementById(targetScrollElementId);
-                    if (elSlot) wrapper.scrollLeft = elSlot.offsetLeft - wrapper.offsetLeft - 16;
+                    wrapper.scrollLeft = Math.max(0, targetScrollLeft);
                 }, 150);
             } else {
                 if (elIndicador) elIndicador.classList.add('hidden');
-                wrapper.scrollLeft = 0; // Si abres otro día, obliga a la barra a arrancar limpio en las 6:00 AM
+                wrapper.scrollLeft = 0;
             }
         }
 
-       // Inserción Inteligente: Traduce las celdas de 24H, pre-selecciona y rellena los cuadros de texto unificados en el acto
+        // Función auxiliar para calcular en qué hora hizo clic el usuario dentro del espacio libre del lienzo
+        function prepararFormularioDesdeCoordenada(event, horaInicio, pxPerMin) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const clickX = event.clientX - rect.left + event.currentTarget.parentElement.scrollLeft;
+            const clickMinutosTotales = Math.floor(clickX / pxPerMin) + (horaInicio * 60);
+            
+            let h = Math.floor(clickMinutosTotales / 60);
+            let m = Math.floor((clickMinutosTotales % 60) / 15) * 15; // Redondear visualmente al cuarto de hora más cercano
+            if (h > 21) { h = 21; m = 45; }
+            
+            let horaStr = h.toString().padStart(2, '0') + ":" + m.toString().padStart(2, '0');
+            prepararFormularioTimeline(horaStr);
+        }
+
+       // Inserción Inteligente: Traduce las cordenadas del Gantt, pre-selecciona y rellena los cuadros de texto unificados sin desbordamientos
         function prepararFormularioTimeline(hora24) {
             let [h, m] = hora24.split(':').map(Number);
-            
             let apIni = h >= 12 ? "PM" : "AM";
             let h12Ini = h % 12;
             if (h12Ini === 0) h12Ini = 12;
@@ -1844,15 +1934,24 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
             document.getElementById('time-ini-h').value = h12Ini;
             document.getElementById('time-ini-m').value = minStrIni;
             document.getElementById('time-ini-ap').value = apIni;
-            // Sincroniza el cuadro de texto limpio de inicio
+            
+            // Sincronizar cuadro de texto visual de entrada
             document.getElementById('time-inicio-display').value = `${h12Ini}:${minStrIni} ${apIni}`;
-
+            
             // Autocalcular fin estándar sugerido (+1 hora y media)
             let hFin24 = h + 1;
             let mFin24 = m + 30;
-            if (mFin24 >= 60) { hFin24 += 1; mFin24 -= 60; }
-            if (hFin24 > 22) hFin24 = 22;
-
+            if (mFin24 >= 60) { 
+                hFin24 += 1; 
+                mFin24 -= 60;
+            }
+            
+            // Candado de seguridad absoluto: Si la sugerencia supera o iguala las 10:00 PM (22:00), congelar en 10:00 PM exactas
+            if (hFin24 >= 22) {
+                hFin24 = 22;
+                mFin24 = 0;
+            }
+            
             let apFin = hFin24 >= 12 ? "PM" : "AM";
             let h12Fin = hFin24 % 12;
             if (h12Fin === 0) h12Fin = 12;
@@ -1861,9 +1960,11 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
             document.getElementById('time-fin-h').value = h12Fin;
             document.getElementById('time-fin-m').value = minStrFin;
             document.getElementById('time-fin-ap').value = apFin;
-            // Sincroniza el cuadro de texto limpio de salida
+            
+            // Sincronizar cuadro de texto visual de salida blindado
             document.getElementById('time-fin-display').value = `${h12Fin}:${minStrFin} ${apFin}`;
-
+            
+            // Mover el foco directamente al salón para agilizar la experiencia de usuario (UX)
             document.getElementById('time-ubicacion').focus();
         }
 
