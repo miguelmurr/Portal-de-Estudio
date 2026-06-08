@@ -18,40 +18,11 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen">
 
-    <!-- PANEL DE CHAT VERTICAL GEMINI (PASO 1) -->
-    <div id="panel-chat-gemini" class="fixed top-0 left-0 h-full w-80 bg-white shadow-2xl border-r border-slate-200 z-50 transform -translate-x-full transition-transform duration-300 flex flex-col">
-        <!-- Encabezado del Chat con Logo -->
-        <div class="p-4 bg-slate-800 text-white flex justify-between items-center border-b border-slate-700">
-            <div class="flex items-center gap-2">
-                <i class="fa-solid fa-sparkles text-indigo-400 animate-pulse"></i>
-                <span class="font-bold text-sm tracking-wide">Asistente Gemini</span>
-            </div>
-            <button onclick="toggleChatGemini()" class="text-slate-400 hover:text-white text-xl font-black">&times;</button>
-        </div>
-        
-        <!-- Cuerpo del Chat (Mensajes de muestra) -->
-        <div class="flex-grow p-4 overflow-y-auto space-y-3 bg-slate-50 text-xs" id="cuerpo-chat-gemini">
-            <div class="bg-indigo-50 border border-indigo-100 text-slate-700 p-3 rounded-xl max-w-[85%] self-start shadow-sm">
-                ¡Hola, Miguel! Soy tu asistente exclusivo del <strong>Portal de Estudio</strong>. ¿En qué te puedo colaborar hoy? ✨
-            </div>
-        </div>
-        
-        <!-- Input del Chat (Deshabilitado temporalmente para el Paso 1) -->
-        <div class="p-3 bg-white border-t border-slate-100 flex gap-2">
-            <input type="text" id="input-chat-gemini" onkeypress="evaluarEnterChat(event)" placeholder="Pregúntame algo..." class="flex-grow p-2 border border-slate-200 rounded-lg outline-none text-xs focus:border-indigo-500 bg-white text-slate-700">
-            <button onclick="enviarMensajeGemini()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-colors">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
-        </div>
-    </div>
+    
 
     <!-- BARRA DE NAVEGACIÓN MODIFICADA CON BOTÓN SUPERIOR IZQUIERDO -->
     <nav class="bg-slate-800 text-white p-4 shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
-        <div class="flex items-center gap-3 w-full sm:w-auto justify-start">
-            <!-- El Logo Destello de Gemini como Botón de apertura -->
-            <button onclick="toggleChatGemini()" class="text-indigo-400 hover:text-indigo-300 transition-all text-base p-1.5 bg-slate-700/60 hover:bg-slate-700 rounded-lg border border-slate-600/50 flex items-center justify-center w-9 h-9 shadow-sm" title="Abrir Asistente Gemini">
-                <i class="fa-solid fa-sparkles animate-pulse"></i>
-            </button>
+       <div class="flex items-center gap-3 w-full sm:w-auto justify-start">
             <h1 class="text-2xl font-bold tracking-wide"><i class="fa-solid fa-graduation-cap mr-2"></i> Portal Universitario</h1>
         </div>
         <div class="flex items-center gap-3">
@@ -429,117 +400,7 @@ const firebaseConfig = {
             }
         }
 
-        function toggleChatGemini() {
-            const panel = document.getElementById('panel-chat-gemini');
-            panel.classList.toggle('-translate-x-full');
-        }
-
-        // =================================================================
-        // MOTOR DE CONEXIÓN ASISTENTE GEMINI (PASO 2)
-        // =================================================================
-        const GEMINI_API_KEY = "AQ.Ab8RN6JNXpXhiGp_nt4uNtQxClb2gWuS2dLGq0NVDHk2jBFopw"; 
-
-        function evaluarEnterChat(e) {
-            if (e.key === 'Enter') {
-                enviarMensajeGemini();
-            }
-        }
-
-        async function enviarMensajeGemini() {
-            const input = document.getElementById('input-chat-gemini');
-            const mensaje = input.value.trim();
-            
-            if (!mensaje) return;
-
-            // 1. Limpiar el input inmediatamente
-            input.value = '';
-
-            // 2. Renderizar el mensaje del usuario en el chat
-            agregarBurbujaChat(mensaje, 'usuario');
-
-            // 3. Crear y agregar el indicador de carga
-            const cuerpoChat = document.getElementById('cuerpo-chat-gemini');
-            const idLoading = "loading-" + Date.now();
-            const loadingHTML = `
-                <div id="${idLoading}" class="flex justify-start w-full fade-in">
-                    <div class="bg-slate-200 text-slate-500 p-2.5 rounded-xl max-w-[85%] shadow-sm italic flex items-center gap-2">
-                        <i class="fa-solid fa-sparkles text-indigo-500 animate-spin"></i> Gemini está pensando...
-                    </div>
-                </div>
-            `;
-            cuerpoChat.innerHTML += loadingHTML;
-            cuerpoChat.scrollTop = cuerpoChat.scrollHeight;
-
-            try {
-                // 4. Hacer la petición HTTP directa a la API oficial de Google AI Studio con el modelo actualizado (v1)
-                const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
-                const respuesta = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{ text: mensaje }]
-                        }]
-                    })
-                });
-
-                const data = await respuesta.json();
-                
-                // Eliminar indicador de carga
-                document.getElementById(idLoading).remove();
-
-                // Verificar primero si Google envió un error explícito
-                if (data.error) {
-                    console.error("Error devuelto por Google AI:", data.error);
-                    agregarBurbujaChat(`¡Ups! Google rechazó la petición. Motivo: "${data.error.message}" (Código: ${data.error.code})`, 'gemini');
-                } 
-                // Si no hay error y la respuesta es la esperada, la procesamos
-                else if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    let respuestaTexto = data.candidates[0].content.parts[0].text;
-                    agregarBurbujaChat(respuestaTexto, 'gemini');
-                } 
-                // Caso extremo de formato desconocido
-                else {
-                    agregarBurbujaChat("Lo siento, Miguel. Recibí una respuesta con un formato inesperado de la API.", 'gemini');
-                }
-            } catch (error) {
-                console.error("Error al conectar con Gemini:", error);
-                document.getElementById(idLoading).remove();
-                agregarBurbujaChat("Hubo un error de conexión con mi servidor en la nube. Revisa la consola o tu configuración de red.", 'gemini');
-            }
-        }
-
-        function agregarBurbujaChat(texto, remitente) {
-            const cuerpoChat = document.getElementById('cuerpo-chat-gemini');
-            let htmlBurbuja = "";
-
-            if (remitente === 'usuario') {
-                htmlBurbuja = `
-                    <div class="flex justify-end w-full fade-in">
-                        <div class="bg-slate-700 text-white p-3 rounded-xl max-w-[85%] shadow-sm break-words">
-                            ${texto}
-                        </div>
-                    </div>
-                `;
-            } else {
-                const textoFormateado = texto.replace(/\n/g, '<br>');
-                htmlBurbuja = `
-                    <div class="flex justify-start w-full fade-in">
-                        <div class="bg-indigo-50 border border-indigo-100 text-slate-700 p-3 rounded-xl max-w-[85%] shadow-sm break-words">
-                            <div class="flex items-center gap-1.5 font-bold text-indigo-600 mb-1">
-                                <i class="fa-solid fa-sparkles text-[10px]"></i> Asistente Gemini
-                            </div>
-                            <div>${textoFormateado}</div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            cuerpoChat.innerHTML += htmlBurbuja;
-            cuerpoChat.scrollTop = cuerpoChat.scrollHeight;
-        }
+       
 
         // --- SISTEMA MAESTRO DE CONTROL TEMPORAL ---
         function inicializarEstructuraPeriodos() {
