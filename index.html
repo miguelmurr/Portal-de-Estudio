@@ -1388,7 +1388,7 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
                         <div class="flex items-center gap-2.5 min-w-0">
                             <i class="fa-solid fa-triangle-exclamation text-amber-500 flex-shrink-0"></i>
                             <p class="text-xs text-slate-600 font-medium truncate">
-                                <span class="font-bold text-slate-800">[Tarea para HOY]</span> en <span class="font-bold">${infoMateria.nombre}</span>: ${tarea.nombre}
+                                <span class="font-bold text-slate-800">SE ENTREGA HOY:</span> en <span class="font-bold">${infoMateria.nombre}</span>: ${tarea.nombre}
                             </p>
                         </div>
                         <span class="text-[9px] bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0">Crítico</span>
@@ -1416,7 +1416,7 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
                             <div class="flex items-center gap-2.5 min-w-0">
                                 <i class="fa-solid fa-clock text-cyan-500 flex-shrink-0"></i>
                                 <p class="text-xs text-slate-600 font-medium truncate">
-                                    <span class="font-bold text-slate-800">[Próxima Clase]</span> <span class="font-bold">${infoMateria.nombre}</span> comienza en <span class="font-bold text-cyan-600">${diferencia} min</span> (${bloque.inicio}) en ${bloque.ubicacion}.
+                                    <span class="font-bold text-slate-800">PRÓXIMA CLASE:</span> <span class="font-bold">${infoMateria.nombre}</span> comienza en <span class="font-bold text-cyan-600">${diferencia} min</span> (${bloque.inicio}) en ${bloque.ubicacion}.
                                 </p>
                             </div>
                             <span class="text-[9px] bg-cyan-50 text-cyan-700 border border-cyan-100 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0 animate-pulse">Entrando</span>
