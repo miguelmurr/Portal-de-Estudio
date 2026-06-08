@@ -1623,16 +1623,28 @@ const firebaseConfig = {
             document.getElementById('time-ubicacion').focus();
         }
 
-           function agregarBloqueDesdeTimeline(e) {
-            e.preventDefault();
-            if (esPeriodoBloqueado) {
-                alert("Este semestre ha finalizado. No se permiten añadir bloques horarios.");
-                return;
-            }
-function cerrarTimeline() {
+           function cerrarTimeline() {
             document.getElementById('modal-timeline').style.display = 'none';
             document.getElementById('form-timeline-rapido').reset();
+            document.getElementById('wrapper-materia-manual').classList.add('hidden');
             diaTimelineActivo = null;
+        }
+
+        function evaluarMateriaOtroTimeline(valor) {
+            const wrapperManual = document.getElementById('wrapper-materia-manual');
+            const inputManual = document.getElementById('time-nombre-manual');
+            
+            if (wrapperManual && inputManual) {
+                if (valor === 'otro') {
+                    wrapperManual.classList.remove('hidden');
+                    inputManual.required = true;
+                    inputManual.focus();
+                } else {
+                    wrapperManual.classList.add('hidden');
+                    inputManual.required = false;
+                    inputManual.value = '';
+                }
+            }
         }
 
         function agregarBloqueDesdeTimeline(e) {
@@ -1646,7 +1658,7 @@ function cerrarTimeline() {
             const ubicacion = document.getElementById('time-ubicacion').value.trim();
             const repetirSemanal = document.getElementById('time-repetir').checked;
 
-            // Recolección y unificación temporal
+            // RECOLECCIÓN DEL CUADRO UNIFICADO DE TIEMPO 12H
             const hIni = document.getElementById('time-ini-h').value;
             const mIni = document.getElementById('time-ini-m').value;
             const apIni = document.getElementById('time-ini-ap').value;
