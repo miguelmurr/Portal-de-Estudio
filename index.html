@@ -33,117 +33,125 @@
 
     <main id="vista-hub" class="max-w-6xl mx-auto p-4 mt-6 fade-in">
         <header class="mb-8">
-            <h2 class="text-3xl font-black text-slate-100">¡Hola, Miguel!</h2>
-            <p class="text-slate-400 mt-1">Bienvenido a tu suite de gestión académica personal.</p>
+            <h2 class="text-3xl font-black text-zinc-100">¡Hola, Miguel!</h2>
+            <p class="text-zinc-400 mt-1">Bienvenido a tu suite de gestión académica personal.</p>
         </header>
 
-       <div class="border border-slate-800/80 bg-slate-900 rounded-2xl p-6 shadow-xl relative overflow-hidden group mb-8">
-            <div class="absolute top-0 left-0 right-0 h-1.5 bg-slate-700"></div>
+       <!-- CUADRO GENERAL: Progreso del Semestre Activo -->
+        <div class="border border-zinc-800 bg-zinc-900 rounded-2xl p-6 shadow-xl relative overflow-hidden group mb-8">
+            <div class="absolute top-0 left-0 right-0 h-1.5 bg-zinc-700"></div>
             
             <div class="flex justify-between items-start mb-2 mt-2">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-100">Progreso del Semestre</h3>
-                    <p class="text-sm text-slate-400 mt-0.5">Porcentaje de tiempo transcurrido en el periodo académico seleccionado (calculado día a día).</p>
+                    <h3 class="text-xl font-bold text-zinc-100">Progreso del Semestre</h3>
+                    <p class="text-sm text-zinc-400 mt-0.5">Porcentaje de tiempo transcurrido en el periodo académico seleccionado (calculado día a día).</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/50 p-3.5 rounded-xl border border-slate-800/60 my-4">
+            <!-- Contenedor interno -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-zinc-950/40 p-3.5 rounded-xl border border-zinc-800/60 my-4">
                 <div class="flex items-center gap-3">
-                    <div class="bg-slate-800 text-slate-300 p-2 rounded-lg flex items-center justify-center w-9 h-9 border border-slate-700/50">
+                    <div class="bg-zinc-800 text-zinc-300 p-2 rounded-lg flex items-center justify-center w-9 h-9 border border-zinc-700/50">
                         <i class="fa-solid fa-calendar-days text-base"></i>
                     </div>
                     <div>
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Periodo Activo</span>
-                        <h4 id="hub-semestre-titulo" class="text-xs font-bold text-slate-200 uppercase">Calculando...</h4>
+                        <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block">Periodo Activo</span>
+                        <h4 id="hub-semestre-titulo" class="text-xs font-bold text-zinc-200 uppercase">Calculando...</h4>
                     </div>
                 </div>
-                <div class="flex items-center sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-800/40">
+                <div class="flex items-center sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-zinc-800/40">
                     <div class="sm:text-right">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Rango de Fechas</span>
-                        <span id="hub-semestre-fechas" class="text-xs font-bold text-slate-300 bg-slate-800 px-2.5 py-0.5 rounded border border-slate-700/60 inline-block mt-0.5">Cargando...</span>
+                        <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block">Rango de Fechas</span>
+                        <span id="hub-semestre-fechas" class="text-xs font-bold text-zinc-300 bg-zinc-800 px-2.5 py-0.5 rounded border border-zinc-700/60 inline-block mt-0.5">Cargando...</span>
                     </div>
                 </div>
             </div>
             
-            <div class="space-y-2 pt-2 border-t border-slate-800/60">
+            <!-- Barra de Progreso General -->
+            <div class="space-y-2 pt-2 border-t border-zinc-800/60">
                  <div class="flex justify-between items-baseline">
-                    <span id="carrera-semestre-calculado" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Calculando...</span>
+                    <span id="carrera-semestre-calculado" class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Calculando...</span>
                     <span id="carrera-porcentaje" class="text-sm font-mono font-black text-sky-400">0.0000%</span>
                 </div>
-                <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800/30">
-                    <div id="carrera-barra" class="bg-slate-500 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
+                <div class="w-full bg-zinc-950 rounded-full h-2 overflow-hidden border border-zinc-800/30">
+                    <div id="carrera-barra" class="bg-zinc-600 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
                 </div>
             </div>
         </div>
 
+        <!-- REJILLA DE MÓDULOS DE TRABAJO -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
-            <div onclick="cambiarVista('notas')" class="border border-slate-800/80 bg-slate-900 rounded-2xl p-6 shadow-lg hover:border-indigo-500/30 transition-all cursor-pointer relative overflow-hidden group">
-                 <div class="absolute top-0 left-0 right-0 h-1.5 bg-slate-700 group-hover:bg-indigo-500 transition-colors"></div>
+            <!-- Módulo 1: Control de Notas -->
+            <div onclick="cambiarVista('notas')" class="border border-zinc-800 bg-zinc-900 rounded-2xl p-6 shadow-lg hover:border-indigo-500/30 transition-all cursor-pointer relative overflow-hidden group">
+                 <div class="absolute top-0 left-0 right-0 h-1.5 bg-zinc-700 group-hover:bg-indigo-500 transition-colors"></div>
                 <div class="flex justify-between items-start mb-4 mt-2">
-                    <h3 class="text-xl font-bold text-slate-100">Control de Notas</h3>
-                    <i class="fa-solid fa-chart-pie text-slate-400 text-2xl transition-colors group-hover:text-indigo-400"></i>
+                    <h3 class="text-xl font-bold text-zinc-100">Control de Notas</h3>
+                    <i class="fa-solid fa-chart-pie text-zinc-400 text-2xl transition-colors group-hover:text-indigo-400"></i>
                 </div>
-                <p class="text-sm text-slate-400 mb-6">Gestiona tus cortes, parciales y revisa tu estado de competencia por materia.</p>
+                <p class="text-sm text-zinc-400 mb-6">Gestiona tus cortes, parciales y revisa tu estado de competencia por materia.</p>
                 
-                <div class="space-y-3 pt-2 border-t border-slate-800/60">
+                <div class="space-y-3 pt-2 border-t border-zinc-800/60">
                     <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Promedio Global</span>
-                        <span id="hub-promedio" class="text-lg font-black text-slate-100">0.00</span>
+                        <span class="text-xs font-bold text-zinc-500 uppercase tracking-wider">Promedio Global</span>
+                        <span id="hub-promedio" class="text-lg font-black text-zinc-100">0.00</span>
                     </div>
                     <div>
-                         <div class="flex justify-between text-[11px] font-bold text-slate-500 mb-1">
+                         <div class="flex justify-between text-[11px] font-bold text-zinc-500 mb-1">
                             <span>RENDIMIENTO GENERAL</span>
-                            <span id="hub-porcentaje-texto" class="text-slate-300">0.00%</span>
+                            <span id="hub-porcentaje-texto" class="text-zinc-300">0.00%</span>
                         </div>
-                         <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800/30">
-                            <div id="hub-porcentaje-barra" class="bg-slate-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                         <div class="w-full bg-zinc-950 rounded-full h-2 overflow-hidden border border-zinc-800/30">
+                            <div id="hub-porcentaje-barra" class="bg-zinc-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                         </div>
                      </div>
                 </div>
             </div>
 
-            <div onclick="cambiarVista('actividades')" class="border border-slate-800/80 bg-slate-900 rounded-2xl p-6 shadow-lg hover:border-amber-500/30 transition-all cursor-pointer relative overflow-hidden group">
-                <div class="absolute top-0 left-0 right-0 h-1.5 bg-slate-700 group-hover:bg-amber-500 transition-colors"></div>
+            <!-- Módulo 2: Agenda de Actividades -->
+            <div onclick="cambiarVista('actividades')" class="border border-zinc-800 bg-zinc-900 rounded-2xl p-6 shadow-lg hover:border-amber-500/30 transition-all cursor-pointer relative overflow-hidden group">
+                <div class="absolute top-0 left-0 right-0 h-1.5 bg-zinc-700 group-hover:bg-amber-500 transition-colors"></div>
                 <div class="flex justify-between items-start mb-4 mt-2">
-                    <h3 class="text-xl font-bold text-slate-100">Agenda de Actividades</h3>
-                    <i class="fa-solid fa-clock text-slate-400 text-2xl transition-colors group-hover:text-amber-400"></i>
+                    <h3 class="text-xl font-bold text-zinc-100">Agenda de Actividades</h3>
+                    <i class="fa-solid fa-clock text-zinc-400 text-2xl transition-colors group-hover:text-amber-400"></i>
                 </div>
-                 <p class="text-sm text-slate-400 mb-6">Controla tus tareas, fechas de asignación, entregas y días restantes ordenados por urgencia.</p>
+                 <p class="text-sm text-zinc-400 mb-6">Controla tus tareas, fechas de asignación, entregas y días restantes ordenados por urgencia.</p>
                 
-                <div class="pt-2 border-t border-slate-800/60 flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <div class="pt-2 border-t border-zinc-800/60 flex justify-between items-center text-xs font-bold text-zinc-500 uppercase tracking-wider">
                     <span>Tareas Activas</span>
-                    <span id="hub-total-actividades" class="text-sm font-black text-amber-400 bg-slate-950 px-2.5 py-0.5 rounded-md border border-slate-800/60">0</span>
+                    <span id="hub-total-actividades" class="text-sm font-black text-amber-400 bg-zinc-950 px-2.5 py-0.5 rounded-md border border-zinc-800/60">0</span>
                 </div>
             </div>
 
-            <div onclick="cambiarVista('horario')" class="border border-slate-800/80 bg-slate-900 rounded-2xl p-6 shadow-lg hover:border-sky-500/30 transition-all cursor-pointer relative overflow-hidden group">
-                <div class="absolute top-0 left-0 right-0 h-1.5 bg-slate-700 group-hover:bg-sky-500 transition-colors"></div>
+            <!-- Módulo 3: Horario de Clases Semanal -->
+            <div onclick="cambiarVista('horario')" class="border border-zinc-800 bg-zinc-900 rounded-2xl p-6 shadow-lg hover:border-sky-500/30 transition-all cursor-pointer relative overflow-hidden group">
+                <div class="absolute top-0 left-0 right-0 h-1.5 bg-zinc-700 group-hover:bg-sky-500 transition-colors"></div>
                 <div class="flex justify-between items-start mb-4 mt-2">
-                    <h3 class="text-xl font-bold text-slate-100">Horario de Clases</h3>
-                    <i class="fa-solid fa-calendar-days text-slate-400 text-2xl transition-colors group-hover:text-sky-400"></i>
+                    <h3 class="text-xl font-bold text-zinc-100">Horario de Clases</h3>
+                    <i class="fa-solid fa-calendar-days text-zinc-400 text-2xl transition-colors group-hover:text-sky-400"></i>
                 </div>
-                <p class="text-sm text-slate-400 mb-6">Visualiza tu jornada universitaria diaria, salones asignados y enlaces de clases.</p>
+                <p class="text-sm text-zinc-400 mb-6">Visualiza tu jornada universitaria diaria, salones asignados y enlaces de clases.</p>
                 
-                <div class="pt-2 border-t border-slate-800/60 flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <div class="pt-2 border-t border-zinc-800/60 flex justify-between items-center text-xs font-bold text-zinc-500 uppercase tracking-wider">
                     <span>Estado Actual</span>
-                    <span id="hub-estado-clase" class="text-xs font-bold text-sky-400 bg-slate-950 border border-slate-800/60 px-2.5 py-0.5 rounded-md">Fuera de horario</span>
+                    <span id="hub-estado-clase" class="text-xs font-bold text-sky-400 bg-zinc-950 border border-zinc-800/60 px-2.5 py-0.5 rounded-md">Fuera de horario</span>
                 </div>
             </div>
         </div>
     </main>
 
-    <main id="vista-notes" class="max-w-6xl mx-auto p-4 mt-6 hidden fade-in">
-        <button onclick="cambiarVista('hub')" class="mb-6 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-xl text-sm font-semibold shadow transition-colors">
+    <!-- CORRECCIÓN DE ID: 'vista-notas' REESTABLECIDO PARA LA NAVEGACIÓN -->
+    <main id="vista-notas" class="max-w-6xl mx-auto p-4 mt-6 hidden fade-in">
+        <button onclick="cambiarVista('hub')" class="mb-6 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 px-4 py-2 rounded-xl text-sm font-semibold shadow transition-colors">
             <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Menú Principal
         </button>
 
-        <section class="bg-slate-900 rounded-2xl shadow-xl p-6 mb-8 border border-slate-800/80">
-            <h2 class="text-xl font-bold text-slate-100 mb-4 border-b border-slate-800 pb-2"><i class="fa-solid fa-chart-pie mr-2 text-slate-400"></i> Rendimiento Global</h2>
+        <section class="bg-zinc-900 rounded-2xl shadow-xl p-6 mb-8 border border-zinc-800">
+            <h2 class="text-xl font-bold text-zinc-100 mb-4 border-b border-zinc-800 pb-2"><i class="fa-solid fa-chart-pie mr-2 text-zinc-400"></i> Rendimiento Global</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
-                <div class="bg-slate-950/40 p-4 rounded-xl border border-slate-800/60">
-                     <p class="text-sm text-slate-400 font-semibold uppercase tracking-wider">Promedio Global Ponderado</p>
-                    <p class="text-4xl font-black text-slate-100 mt-1 transition-colors duration-300" id="promedio-global">0.00</p>
+                <div class="bg-zinc-950/40 p-4 rounded-xl border border-zinc-800/60">
+                     <p class="text-sm text-zinc-400 font-semibold uppercase tracking-wider">Promedio Global Ponderado</p>
+                    <p class="text-4xl font-black text-zinc-100 mt-1 transition-colors duration-300" id="promedio-global">0.00</p>
                 </div>
                 <div id="estado-global-card" class="p-4 rounded-xl border flex flex-col justify-center items-center transition-all duration-300">
                     <p class="text-sm font-semibold uppercase tracking-wider mb-1">Estado Actual</p>
@@ -152,29 +160,30 @@
             </div>
         </section>
 
-        <h2 class="text-xl font-bold text-slate-100 mb-4"><i class="fa-solid fa-book mr-2 text-slate-400"></i> Mis Materias</h2>
+        <h2 class="text-xl font-bold text-zinc-100 mb-4"><i class="fa-solid fa-book mr-2 text-zinc-400"></i> Mis Materias</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="materias-grid"></div>
     </main>
 
     <main id="vista-actividades" class="max-w-6xl mx-auto p-4 mt-6 hidden fade-in">
         <div class="flex flex-wrap gap-3 mb-6">
-            <button onclick="cambiarVista('hub')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-xl text-sm font-semibold shadow transition-colors flex items-center">
+            <button onclick="cambiarVista('hub')" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 px-4 py-2 rounded-xl text-sm font-semibold shadow transition-colors flex items-center">
                 <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Menú Principal
             </button>
-             <button onclick="abrirHistorial()" class="bg-emerald-950/60 hover:bg-emerald-900 text-emerald-400 border border-emerald-900/50 px-4 py-2 rounded-xl text-sm font-semibold shadow transition-colors flex items-center">
+             <button onclick="abrirHistorial()" class="bg-emerald-950/40 hover:bg-emerald-900 text-emerald-400 border border-emerald-900/50 px-4 py-2 rounded-xl text-sm font-semibold shadow transition-colors flex items-center">
                 <i class="fa-solid fa-clock-rotate-left mr-2"></i> Ver Entregadas
             </button>
         </div>
 
-        <section class="bg-slate-900 rounded-2xl shadow-xl p-6 mb-8 border border-slate-800/80">
-            <h2 class="text-xl font-bold text-slate-100 mb-4 border-b border-slate-800 pb-2">
+        <!-- SECCIÓN 1: FORMULARIO DE REGISTRO -->
+        <section class="bg-zinc-900 rounded-2xl shadow-xl p-6 mb-8 border border-zinc-800">
+            <h2 class="text-xl font-bold text-zinc-100 mb-4 border-b border-zinc-800 pb-2">
                 <i class="fa-solid fa-pen-to-square mr-2 text-amber-400"></i> Registrar Nueva Actividad
             </h2>
             <form id="form-actividad" onsubmit="agregarNuevaActividad(event)" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                 <div>
-                     <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Materia</label>
-                    <select id="reg-materia" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg outline-none text-sm font-semibold text-slate-200 focus:border-amber-500/50 transition-colors">
-                        <option value="" disabled selected class="text-slate-500">Selecciona una materia</option>
+                     <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Materia</label>
+                    <select id="reg-materia" required class="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-lg outline-none text-sm font-semibold text-zinc-200 focus:border-amber-500/50 transition-colors">
+                        <option value="" disabled selected class="text-zinc-500">Selecciona una materia</option>
                         <option value="comunicacion">Comunicación Oral y Escrita</option>
                         <option value="ciudadana">Formación Ciudadana 1</option>
                         <option value="matematicas">Fundamentos en Matemáticas</option>
@@ -184,16 +193,16 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Nombre de la Actividad</label>
-                    <input type="text" id="reg-actividad" placeholder="Ej: Taller de derivadas" required class="w-full p-2 bg-slate-950 border border-slate-800 rounded-lg outline-none text-sm text-slate-200 focus:border-amber-500/50 transition-colors">
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Nombre de la Actividad</label>
+                    <input type="text" id="reg-actividad" placeholder="Ej: Taller de derivadas" required class="w-full p-2 bg-zinc-950 border border-zinc-800 rounded-lg outline-none text-sm text-zinc-200 focus:border-amber-500/50 transition-colors">
                 </div>
                 <div>
-                     <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Fecha Asignación</label>
-                    <input type="date" id="reg-fecha-asignacion" required class="w-full p-2 bg-slate-950 border border-slate-800 rounded-lg outline-none text-sm text-slate-200 focus:border-amber-500/50 transition-colors">
+                     <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Fecha Asignación</label>
+                    <input type="date" id="reg-fecha-asignacion" required class="w-full p-2 bg-zinc-950 border border-zinc-800 rounded-lg outline-none text-sm text-zinc-200 focus:border-amber-500/50 transition-colors">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Fecha Entrega</label>
-                    <input type="date" id="reg-fecha-entrega" required class="w-full p-2 bg-slate-950 border border-slate-800 rounded-lg outline-none text-sm text-slate-200 focus:border-amber-500/50 transition-colors">
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Fecha Entrega</label>
+                    <input type="date" id="reg-fecha-entrega" required class="w-full p-2 bg-zinc-950 border border-zinc-800 rounded-lg outline-none text-sm text-zinc-200 focus:border-amber-500/50 transition-colors">
                 </div>
                 <div class="lg:col-span-4 flex justify-end mt-2">
                     <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg transition-colors text-sm w-full sm:w-auto">
@@ -203,14 +212,15 @@
             </form>
         </section>
 
-        <h2 class="text-xl font-bold text-slate-100 mb-4">
-            <i class="fa-solid fa-list-ol mr-2 text-slate-400"></i> Orden de Entrega Inteligente
+        <!-- SECCIÓN 2: TABLA DE ORDEN DE ENTREGA -->
+        <h2 class="text-xl font-bold text-zinc-100 mb-4">
+            <i class="fa-solid fa-list-ol mr-2 text-zinc-400"></i> Orden de Entrega Inteligente
         </h2>
-        <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800/80 overflow-hidden">
+        <div class="bg-zinc-900 rounded-2xl shadow-xl border border-zinc-800 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                      <thead>
-                        <tr class="bg-slate-950 text-slate-300 text-xs uppercase tracking-wider font-bold border-b border-slate-800">
+                        <tr class="bg-zinc-950 text-zinc-300 text-xs uppercase tracking-wider font-bold border-b border-zinc-800">
                             <th class="p-4 border-none">Materia</th>
                             <th class="p-4 border-none">Actividad</th>
                             <th class="p-4 border-none">Fecha Asignación</th>
@@ -219,13 +229,16 @@
                             <th class="p-4 border-none text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="tabla-actividades-body" class="divide-y divide-slate-800/60 text-sm text-slate-300">
-                       </tbody>
+                    <tbody id="tabla-actividades-body" class="divide-y divide-zinc-800/60 text-sm text-zinc-300">
+                       <!-- Renderizado dinámico -->
+                    </tbody>
                 </table>
             </div>
-            <div id="tabla-actividades-vacia" class="hidden p-8 text-center text-slate-500 font-medium bg-slate-900">
-                 <i class="fa-solid fa-clipboard-check text-3xl block mb-2 text-slate-700"></i>
+            <div id="tabla-actividades-vacia" class="hidden p-8 text-center text-zinc-500 font-medium bg-zinc-900">
+                 <i class="fa-solid fa-clipboard-check text-3xl block mb-2 text-zinc-700"></i>
                 No tienes actividades pendientes. ¡Al día!
+            </div>
+        </div>
             </div>
         </div>
     </main>
@@ -286,22 +299,24 @@
         </div>
     </main>
 
+    <!-- FASE 3: HORARIO EN MODO OSCURO GRIS GRAFITO -->
     <main id="vista-horario" class="max-w-6xl mx-auto p-4 mt-6 hidden fade-in">
         <div class="flex flex-wrap gap-3 mb-6">
-            <button onclick="cambiarVista('hub')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-xl text-sm font-semibold shadow transition-colors flex items-center">
+            <button onclick="cambiarVista('hub')" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 px-4 py-2 rounded-xl text-sm font-semibold shadow transition-colors flex items-center">
                 <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Menú Principal
             </button>
         </div>
 
-        <section class="bg-slate-900 rounded-2xl shadow-xl p-6 mb-8 border border-slate-800/80">
-            <h2 class="text-xl font-bold text-slate-100 mb-4 border-b border-slate-800 pb-2">
+        <!-- SECCIÓN 1: FORMULARIO DE REGISTRO DE BLOQUES -->
+        <section class="bg-zinc-900 rounded-2xl shadow-xl p-6 mb-8 border border-zinc-800">
+            <h2 class="text-xl font-bold text-zinc-100 mb-4 border-b border-zinc-800 pb-2">
                 <i class="fa-solid fa-calendar-plus mr-2 text-sky-400"></i> Asignar Bloque de Clase
             </h2>
             <form id="form-horario" onsubmit="agregarBloqueHorario(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Materia</label>
-                    <select id="hor-materia" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg outline-none text-sm font-semibold text-slate-200 focus:border-sky-500/50 transition-colors">
-                        <option value="" disabled selected class="text-slate-500">Selecciona materia</option>
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Materia</label>
+                    <select id="hor-materia" required class="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-lg outline-none text-sm font-semibold text-zinc-200 focus:border-sky-500/50 transition-colors">
+                        <option value="" disabled selected class="text-zinc-500">Selecciona materia</option>
                         <option value="comunicacion">Comunicación Oral y Escrita</option>
                         <option value="ciudadana">Formación Ciudadana 1</option>
                         <option value="matematicas">Fundamentos en Matemáticas</option>
@@ -311,9 +326,9 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Día de la Semana</label>
-                    <select id="hor-dia" required class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg outline-none text-sm font-semibold text-slate-200 focus:border-sky-500/50 transition-colors">
-                        <option value="" disabled selected class="text-slate-500">Selecciona día</option>
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Día de la Semana</label>
+                    <select id="hor-dia" required class="w-full p-2.5 bg-zinc-950 border border-zinc-800 rounded-lg outline-none text-sm font-semibold text-zinc-200 focus:border-sky-500/50 transition-colors">
+                        <option value="" disabled selected class="text-zinc-500">Selecciona día</option>
                         <option value="1">Lunes</option>
                         <option value="2">Martes</option>
                         <option value="3">Miércoles</option>
@@ -323,12 +338,12 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Hora de Inicio</label>
-                    <input type="time" id="hor-inicio" required class="w-full p-2 bg-slate-950 border border-slate-800 rounded-lg outline-none text-sm text-slate-200 focus:border-sky-500/50 transition-colors">
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Hora de Inicio</label>
+                    <input type="time" id="hor-inicio" required class="w-full p-2 bg-zinc-950 border border-zinc-800 rounded-lg outline-none text-sm text-zinc-200 focus:border-sky-500/50 transition-colors">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Ubicación / Salón</label>
-                    <input type="text" id="hor-ubicacion" placeholder="Ej: Aula 302 / Teams" required class="w-full p-2 bg-slate-950 border border-slate-800 rounded-lg outline-none text-sm text-slate-200 focus:border-sky-500/50 transition-colors">
+                    <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Ubicación / Salón</label>
+                    <input type="text" id="hor-ubicacion" placeholder="Ej: Aula 302 / Teams" required class="w-full p-2 bg-zinc-950 border border-zinc-800 rounded-lg outline-none text-sm text-zinc-200 focus:border-sky-500/50 transition-colors">
                 </div>
                 <div class="sm:col-span-2 lg:col-span-1">
                     <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-xl font-semibold shadow-md transition-colors text-sm w-full">
@@ -338,8 +353,9 @@
             </form>
         </section>
 
-        <h2 class="text-xl font-bold text-slate-100 mb-4">
-            <i class="fa-solid fa-calendar-week mr-2 text-slate-400"></i> Mi Agenda Universitaria Semanal
+        <!-- SECCIÓN 2: GRID DE LA AGENDA SEMANAL COMPLETA -->
+        <h2 class="text-xl font-bold text-zinc-100 mb-4">
+            <i class="fa-solid fa-calendar-week mr-2 text-zinc-400"></i> Mi Agenda Universitaria Semanal
         </h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4" id="contenedor-grid-semanal">
