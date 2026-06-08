@@ -860,24 +860,24 @@ const firebaseConfig = {
                     listaActividades = [];
                 }
                 renderizarTablaActividades();
-                renderizarDashboard(); // MAGIA: Si completas una tarea, tu nota global se recalcula al instante.
-                evaluarAlertasInmediatas(); // Sincronización instantánea del banner de alertas
+                renderizarDashboard();
+                evaluarAlertasInmediatas(); // Sincronización reactiva por cambio de actividades
             });
-
-            // ESCUCHA EN TIEMPO REAL DEL HORARIO SEMANAL (PASO 3)
+// ESCUCHA EN TIEMPO REAL DEL HORARIO SEMANAL (PASO 3)
             if (unsubscribeHorario) unsubscribeHorario();
-            const docHorarioId = (periodoActivoId === "PRIMER SEMESTRE") ? "horario" : "horario_" + periodoActivoId.replace(/ /g, "_");
-            
-            unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapshot((doc) => {
+const docHorarioId = (periodoActivoId === "PRIMER SEMESTRE") ? "horario" : "horario_" + periodoActivoId.replace(/ /g, "_");
+unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapshot((doc) => {
                 if (doc.exists) {
                     listaHorarios = doc.data().lista || [];
                 } else {
                     listaHorarios = [];
+              
                 }
                 if (!document.getElementById('vista-horario').classList.contains('hidden')) {
                     renderizarEstructuraHorario();
                 }
                 evaluarClaseActualHub();
+                evaluarAlertasInmediatas(); // Sincronización reactiva por cambio de horarios (Arregla bug de reinicio)
             });
         }
 
@@ -1009,29 +1009,36 @@ const firebaseConfig = {
 
                     contenedorNotas.innerHTML += `
                         <div class="flex flex-col sm:flex-row justify-between items-center bg-white/90 p-4 rounded-xl shadow-sm border ${tema.borderStrong} gap-4 transition-all hover:shadow-md fade-in">
+                           
                             <div class="flex-grow w-full">
                                 <p class="font-bold text-slate-700 text-sm line-clamp-1">${tarea.nombre}</p>
                                 <p class="text-[10px] text-slate-400 font-mono mt-0.5"><i class="fa-regular fa-calendar mr-1"></i> Entregada: ${tarea.fechaEntrega}</p>
+                    
                             </div>
                             <div class="flex gap-3 w-full sm:w-auto">
                                 <div>
+                            
                                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nota (0-5)</label>
                                     <input type="number" min="0" max="5" step="0.1" 
-                                        oninput="guardarNotaTemporal('${tarea.id}', 'nota', this.value)" 
+                                        oninput="guardarNotaTemporal('${tarea.id}', 'nota', this)" 
                                         value="${notaVal}" 
                                         ${disabledAttr}
+                    
                                         class="w-20 p-2 text-sm border border-slate-200 rounded-lg outline-none font-bold text-slate-700 text-center ${tema.focusRing}">
                                 </div>
                                 <div>
+      
                                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">% Valor</label>
                                     <div class="relative">
+                          
                                         <input type="number" min="0" max="100" step="1" 
-                                            oninput="guardarNotaTemporal('${tarea.id}', 'porcentaje', this.value)" 
+                                            oninput="guardarNotaTemporal('${tarea.id}', 'porcentaje', this)" 
                                             value="${porcVal}" 
                                             ${disabledAttr}
                                             class="w-20 p-2 pr-5 text-sm border border-slate-200 rounded-lg outline-none font-bold text-slate-700 text-center ${tema.focusRing}">
                                         <span class="absolute right-2 top-2 text-xs font-bold text-slate-400">%</span>
                                     </div>
+        
                                 </div>
                             </div>
                         </div>
@@ -1043,9 +1050,38 @@ const firebaseConfig = {
             document.getElementById('modal-notas').style.display = 'flex';
         }
 
-        function guardarNotaTemporal(idTarea, campo, valor) {
-            let valNum = parseFloat(valor);
-            if (isNaN(valNum)) valNum = 0;
+       function guardarNotaTemporal(idTarea, campo, inputEl) {
+            let rawVal = inputEl.value;
+            let valNum = parseFloat(rawVal);
+            
+            if (campo === 'nota') {
+                // Extraer solo caracteres numéricos ignorando puntos previos
+                let digits = rawVal.replace(/\D/g, '');
+                
+                // Si el usuario digitó más de un número, forzar el primer carácter como entero y el resto como decimal
+                if (digits.length > 1) {
+                    rawVal = digits[0] + '.' + digits.slice(1);
+                    valNum = parseFloat(rawVal);
+                }
+                
+                if (isNaN(valNum)) valNum = 0;
+                
+                // Candado de seguridad matemático absoluto contra desbordamiento mayor a 5.0
+                if (valNum > 5) {
+                    valNum = 5;
+                    rawVal = "5";
+                }
+                
+                // Reflejar visualmente el cambio formateado en la celda del usuario en tiempo real
+                inputEl.value = rawVal;
+                
+            } else if (campo === 'porcentaje') {
+                if (isNaN(valNum)) valNum = 0;
+                if (valNum > 100) {
+                    valNum = 100;
+                    inputEl.value = "100";
+                }
+            }
             
             let tarea = listaActividades.find(t => t.id === idTarea);
             if (tarea) {
@@ -1513,21 +1549,27 @@ const firebaseConfig = {
                     `;
                 } else {
                     clasesDelDia.forEach(bloque => {
-                        const mat = estructuraBase[bloque.materiaId] || { nombre: "Desconocida", color: "slate", icono: "fa-book" };
-                        const tema = temasColor[mat.color || 'violet'];
-                        
+                        let esOtro = bloque.materiaId === 'otro';
+                        let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (estructuraBase[bloque.materiaId]?.nombre || "Materia");
+                        let colorClase = esOtro ? 'slate' : (estructuraBase[bloque.materiaId]?.color || 'violet');
+                        let tema = temasColor[colorClase] || temasColor.violet;
+           
                         // Evaluar si esta clase en específico está sucediendo en vivo
                         let esClaseEnVivo = false;
-                        if (esHoy) {
+                        if (esHoy) 
+                        {
                             let horaClase = parseInt(bloque.inicio.split(':')[0]);
                             let minClase = parseInt(bloque.inicio.split(':')[1]);
                             let horaActual = ahora.getHours();
+       
                             let minActual = ahora.getMinutes();
                             
                             let tiempoClase = (horaClase * 60) + minClase;
+             
                             let tiempoActual = (horaActual * 60) + minActual;
                             
                             // Asumimos una duración estándar universitaria de 120 minutos (2 horas) por bloque
+          
                             if (tiempoActual >= tiempoClase && tiempoActual < (tiempoClase + 120)) {
                                 esClaseEnVivo = true;
                             }
@@ -1540,12 +1582,12 @@ const firebaseConfig = {
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         `;
-
                         let bloqueHTML = `
                             <div class="group border ${tema.borderStrong} ${tema.cardBgSoft} p-3 rounded-xl relative overflow-hidden transition-all duration-300 ${liveBorde}">
                                 <div class="absolute top-0 left-0 bottom-0 w-1 ${tema.borderAccent}"></div>
+                    
                                 <div class="flex justify-between items-start gap-1">
-                                    <h4 class="font-bold text-slate-800 text-xs leading-tight line-clamp-2">${mat.nombre}</h4>
+                                    <h4 class="font-bold text-slate-800 text-xs leading-tight line-clamp-2">${nombreMostrar}</h4>
                                     ${btnBorrar}
                                 </div>
                                 <div class="mt-2 space-y-1 text-[10px] font-semibold text-slate-500">
@@ -1724,11 +1766,16 @@ const firebaseConfig = {
                     if (b.fin) {
                         [hFin, mFin] = b.fin.split(':').map(Number);
                     } else {
-                        hFin = hIni + 2; mFin = mIni; // Salvavidas registros antiguos
+                        hFin = hIni + 2; mFin = mIni;
                     }
                     let eventStartMin = (hIni * 60) + mIni;
                     let eventEndMin = (hFin * 60) + mFin;
-                    return currentSlotMin >= eventStartMin && currentSlotMin < eventEndMin;
+                    
+                    let slotStartMin = h * 60;
+                    let slotEndMin = (h + 1) * 60;
+                    
+                    // Nueva condición de intersección matemática horaria
+                    return eventStartMin < slotEndMin && eventEndMin > slotStartMin;
                 });
 
                 if (bloqueOcupado) {
@@ -1743,7 +1790,7 @@ const firebaseConfig = {
                             <div class="absolute top-0 left-0 bottom-0 w-1 ${tema.borderAccent}"></div>
                             <div>
                                 <div class="flex justify-between items-center gap-1">
-                                    <span class="font-mono font-black text-slate-500 text-[10px] bg-slate-50 px-1.5 py-0.5 rounded shadow-sm border border-slate-100">${horaStr}</span>
+                                    <span class="font-mono font-black text-sky-700 text-[10px] bg-sky-50 px-1.5 py-0.5 rounded shadow-sm border border-sky-100" title="Duración exacta de la actividad">${bloqueOcupado.inicio} - ${bloqueOcupado.fin}</span>
                                     <span class="text-[8px] font-black uppercase tracking-wider ${esFijo ? 'text-indigo-600 bg-indigo-50 border border-indigo-100' : 'text-amber-600 bg-amber-50 border border-amber-100'} px-1.5 py-0.5 rounded">
                                         ${esFijo ? 'Fijo' : 'Evento'}
                                     </span>
