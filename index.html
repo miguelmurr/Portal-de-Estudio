@@ -307,12 +307,12 @@
             </button>
         </div>
 
-        <!-- SECCIÓN 1: FORMULARIO DE REGISTRO DE BLOQUES -->
-       <section class="bg-white rounded-2xl shadow-md p-6 mb-8 border border-slate-200">
+       <!-- SECCIÓN 1: FORMULARIO DE REGISTRO DE BLOQUES OPTIMIZADO 12H -->
+        <section class="bg-white rounded-2xl shadow-md p-6 mb-8 border border-slate-200">
             <h2 class="text-xl font-bold text-slate-700 mb-4 border-b pb-2">
                  <i class="fa-solid fa-calendar-plus mr-2 text-sky-600"></i> Asignar Bloque de Clase
             </h2>
-            <form id="form-horario" onsubmit="agregarBloqueHorario(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 items-end text-xs">
+            <form id="form-horario" onsubmit="agregarBloqueHorario(event)" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 items-end text-xs">
                 <div>
                     <label class="block font-bold text-slate-500 uppercase mb-1">Materia</label>
                     <select id="hor-materia" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
@@ -337,16 +337,33 @@
                         <option value="6">Sábado</option>
                     </select>
                 </div>
+                
+                <!-- COLUMNAS TRIPLES: HORA INICIO UX -->
                 <div>
                     <label class="block font-bold text-slate-500 uppercase mb-1">Hora Inicio</label>
-                    <select id="hor-inicio-hora" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
+                    <div class="grid grid-cols-3 gap-1">
+                        <select id="hor-ini-h" required class="p-2 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200 text-center"></select>
+                        <select id="hor-ini-m" required class="p-2 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200 text-center"></select>
+                        <select id="hor-ini-ap" required class="p-1 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-600 focus:ring-2 focus:ring-sky-200 text-center">
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
                         </select>
+                    </div>
                 </div>
+
+                <!-- COLUMNAS TRIPLES: HORA SALIDA UX -->
                 <div>
                     <label class="block font-bold text-slate-500 uppercase mb-1">Hora Salida (Hasta)</label>
-                    <select id="hor-fin-hora" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
+                    <div class="grid grid-cols-3 gap-1">
+                        <select id="hor-fin-h" required class="p-2 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200 text-center"></select>
+                        <select id="hor-fin-m" required class="p-2 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200 text-center"></select>
+                        <select id="hor-fin-ap" required class="p-1 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-600 focus:ring-2 focus:ring-sky-200 text-center">
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
                         </select>
+                    </div>
                 </div>
+
                 <div>
                     <label class="block font-bold text-slate-500 uppercase mb-1">Ubicación / Salón</label>
                     <input type="text" id="hor-ubicacion" placeholder="Ej: Aula 302 / Teams" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-slate-700 focus:ring-2 focus:ring-sky-200 font-semibold">
@@ -367,10 +384,108 @@
         </div>
         
        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4" id="contenedor-grid-semanal">
-        </div>
+            </div>
     </main>
 
     <div id="modal-timeline" class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm hidden justify-center items-center z-50 p-4 fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden border border-slate-200 flex flex-col max-h-[90vh]">
+            <div class="p-4 bg-slate-800 text-white flex justify-between items-center sticky top-0 z-10">
+                <div>
+                    <h3 class="text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-clock text-sky-400"></i> Planificador Diario: <span id="timeline-dia-nombre" class="text-sky-300">Lunes</span>
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Visualiza tus bloques de clase, añade eventos temporales y gestiona tus horas libres.</p>
+                </div>
+                <button onclick="cerrarTimeline()" class="text-white hover:text-slate-300 text-2xl transition font-black">&times;</button>
+            </div>
+
+            <div class="p-6 overflow-y-auto flex-grow space-y-6 bg-slate-50">
+                <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm">
+                    <div class="flex items-center justify-between mb-3 border-b pb-2 border-slate-100">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-chart-gantt mr-1 text-slate-400"></i> Línea de Tiempo (6:00 AM - 10:00 PM)</span>
+                        <span id="txt-indicador-hoy" class="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded border border-sky-100 uppercase tracking-wider hidden animate-pulse">Viendo día de Hoy</span>
+                    </div>
+                    
+                    <div class="overflow-x-auto pb-2 flex gap-2" style="scrollbar-width: thin;" id="wrapper-timeline-horizontal">
+                        </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm">
+                    <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-plus text-sky-600"></i> Agendar Actividad en este día
+                    </h4>
+                    <form id="form-timeline-rapido" onsubmit="agregarBloqueDesdeTimeline(event)" class="space-y-4 text-xs">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 items-end">
+                            <div>
+                                <label class="block font-bold text-slate-400 uppercase mb-1">Materia o Tipo</label>
+                                <select id="time-materia" onchange="evaluarMateriaOtroTimeline(this.value)" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-100">
+                                    <option value="comunicacion">Comunicación Oral y Escrita</option>
+                                    <option value="ciudadana">Formación Ciudadana 1</option>
+                                    <option value="matematicas">Fundamentos en Matemáticas</option>
+                                    <option value="digital">Entorno Digital</option>
+                                    <option value="mercadeo">Fundamentos de Mercadeo</option>
+                                    <option value="economia">Fundamentos de Economía</option>
+                                    <option value="otro">Otro...</option>
+                                </select>
+                            </div>
+                            
+                            <div id="wrapper-materia-manual" class="hidden">
+                                <label class="block font-bold text-slate-400 uppercase mb-1">Nombre del Evento</label>
+                                <input type="text" id="time-nombre-manual" placeholder="Ej: Gimnasio / Almuerzo" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-slate-700 focus:ring-2 focus:ring-sky-100 font-semibold">
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-slate-400 uppercase mb-1">Hora Inicio</label>
+                                <div class="grid grid-cols-3 gap-1">
+                                    <select id="time-ini-h" required class="p-2 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-700 focus:ring-2 focus:ring-sky-100 text-center"></select>
+                                    <select id="time-ini-m" required class="p-2 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-700 focus:ring-2 focus:ring-sky-100 text-center"></select>
+                                    <select id="time-ini-ap" required class="p-1 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-600 focus:ring-2 focus:ring-sky-100 text-center">
+                                        <option value="AM">AM</option>
+                                        <option value="PM">PM</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-slate-400 uppercase mb-1">Hora Salida (Hasta)</label>
+                                <div class="grid grid-cols-3 gap-1">
+                                    <select id="time-fin-h" required class="p-2 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-700 focus:ring-2 focus:ring-sky-100 text-center"></select>
+                                    <select id="time-fin-m" required class="p-2 bg-slate-50 border border-slate-200 rounded-lg font-semibold text-slate-700 focus:ring-2 focus:ring-sky-100 text-center"></select>
+                                    <select id="time-fin-ap" required class="p-1 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-600 focus:ring-2 focus:ring-sky-100 text-center">
+                                        <option value="AM">AM</option>
+                                        <option value="PM">PM</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block font-bold text-slate-400 uppercase mb-1">Ubicación / Salón</label>
+                                <input type="text" id="time-ubicacion" placeholder="Ej: Aula 302 / Teams" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-slate-700 focus:ring-2 focus:ring-sky-100 font-semibold">
+                            </div>
+
+                            <div class="flex items-center h-[38px] px-2 bg-slate-50 rounded-lg border border-slate-200/60">
+                                <label class="flex items-center gap-2 cursor-pointer select-none w-full">
+                                    <input type="checkbox" id="time-repetir" checked class="w-4 h-4 text-sky-600 bg-slate-100 border-slate-300 rounded focus:ring-sky-500 cursor-pointer">
+                                    <div class="text-left">
+                                        <span class="block font-bold text-slate-700 text-[9px] uppercase tracking-wide leading-none">Repetir</span>
+                                        <span class="block text-[8px] text-slate-400 font-medium mt-0.5">Cada semana</span>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div>
+                                <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white p-2.5 h-[38px] rounded-lg font-bold shadow transition-colors w-full uppercase tracking-wider text-[10px]">
+                                    <i class="fa-solid fa-plus mr-1"></i> Fijar Actividad
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-notas" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50 p-4 fade-in">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden border border-slate-200 flex flex-col max-h-[90vh]">
             <div class="p-4 bg-slate-800 text-white flex justify-between items-center sticky top-0 z-10">
                 <div>
@@ -1422,51 +1537,44 @@ const firebaseConfig = {
         }
 
         // CONTROL INTEGRADO UX: POBLADO DE HORAS E INPUT DINÁMICO (PUNTOS 1, 3 Y 4)
+       // MOTOR DE ARQUITECTURA UX: CONFIGURACIÓN COHERENTE 12H (PUNTO 1 Y 4)
         function poblarSelectoresHorasTimeline() {
-            const selectInicio = document.getElementById('time-inicio-hora');
-            const selectFin = document.getElementById('time-fin-hora');
-            const mainInicio = document.getElementById('hor-inicio-hora');
-            const mainFin = document.getElementById('hor-fin-hora');
-            
-            function generarOpciones(selIn, selFi) {
-                if (!selIn || !selFi) return;
-                selIn.innerHTML = '';
-                selFi.innerHTML = '';
-                for (let h = 6; h <= 22; h++) {
-                    let horaFormato = h.toString().padStart(2, '0');
-                    if (h < 22) selIn.innerHTML += `<option value="${horaFormato}:00">${horaFormato}:00</option>`;
-                    if (h > 6) selFi.innerHTML += `<option value="${horaFormato}:00">${horaFormato}:00</option>`;
-                    if (h < 22) {
-                        selIn.innerHTML += `<option value="${horaFormato}:30">${horaFormato}:30</option>`;
-                        selFi.innerHTML += `<option value="${horaFormato}:30">${horaFormato}:30</option>`;
-                    }
+            const horasIds = ['hor-ini-h', 'hor-fin-h', 'time-ini-h', 'time-fin-h'];
+            const minutosIds = ['hor-ini-m', 'hor-fin-m', 'time-ini-m', 'time-fin-m'];
+
+            // Llenar selectores de horas (1 al 12)
+            horasIds.forEach(id => {
+                const selectEl = document.getElementById(id);
+                if (!selectEl) return;
+                selectEl.innerHTML = '';
+                for (let h = 1; h <= 12; h++) {
+                    selectEl.innerHTML += `<option value="${h}">${h}</option>`;
                 }
-                selFi.selectedIndex = 1;
-            }
-            
-            generarOpciones(selectInicio, selectFin);
-            generarOpciones(mainInicio, mainFin);
+            });
+
+            // Llenar selectores de minutos en múltiplos estrictos de 5 (00 a 55)
+            minutosIds.forEach(id => {
+                const selectEl = document.getElementById(id);
+                if (!selectEl) return;
+                selectEl.innerHTML = '';
+                for (let m = 0; m < 60; m += 5) {
+                    let minStr = m.toString().padStart(2, '0');
+                    selectEl.innerHTML += `<option value="${minStr}">${minStr}</option>`;
+                }
+            });
+
+            // Pre-configurar valores iniciales cómodos por defecto
+            if (document.getElementById('hor-ini-h')) document.getElementById('hor-ini-h').value = "6";
+            if (document.getElementById('hor-fin-h')) document.getElementById('hor-fin-h').value = "8";
+            if (document.getElementById('hor-fin-ap')) document.getElementById('hor-fin-ap').value = "AM";
         }
 
-        function evaluarMateriaOtroTimeline(valor) {
-            const wrapperManual = document.getElementById('wrapper-materia-manual');
-            const inputManual = document.getElementById('time-nombre-manual');
-            
-            if (valor === 'otro') {
-                wrapperManual.classList.remove('hidden');
-                inputManual.required = true;
-                inputManual.focus();
-            } else {
-                wrapperManual.classList.add('hidden');
-                inputManual.required = false;
-                inputManual.value = '';
-            }
-        }
-
-        function cerrarTimeline() {
-            document.getElementById('modal-timeline').style.display = 'none';
-            document.getElementById('form-timeline-rapido').reset();
-            diaTimelineActivo = null;
+        // Helper de traducción invisible: Convierte el combo de 3 columnas 12H a formato 24H para la Base de Datos
+        function convertir12a24(hora, minuto, ampm) {
+            let h = parseInt(hora);
+            if (ampm === "PM" && h < 12) h += 12;
+            if (ampm === "AM" && h === 12) h = 0;
+            return h.toString().padStart(2, '0') + ":" + minuto;
         }
 
         function renderizarTimelineHorizontal() {
@@ -1476,42 +1584,35 @@ const firebaseConfig = {
             let clasesDelDia = listaHorarios.filter(b => b.dia === diaTimelineActivo);
             let targetScrollElementId = null;
 
-            // Obtener datos reales del reloj para el auto-enfoque (Punto 2)
             const ahora = new Date();
             const horaActualSistema = ahora.getHours();
-            const diaActualSistema = ahora.getDay(); // 1=Lunes, 2=Martes...
+            const diaActualSistema = ahora.getDay(); 
 
-            // Renderizar slots de 1 hora desde las 6:00 AM (6) hasta las 10:00 PM (22)
+            // Construir slots de una hora (De 6:00 AM a 10:00 PM)
             for (let h = 6; h <= 21; h++) {
                 let horaStr = h.toString().padStart(2, '0') + ':00';
                 let currentSlotMin = h * 60;
 
-                // Capturar el primer bloque de hora anterior o igual al del sistema para el auto-scroll
+                // Solo activar el marcador de scroll si coincide con el día de hoy real
                 if (parseInt(diaTimelineActivo) === diaActualSistema && h === horaActualSistema) {
                     targetScrollElementId = `slot-timeline-${h}`;
                 } else if (parseInt(diaTimelineActivo) === diaActualSistema && h === 6 && horaActualSistema < 6) {
-                    targetScrollElementId = `slot-timeline-6`; // Si madrugas, enfoca el inicio
+                    targetScrollElementId = `slot-timeline-6`;
                 } else if (parseInt(diaTimelineActivo) === diaActualSistema && h === 21 && horaActualSistema > 21) {
-                    targetScrollElementId = `slot-timeline-21`; // Si es tarde, enfoca la noche
+                    targetScrollElementId = `slot-timeline-21`;
                 }
 
-                // Evaluar si hay alguna actividad cubriendo este slot con escudo protector de datos viejos
                 let bloqueOcupado = clasesDelDia.find(b => {
                     if (!b.inicio) return false;
                     let [hIni, mIni] = b.inicio.split(':').map(Number);
                     let hFin, mFin;
-                    
                     if (b.fin) {
                         [hFin, mFin] = b.fin.split(':').map(Number);
                     } else {
-                        // SALVAVIDAS: Si es un registro viejo de Firebase, asume 2 horas estándar por defecto
-                        hFin = hIni + 2;
-                        mFin = mIni;
+                        hFin = hIni + 2; mFin = mIni; // Salvavidas registros antiguos
                     }
-                    
                     let eventStartMin = (hIni * 60) + mIni;
                     let eventEndMin = (hFin * 60) + mFin;
-
                     return currentSlotMin >= eventStartMin && currentSlotMin < eventEndMin;
                 });
 
@@ -1527,7 +1628,7 @@ const firebaseConfig = {
                             <div class="absolute top-0 left-0 bottom-0 w-1 ${tema.borderAccent}"></div>
                             <div>
                                 <div class="flex justify-between items-center gap-1">
-                                    <span class="font-mono font-black text-slate-500 text-[10px] bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">${horaStr}</span>
+                                    <span class="font-mono font-black text-slate-500 text-[10px] bg-slate-50 px-1.5 py-0.5 rounded shadow-sm border border-slate-100">${horaStr}</span>
                                     <span class="text-[8px] font-black uppercase tracking-wider ${esFijo ? 'text-indigo-600 bg-indigo-50 border border-indigo-100' : 'text-amber-600 bg-amber-50 border border-amber-100'} px-1.5 py-0.5 rounded">
                                         ${esFijo ? 'Fijo' : 'Evento'}
                                     </span>
@@ -1543,7 +1644,6 @@ const firebaseConfig = {
                         </div>
                     `;
                 } else {
-                    // Mapeo automático de Horas Libres con Inserción Rápida (Punto 1)
                     wrapper.innerHTML += `
                         <div id="slot-timeline-${h}" onclick="prepararFormularioTimeline('${horaStr}')" class="flex-shrink-0 w-44 border border-dashed border-slate-200 bg-slate-50/50 hover:bg-sky-50/30 hover:border-sky-300/60 p-3 rounded-xl flex flex-col justify-between items-center text-center cursor-pointer transition-all min-h-[96px] group shadow-inner">
                             <span class="font-mono font-bold text-slate-400 text-[10px] bg-white px-1.5 py-0.5 rounded border border-slate-100">${horaStr}</span>
@@ -1556,36 +1656,48 @@ const firebaseConfig = {
                 }
             }
 
-            // MOTOR DE SCROLL INTELIGENTE AUTOMÁTICO (PUNTO 2)
+            // REPARACIÓN DEFINITIVA DEL BUG DE SCROLL RESIDUAL (PUNTO 2)
+            const elIndicador = document.getElementById('txt-indicador-hoy');
             if (targetScrollElementId) {
+                if (elIndicador) elIndicador.classList.remove('hidden');
                 setTimeout(() => {
                     const elSlot = document.getElementById(targetScrollElementId);
-                    if (elSlot) {
-                        wrapper.scrollLeft = elSlot.offsetLeft - wrapper.offsetLeft - 16; // Margen estético de encuadre
-                    }
+                    if (elSlot) wrapper.scrollLeft = elSlot.offsetLeft - wrapper.offsetLeft - 16;
                 }, 150);
+            } else {
+                if (elIndicador) elIndicador.classList.add('hidden');
+                wrapper.scrollLeft = 0; // Si abres otro día, obliga a la barra a arrancar limpio en las 6:00 AM
             }
         }
 
-        function prepararFormularioTimeline(horaSeleccionada) {
-            document.getElementById('time-inicio-hora').value = horaSeleccionada;
+        // Inserción Inteligente: Traduce las celdas de 24H y pre-selecciona automáticamente los 3 desplegables 12H
+        function prepararFormularioTimeline(hora24) {
+            let [h, m] = hora24.split(':').map(Number);
             
-            // UX: Autocalcular hora de salida coherente (+1 hora y media por defecto)
-            let [h, m] = horaSeleccionada.split(':').map(Number);
-            let hFin = h + 1;
-            let mFin = m + 30;
-            if (mFin >= 60) { hFin += 1; mFin = 0; }
-            document.getElementById('time-fin-hora').value = hFin.toString().padStart(2, '0') + ':' + mFin.toString().padStart(2, '0');
+            let apIni = h >= 12 ? "PM" : "AM";
+            let h12Ini = h % 12;
+            if (h12Ini === 0) h12Ini = 12;
             
+            document.getElementById('time-ini-h').value = h12Ini;
+            document.getElementById('time-ini-m').value = m.toString().padStart(2, '0');
+            document.getElementById('time-ini-ap').value = apIni;
+
+            // Autocalcular fin estándar sugerido (+1 hora y media)
+            let hFin24 = h + 1;
+            let mFin24 = m + 30;
+            if (mFin24 >= 60) { hFin24 += 1; mFin24 -= 60; }
+            if (hFin24 > 22) hFin24 = 22;
+
+            let apFin = hFin24 >= 12 ? "PM" : "AM";
+            let h12Fin = hFin24 % 12;
+            if (h12Fin === 0) h12Fin = 12;
+
+            document.getElementById('time-fin-h').value = h12Fin;
+            document.getElementById('time-fin-m').value = mFin24.toString().padStart(2, '0');
+            document.getElementById('time-fin-ap').value = apFin;
+
             document.getElementById('time-ubicacion').focus();
         }
-
-        function agregarBloqueDesdeTimeline(e) {
-            e.preventDefault();
-            if (esPeriodoBloqueado) {
-                alert("Este semestre ha finalizado. No se permiten añadir bloques horarios.");
-                return;
-            }
 
             const materiaId = document.getElementById('time-materia').value;
             const horaInicio = document.getElementById('time-inicio-hora').value;
