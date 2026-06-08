@@ -308,14 +308,14 @@
         </div>
 
         <!-- SECCIÓN 1: FORMULARIO DE REGISTRO DE BLOQUES -->
-        <section class="bg-white rounded-2xl shadow-md p-6 mb-8 border border-slate-200">
+       <section class="bg-white rounded-2xl shadow-md p-6 mb-8 border border-slate-200">
             <h2 class="text-xl font-bold text-slate-700 mb-4 border-b pb-2">
-                <i class="fa-solid fa-calendar-plus mr-2 text-sky-600"></i> Asignar Bloque de Clase
+                 <i class="fa-solid fa-calendar-plus mr-2 text-sky-600"></i> Asignar Bloque de Clase
             </h2>
-            <form id="form-horario" onsubmit="agregarBloqueHorario(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+            <form id="form-horario" onsubmit="agregarBloqueHorario(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 items-end text-xs">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Materia</label>
-                    <select id="hor-materia" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
+                    <label class="block font-bold text-slate-500 uppercase mb-1">Materia</label>
+                    <select id="hor-materia" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
                         <option value="" disabled selected>Selecciona materia</option>
                         <option value="comunicacion">Comunicación Oral y Escrita</option>
                         <option value="ciudadana">Formación Ciudadana 1</option>
@@ -326,8 +326,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Día de la Semana</label>
-                    <select id="hor-dia" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
+                    <label class="block font-bold text-slate-500 uppercase mb-1">Día de la Semana</label>
+                    <select id="hor-dia" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
                         <option value="" disabled selected>Selecciona día</option>
                         <option value="1">Lunes</option>
                         <option value="2">Martes</option>
@@ -338,21 +338,26 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Hora de Inicio</label>
-                    <input type="time" id="hor-inicio" required class="w-full p-2 border border-slate-200 rounded-lg outline-none text-sm text-slate-700 focus:ring-2 focus:ring-sky-200">
+                    <label class="block font-bold text-slate-500 uppercase mb-1">Hora Inicio</label>
+                    <select id="hor-inicio-hora" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
+                        </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Ubicación / Salón</label>
-                    <input type="text" id="hor-ubicacion" placeholder="Ej: Aula 302 / Teams" required class="w-full p-2 border border-slate-200 rounded-lg outline-none text-sm text-slate-700 focus:ring-2 focus:ring-sky-200">
+                    <label class="block font-bold text-slate-500 uppercase mb-1">Hora Salida (Hasta)</label>
+                    <select id="hor-fin-hora" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
+                        </select>
                 </div>
-                <div class="sm:col-span-2 lg:col-span-1">
-                    <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-xl font-semibold shadow transition-colors text-sm w-full">
+                <div>
+                    <label class="block font-bold text-slate-500 uppercase mb-1">Ubicación / Salón</label>
+                    <input type="text" id="hor-ubicacion" placeholder="Ej: Aula 302 / Teams" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-slate-700 focus:ring-2 focus:ring-sky-200 font-semibold">
+                </div>
+                <div>
+                    <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white p-2.5 h-[38px] rounded-xl font-bold shadow transition-colors w-full uppercase tracking-wider text-[11px]">
                         <i class="fa-solid fa-plus mr-1"></i> Fijar Bloque
                     </button>
                 </div>
             </form>
         </section>
-
         <!-- SECCIÓN 2: GRID DE LA AGENDA SEMANAL COMPLETA -->
        <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold text-slate-700">
@@ -1203,10 +1208,8 @@ const firebaseConfig = {
         // --- CONTROLADOR DE INICIO ADAPTADO ---
         window.onload = function() {
             inicializarEstructuraPeriodos();
-           
-            // Monitoreo constante del reloj del sistema para la barra de progreso diaria
+            poblarSelectoresHorasTimeline(); // <- LLAMA A LA FÁBRICA DE HORAS PARA EL CUADRO SUPERIOR
             setInterval(procesarPeriodoActual, 60000);
-            // Monitoreo del estado de clases en vivo cada minuto
             setInterval(evaluarClaseActualHub, 60000);
         };
 
@@ -1222,15 +1225,26 @@ const firebaseConfig = {
 
             const materiaId = document.getElementById('hor-materia').value;
             const diaId = document.getElementById('hor-dia').value;
-            const horaInicio = document.getElementById('hor-inicio').value;
+            const horaInicio = document.getElementById('hor-inicio-hora').value;
+            const horaFin = document.getElementById('hor-fin-hora').value;
             const ubicacion = document.getElementById('hor-ubicacion').value.trim();
+
+            // Validación de seguridad cronológica
+            let tIni = parseInt(horaInicio.replace(':', ''));
+            let tFin = parseInt(horaFin.replace(':', ''));
+            if (tFin <= tIni) {
+                alert("Error de lógica: La hora de salida debe ser posterior a la hora de inicio.");
+                return;
+            }
 
             const nuevoBloque = {
                 id: Date.now().toString(),
                 materiaId: materiaId,
                 dia: diaId,
                 inicio: horaInicio,
-                ubicacion: ubicacion
+                fin: horaFin, // Guarda la hora de salida de la materia
+                ubicacion: ubicacion,
+                repetir: true
             };
 
             listaHorarios.push(nuevoBloque);
@@ -1411,30 +1425,27 @@ const firebaseConfig = {
         function poblarSelectoresHorasTimeline() {
             const selectInicio = document.getElementById('time-inicio-hora');
             const selectFin = document.getElementById('time-fin-hora');
+            const mainInicio = document.getElementById('hor-inicio-hora');
+            const mainFin = document.getElementById('hor-fin-hora');
             
-            selectInicio.innerHTML = '';
-            selectFin.innerHTML = '';
-
-            // Generamos las opciones desde las 6:00 AM hasta las 10:00 PM en múltiplos limpios
-            for (let h = 6; h <= 22; h++) {
-                let horaFormato = h.toString().padStart(2, '0');
-                
-                // Opción En Punto (:00 es múltiplo de 5)
-                if (h < 22) {
-                    selectInicio.innerHTML += `<option value="${horaFormato}:00">${horaFormato}:00</option>`;
+            function generarOpciones(selIn, selFi) {
+                if (!selIn || !selFi) return;
+                selIn.innerHTML = '';
+                selFi.innerHTML = '';
+                for (let h = 6; h <= 22; h++) {
+                    let horaFormato = h.toString().padStart(2, '0');
+                    if (h < 22) selIn.innerHTML += `<option value="${horaFormato}:00">${horaFormato}:00</option>`;
+                    if (h > 6) selFi.innerHTML += `<option value="${horaFormato}:00">${horaFormato}:00</option>`;
+                    if (h < 22) {
+                        selIn.innerHTML += `<option value="${horaFormato}:30">${horaFormato}:30</option>`;
+                        selFi.innerHTML += `<option value="${horaFormato}:30">${horaFormato}:30</option>`;
+                    }
                 }
-                if (h > 6) {
-                    selectFin.innerHTML += `<option value="${horaFormato}:00">${horaFormato}:00</option>`;
-                }
-
-                // Opción Media Hora (:30 es múltiplo de 5)
-                if (h < 22) {
-                    selectInicio.innerHTML += `<option value="${horaFormato}:30">${horaFormato}:30</option>`;
-                    selectFin.innerHTML += `<option value="${horaFormato}:30">${horaFormato}:30</option>`;
-                }
+                selFi.selectedIndex = 1;
             }
-            // Dejar por defecto un bloque coherente de inicio
-            selectFin.selectedIndex = 1; 
+            
+            generarOpciones(selectInicio, selectFin);
+            generarOpciones(mainInicio, mainFin);
         }
 
         function evaluarMateriaOtroTimeline(valor) {
@@ -1484,10 +1495,20 @@ const firebaseConfig = {
                     targetScrollElementId = `slot-timeline-21`; // Si es tarde, enfoca la noche
                 }
 
-                // Evaluar si hay alguna actividad que cubra este minuto exacto en el rango de inicio/salida (Punto 4)
+                // Evaluar si hay alguna actividad cubriendo este slot con escudo protector de datos viejos
                 let bloqueOcupado = clasesDelDia.find(b => {
+                    if (!b.inicio) return false;
                     let [hIni, mIni] = b.inicio.split(':').map(Number);
-                    let [hFin, mFin] = b.fin.split(':').map(Number);
+                    let hFin, mFin;
+                    
+                    if (b.fin) {
+                        [hFin, mFin] = b.fin.split(':').map(Number);
+                    } else {
+                        // SALVAVIDAS: Si es un registro viejo de Firebase, asume 2 horas estándar por defecto
+                        hFin = hIni + 2;
+                        mFin = mIni;
+                    }
+                    
                     let eventStartMin = (hIni * 60) + mIni;
                     let eventEndMin = (hFin * 60) + mFin;
 
