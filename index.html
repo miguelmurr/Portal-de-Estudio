@@ -338,31 +338,51 @@
                     </select>
                 </div>
                 
-                <!-- COLUMNAS TRIPLES: HORA INICIO UX -->
-                <div>
+                <!-- CUSTOM PICKER UNIFICADO: HORA INICIO UX -->
+                <div class="relative">
                     <label class="block font-bold text-slate-500 uppercase mb-1">Hora Inicio</label>
-                    <div class="flex items-center border border-slate-200 rounded-lg bg-slate-50 h-[38px] focus-within:ring-2 focus-within:ring-sky-200 focus-within:border-sky-300 transition-all divide-x divide-slate-200 overflow-hidden">
-                        <select id="hor-ini-h" required class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none py-1 cursor-pointer focus:bg-white"></select>
-                        <select id="hor-ini-m" required class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none py-1 cursor-pointer focus:bg-white"></select>
-                        <select id="hor-ini-ap" required class="w-full bg-transparent text-center font-bold text-slate-600 outline-none py-1 cursor-pointer focus:bg-white">
-                            <option value="AM">AM</option>
-                            <option value="PM">PM</option>
-                        </select>
+                    <input type="text" id="hor-inicio-display" placeholder="--:-- --" readonly onclick="toggleCustomPicker('dropdown-hor-ini')" required 
+                        class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 text-center cursor-pointer focus:ring-2 focus:ring-sky-200 transition-all">
+                    
+                    <!-- Tarjeta flotante con triple columna oculta -->
+                    <div id="dropdown-hor-ini" class="hidden absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl p-3 z-30 space-y-2.5 min-w-[160px]">
+                        <div class="flex items-center divide-x divide-slate-200 border border-slate-200 rounded-lg bg-slate-50 overflow-hidden h-8 text-[11px]">
+                            <select id="hor-ini-h" class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none cursor-pointer"></select>
+                            <select id="hor-ini-m" class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none cursor-pointer"></select>
+                            <select id="hor-ini-ap" class="w-full bg-transparent text-center font-bold text-slate-600 outline-none cursor-pointer">
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                        </div>
+                        <button type="button" onclick="confirmarHoraCustom('hor-inicio-display', 'hor-ini-h', 'hor-ini-m', 'hor-ini-ap', 'dropdown-hor-ini')" 
+                            class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-1 rounded-md text-[10px] uppercase tracking-wider transition-colors shadow-sm">
+                            Aceptar
+                        </button>
                     </div>
                 </div>
 
-                <div>
+                <!-- CUSTOM PICKER UNIFICADO: HORA SALIDA UX -->
+                <div class="relative">
                     <label class="block font-bold text-slate-500 uppercase mb-1">Hora Salida (Hasta)</label>
-                    <div class="flex items-center border border-slate-200 rounded-lg bg-slate-50 h-[38px] focus-within:ring-2 focus-within:ring-sky-200 focus-within:border-sky-300 transition-all divide-x divide-slate-200 overflow-hidden">
-                        <select id="hor-fin-h" required class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none py-1 cursor-pointer focus:bg-white"></select>
-                        <select id="hor-fin-m" required class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none py-1 cursor-pointer focus:bg-white"></select>
-                        <select id="hor-fin-ap" required class="w-full bg-transparent text-center font-bold text-slate-600 outline-none py-1 cursor-pointer focus:bg-white">
-                            <option value="AM">AM</option>
-                            <option value="PM">PM</option>
-                        </select>
+                    <input type="text" id="hor-fin-display" placeholder="--:-- --" readonly onclick="toggleCustomPicker('dropdown-hor-fin')" required 
+                        class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 text-center cursor-pointer focus:ring-2 focus:ring-sky-200 transition-all">
+                    
+                    <!-- Tarjeta flotante con triple columna oculta -->
+                    <div id="dropdown-hor-fin" class="hidden absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl p-3 z-30 space-y-2.5 min-w-[160px]">
+                        <div class="flex items-center divide-x divide-slate-200 border border-slate-200 rounded-lg bg-slate-50 overflow-hidden h-8 text-[11px]">
+                            <select id="hor-fin-h" class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none cursor-pointer"></select>
+                            <select id="hor-fin-m" class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none cursor-pointer"></select>
+                            <select id="hor-fin-ap" class="w-full bg-transparent text-center font-bold text-slate-600 outline-none cursor-pointer">
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
+                        </div>
+                        <button type="button" onclick="confirmarHoraCustom('hor-fin-display', 'hor-fin-h', 'hor-fin-m', 'hor-fin-ap', 'dropdown-hor-fin')" 
+                            class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-1 rounded-md text-[10px] uppercase tracking-wider transition-colors shadow-sm">
+                            Aceptar
+                        </button>
                     </div>
                 </div>
-
                 <div>
                     <label class="block font-bold text-slate-500 uppercase mb-1">Ubicación / Salón</label>
                     <input type="text" id="hor-ubicacion" placeholder="Ej: Aula 302 / Teams" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-slate-700 focus:ring-2 focus:ring-sky-200 font-semibold">
@@ -433,27 +453,45 @@
                                 <input type="text" id="time-nombre-manual" placeholder="Ej: Gimnasio / Almuerzo" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-slate-700 focus:ring-2 focus:ring-sky-100 font-semibold">
                             </div>
 
-                            <div>
+                            <div class="relative">
                                 <label class="block font-bold text-slate-400 uppercase mb-1">Hora Inicio</label>
-                                <div class="flex items-center border border-slate-200 rounded-lg bg-slate-50 h-[38px] focus-within:ring-2 focus-within:ring-sky-100 focus-within:border-sky-200 transition-all divide-x divide-slate-200 overflow-hidden">
-                                    <select id="time-ini-h" required class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none py-1 cursor-pointer focus:bg-white"></select>
-                                    <select id="time-ini-m" required class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none py-1 cursor-pointer focus:bg-white"></select>
-                                    <select id="time-ini-ap" required class="w-full bg-transparent text-center font-bold text-slate-600 outline-none py-1 cursor-pointer focus:bg-white">
-                                        <option value="AM">AM</option>
-                                        <option value="PM">PM</option>
-                                    </select>
+                                <input type="text" id="time-inicio-display" placeholder="--:-- --" readonly onclick="toggleCustomPicker('dropdown-time-ini')" required 
+                                    class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 text-center cursor-pointer focus:ring-2 focus:ring-sky-100 transition-all">
+                                
+                                <div id="dropdown-time-ini" class="hidden absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl p-3 z-30 space-y-2.5 min-w-[160px]">
+                                    <div class="flex items-center divide-x divide-slate-200 border border-slate-200 rounded-lg bg-slate-50 overflow-hidden h-8 text-[11px]">
+                                        <select id="time-ini-h" class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none cursor-pointer"></select>
+                                        <select id="time-ini-m" class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none cursor-pointer"></select>
+                                        <select id="time-ini-ap" class="w-full bg-transparent text-center font-bold text-slate-600 outline-none cursor-pointer">
+                                            <option value="AM">AM</option>
+                                            <option value="PM">PM</option>
+                                        </select>
+                                    </div>
+                                    <button type="button" onclick="confirmarHoraCustom('time-inicio-display', 'time-ini-h', 'time-ini-m', 'time-ini-ap', 'dropdown-time-ini')" 
+                                        class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-1 rounded-md text-[10px] uppercase tracking-wider transition-colors shadow-sm">
+                                        Aceptar
+                                    </button>
                                 </div>
                             </div>
 
-                            <div>
+                            <div class="relative">
                                 <label class="block font-bold text-slate-400 uppercase mb-1">Hora Salida (Hasta)</label>
-                                <div class="flex items-center border border-slate-200 rounded-lg bg-slate-50 h-[38px] focus-within:ring-2 focus-within:ring-sky-100 focus-within:border-sky-200 transition-all divide-x divide-slate-200 overflow-hidden">
-                                    <select id="time-fin-h" required class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none py-1 cursor-pointer focus:bg-white"></select>
-                                    <select id="time-fin-m" required class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none py-1 cursor-pointer focus:bg-white"></select>
-                                    <select id="time-fin-ap" required class="w-full bg-transparent text-center font-bold text-slate-600 outline-none py-1 cursor-pointer focus:bg-white">
-                                        <option value="AM">AM</option>
-                                        <option value="PM">PM</option>
-                                    </select>
+                                <input type="text" id="time-fin-display" placeholder="--:-- --" readonly onclick="toggleCustomPicker('dropdown-time-fin')" required 
+                                    class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 text-center cursor-pointer focus:ring-2 focus:ring-sky-100 transition-all">
+                                
+                                <div id="dropdown-time-fin" class="hidden absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl p-3 z-30 space-y-2.5 min-w-[160px]">
+                                    <div class="flex items-center divide-x divide-slate-200 border border-slate-200 rounded-lg bg-slate-50 overflow-hidden h-8 text-[11px]">
+                                        <select id="time-fin-h" class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none cursor-pointer"></select>
+                                        <select id="time-fin-m" class="w-full bg-transparent text-center font-semibold text-slate-700 outline-none cursor-pointer"></select>
+                                        <select id="time-fin-ap" class="w-full bg-transparent text-center font-bold text-slate-600 outline-none cursor-pointer">
+                                            <option value="AM">AM</option>
+                                            <option value="PM">PM</option>
+                                        </select>
+                                    </div>
+                                    <button type="button" onclick="confirmarHoraCustom('time-fin-display', 'time-fin-h', 'time-fin-m', 'time-fin-ap', 'dropdown-time-fin')" 
+                                        class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-1 rounded-md text-[10px] uppercase tracking-wider transition-colors shadow-sm">
+                                        Aceptar
+                                        </button>
                                 </div>
                             </div>
 
@@ -1460,13 +1498,10 @@ const firebaseConfig = {
             document.getElementById('modal-timeline').style.display = 'flex';
         }
 
-        // CONTROL INTEGRADO UX: POBLADO DE HORAS E INPUT DINÁMICO (PUNTOS 1, 3 Y 4)
-       // MOTOR DE ARQUITECTURA UX: CONFIGURACIÓN COHERENTE 12H (PUNTO 1 Y 4)
-        function poblarSelectoresHorasTimeline() {
+       function poblarSelectoresHorasTimeline() {
             const horasIds = ['hor-ini-h', 'hor-fin-h', 'time-ini-h', 'time-fin-h'];
             const minutosIds = ['hor-ini-m', 'hor-fin-m', 'time-ini-m', 'time-fin-m'];
 
-            // Llenar selectores de horas (1 al 12)
             horasIds.forEach(id => {
                 const selectEl = document.getElementById(id);
                 if (!selectEl) return;
@@ -1476,7 +1511,6 @@ const firebaseConfig = {
                 }
             });
 
-            // Llenar selectores de minutos en múltiplos estrictos de 5 (00 a 55)
             minutosIds.forEach(id => {
                 const selectEl = document.getElementById(id);
                 if (!selectEl) return;
@@ -1487,13 +1521,40 @@ const firebaseConfig = {
                 }
             });
 
-            // Pre-configurar valores iniciales cómodos por defecto
             if (document.getElementById('hor-ini-h')) document.getElementById('hor-ini-h').value = "6";
             if (document.getElementById('hor-fin-h')) document.getElementById('hor-fin-h').value = "8";
             if (document.getElementById('hor-fin-ap')) document.getElementById('hor-fin-ap').value = "AM";
+
+            // Sincronización de los cuadros de texto limpios al cargar la suite
+            if (document.getElementById('hor-inicio-display')) document.getElementById('hor-inicio-display').value = "6:00 AM";
+            if (document.getElementById('hor-fin-display')) document.getElementById('hor-fin-display').value = "8:00 AM";
+            if (document.getElementById('time-inicio-display')) document.getElementById('time-inicio-display').value = "";
+            if (document.getElementById('time-fin-display')) document.getElementById('time-fin-display').value = "";
         }
 
-        // Helper de traducción invisible: Convierte el combo de 3 columnas 12H a formato 24H para la Base de Datos
+        // LÓGICA DE APERTURA Y CONTROL FLOTANTE CUSTOM PICKER
+        function toggleCustomPicker(idDropdown) {
+            const todosLosDropdowns = ['dropdown-hor-ini', 'dropdown-hor-fin', 'dropdown-time-ini', 'dropdown-time-fin'];
+            todosLosDropdowns.forEach(id => {
+                if (id !== idDropdown) {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('hidden');
+                }
+            });
+            const target = document.getElementById(idDropdown);
+            if (target) target.classList.toggle('hidden');
+        }
+
+        function confirmarHoraCustom(idDisplay, idH, idM, idAP, idDropdown) {
+            const h = document.getElementById(idH).value;
+            const m = document.getElementById(idM).value;
+            const ap = document.getElementById(idAP).value;
+            
+            // Inyecta el texto formateado dentro del cuadro que estaba en blanco
+            document.getElementById(idDisplay).value = `${h}:${m} ${ap}`;
+            document.getElementById(idDropdown).classList.add('hidden');
+        }
+
         function convertir12a24(hora, minuto, ampm) {
             let h = parseInt(hora);
             if (ampm === "PM" && h < 12) h += 12;
@@ -1594,7 +1655,7 @@ const firebaseConfig = {
             }
         }
 
-        // Inserción Inteligente: Traduce las celdas de 24H y pre-selecciona automáticamente los 3 desplegables 12H
+       // Inserción Inteligente: Traduce las celdas de 24H, pre-selecciona y rellena los cuadros de texto unificados en el acto
         function prepararFormularioTimeline(hora24) {
             let [h, m] = hora24.split(':').map(Number);
             
@@ -1602,9 +1663,12 @@ const firebaseConfig = {
             let h12Ini = h % 12;
             if (h12Ini === 0) h12Ini = 12;
             
+            let minStrIni = m.toString().padStart(2, '0');
             document.getElementById('time-ini-h').value = h12Ini;
-            document.getElementById('time-ini-m').value = m.toString().padStart(2, '0');
+            document.getElementById('time-ini-m').value = minStrIni;
             document.getElementById('time-ini-ap').value = apIni;
+            // Sincroniza el cuadro de texto limpio de inicio
+            document.getElementById('time-inicio-display').value = `${h12Ini}:${minStrIni} ${apIni}`;
 
             // Autocalcular fin estándar sugerido (+1 hora y media)
             let hFin24 = h + 1;
@@ -1616,9 +1680,12 @@ const firebaseConfig = {
             let h12Fin = hFin24 % 12;
             if (h12Fin === 0) h12Fin = 12;
 
+            let minStrFin = mFin24.toString().padStart(2, '0');
             document.getElementById('time-fin-h').value = h12Fin;
-            document.getElementById('time-fin-m').value = mFin24.toString().padStart(2, '0');
+            document.getElementById('time-fin-m').value = minStrFin;
             document.getElementById('time-fin-ap').value = apFin;
+            // Sincroniza el cuadro de texto limpio de salida
+            document.getElementById('time-fin-display').value = `${h12Fin}:${minStrFin} ${apFin}`;
 
             document.getElementById('time-ubicacion').focus();
         }
