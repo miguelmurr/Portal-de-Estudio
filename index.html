@@ -354,14 +354,83 @@
         </section>
 
         <!-- SECCIÓN 2: GRID DE LA AGENDA SEMANAL COMPLETA -->
-        <h2 class="text-xl font-bold text-slate-700 mb-4">
-            <i class="fa-solid fa-calendar-week mr-2 text-slate-600"></i> Mi Agenda Universitaria Semanal
-        </h2>
+       <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-slate-700">
+                <i class="fa-solid fa-calendar-week mr-2 text-slate-600"></i> Mi Agenda Universitaria Semanal
+            </h2>
+            <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md uppercase tracking-wider"><i class="fa-solid fa-pointer mr-1 text-sky-500"></i> Haz clic en un día para ver Timeline</span>
+        </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4" id="contenedor-grid-semanal">
-            <!-- Cada columna representará un día (Lunes a Sábado). Se poblará vía JavaScript de forma ordenada -->
+       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4" id="contenedor-grid-semanal">
         </div>
     </main>
+
+    <div id="modal-timeline" class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm hidden justify-center items-center z-50 p-4 fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden border border-slate-200 flex flex-col max-h-[90vh]">
+            <div class="p-4 bg-slate-800 text-white flex justify-between items-center sticky top-0 z-10">
+                <div>
+                    <h3 class="text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-clock text-sky-400"></i> Planificador Diario: <span id="timeline-dia-nombre" class="text-sky-300">Lunes</span>
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Visualiza tus bloques de clase, añade eventos temporales y gestiona tus horas libres.</p>
+                </div>
+                <button onclick="cerrarTimeline()" class="text-white hover:text-slate-300 text-2xl transition font-black">&times;</button>
+            </div>
+
+            <div class="p-6 overflow-y-auto flex-grow space-y-6 bg-slate-50">
+                <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.02)]">
+                    <div class="flex items-center justify-between mb-3 border-b pb-2 border-slate-100">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider"><i class="fa-solid fa-chart-gantt mr-1 text-slate-400"></i> Línea de Tiempo (6:00 AM - 10:00 PM)</span>
+                        <span class="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded border border-sky-100 uppercase tracking-wider">Duración Bloques: 2 Horas</span>
+                    </div>
+                    
+                    <div class="overflow-x-auto pb-2 flex gap-2" style="scrollbar-width: thin;" id="wrapper-timeline-horizontal">
+                        </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200/80 shadow-[0_4px_20px_rgba(15,23,42,0.02)]">
+                    <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-plus text-sky-600"></i> Agendar en este día (<span id="form-timeline-dia-label">Lunes</span>)
+                    </h4>
+                    <form id="form-timeline-rapido" onsubmit="agregarBloqueDesdeTimeline(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 items-end text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-400 uppercase mb-1">Materia o Tipo</label>
+                            <select id="time-materia" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-100">
+                                <option value="comunicacion">Comunicación Oral y Escrita</option>
+                                <option value="ciudadana">Formación Ciudadana 1</option>
+                                <option value="matematicas">Fundamentos en Matemáticas</option>
+                                <option value="digital">Entorno Digital</option>
+                                <option value="mercadeo">Fundamentos de Mercadeo</option>
+                                <option value="economia">Fundamentos de Economía</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-400 uppercase mb-1">Hora Inicio</label>
+                            <input type="time" id="time-inicio" required class="w-full p-1.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-100">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-400 uppercase mb-1">Salón / Descripción</label>
+                            <input type="text" id="time-ubicacion" placeholder="Ej: Aula 402 / Quiz" required class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none text-slate-700 focus:ring-2 focus:ring-sky-100">
+                        </div>
+                        <div class="flex items-center h-full pb-2.5 px-1 bg-slate-50/50 rounded-lg border border-slate-100">
+                            <label class="flex items-center gap-2 cursor-pointer select-none w-full">
+                                <input type="checkbox" id="time-repetir" checked class="w-4 h-4 text-sky-600 bg-slate-100 border-slate-300 rounded focus:ring-sky-500 cursor-pointer">
+                                <div class="text-left">
+                                    <span class="block font-bold text-slate-700 text-[10px] uppercase tracking-wide">Repetir Clase</span>
+                                    <span class="block text-[9px] text-slate-400 font-medium leading-none">¿Fijo semanalmente?</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div>
+                            <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white p-2.5 rounded-lg font-bold shadow transition-colors w-full uppercase tracking-wider text-[11px]">
+                                <i class="fa-solid fa-plus mr-1"></i> Fijar Actividad
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="modal-notas" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50 p-4 fade-in">
         <div id="modal-content" class="rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transition-all duration-300">
@@ -1182,18 +1251,16 @@ const firebaseConfig = {
                 clasesDelDia.sort((a, b) => a.inicio.localeCompare(b.inicio));
 
                 let esHoy = (d === diaActualSemana);
-                let bgColumna = esHoy ? 'bg-slate-50 border-sky-300 shadow-sm' : 'bg-white border-slate-200';
+                let bgColumna = esHoy ? 'bg-slate-50/80 border-sky-400 shadow-[0_15px_30px_rgba(15,23,42,0.03)]' : 'bg-white border-slate-200/60 shadow-[0_10px_20px_rgba(0,0,0,0.01)]';
                 let badgeHoy = esHoy ? '<span class="text-[9px] bg-sky-500 text-white px-1.5 py-0.5 rounded-full font-black uppercase tracking-wider animate-pulse">Hoy</span>' : '';
-
                 let columnaHTML = `
-                    <div class="border-2 ${bgColumna} rounded-2xl p-4 flex flex-col gap-3 min-h-[300px] transition-all">
+                    <div onclick="abrirTimeline('${d}')" class="border-2 ${bgColumna} rounded-2xl p-4 flex flex-col gap-3 min-h-[300px] transition-all cursor-pointer hover:border-sky-300 hover:shadow-md group relative">
                         <div class="flex justify-between items-center border-b pb-2 mb-1 border-slate-100">
-                            <h3 class="font-bold text-slate-700 text-sm tracking-wide uppercase">${diasNombresCortos[d]}</h3>
+                            <h3 class="font-bold text-slate-700 text-sm tracking-wide uppercase group-hover:text-sky-600 transition-colors">${diasNombresCortos[d]}</h3>
                             ${badgeHoy}
                         </div>
                         <div class="flex flex-col gap-3 flex-grow overflow-y-auto" id="columna-dia-${d}">
-                            <!-- Bloques de clase inyectados aquí -->
-                        </div>
+                            </div>
                     </div>
                 `;
                 contenedor.innerHTML += columnaHTML;
@@ -1292,13 +1359,128 @@ const firebaseConfig = {
             });
 
             if (claseActual) {
-                const mat = estructuraBase[claseActual.materiaId] || { nombre: "Clase" };
+                const mat = estructuraBase[claseActual.materiaId] ||
+{ nombre: "Clase" };
                 elEstadoHub.className = "text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 rounded-md animate-pulse flex items-center gap-1";
-                elEstadoHub.innerHTML = `<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> En curso: ${mat.nombre}`;
-            } else {
+ elEstadoHub.innerHTML = `<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> En curso: ${mat.nombre}`;
+ } else {
                 elEstadoHub.className = "text-xs font-bold text-slate-500 bg-slate-50 border border-slate-100 px-2.5 py-0.5 rounded-md";
-                elEstadoHub.innerText = "Fuera de horario";
+ elEstadoHub.innerText = "Fuera de horario";
             }
+        }
+
+        // =================================================================
+        // INTERFAZ DE LÍNEA DE TIEMPO HORIZONTAL CON MAPPING DE HORAS LIBRES
+        // =================================================================
+        let diaTimelineActivo = null;
+
+        function abrirTimeline(idDia) {
+            diaTimelineActivo = idDia;
+            document.getElementById('timeline-dia-nombre').innerText = diasNombresCortos[idDia];
+            document.getElementById('form-timeline-dia-label').innerText = diasNombresCortos[idDia];
+            
+            renderizarTimelineHorizontal();
+            document.getElementById('modal-timeline').style.display = 'flex';
+        }
+
+        function cerrarTimeline() {
+            document.getElementById('modal-timeline').style.display = 'none';
+            document.getElementById('form-timeline-rapido').reset();
+            diaTimelineActivo = null;
+        }
+
+        function renderizarTimelineHorizontal() {
+            const wrapper = document.getElementById('wrapper-timeline-horizontal');
+            wrapper.innerHTML = '';
+
+            // Filtrar las actividades guardadas para este día específico
+            let clasesDelDia = listaHorarios.filter(b => b.dia === diaTimelineActivo);
+
+            // Bucle hora por hora desde las 6 (6:00 AM) hasta las 21 (9:00 PM - 10:00 PM)
+            for (let h = 6; h <= 21; h++) {
+                let horaStr = h.toString().padStart(2, '0') + ':00';
+                
+                // Buscamos si existe alguna actividad que coincida con este bloque exacto de tiempo
+                let bloqueOcupado = clasesDelDia.find(b => {
+                    let hBloque = parseInt(b.inicio.split(':')[0]);
+                    return hBloque === h;
+                });
+
+                if (bloqueOcupado) {
+                    const mat = estructuraBase[bloqueOcupado.materiaId] || { nombre: "Actividad", color: "slate" };
+                    const tema = temasColor[mat.color || 'violet'];
+                    const esFijo = bloqueOcupado.repetir !== false; // Evalúa la repetición semanal
+
+                    wrapper.innerHTML += `
+                        <div class="flex-shrink-0 w-44 border-2 ${tema.borderStrong} ${tema.cardBgSoft} p-2.5 rounded-xl flex flex-col justify-between relative overflow-hidden min-h-[90px]">
+                            <div class="absolute top-0 left-0 bottom-0 w-1 ${tema.borderAccent}"></div>
+                            <div>
+                                <div class="flex justify-between items-start gap-1">
+                                    <span class="font-mono font-black text-slate-700 text-[10px] bg-white px-1.5 py-0.5 rounded shadow-sm border border-slate-100">${horaStr}</span>
+                                    <span class="text-[8px] font-bold uppercase tracking-wider ${esFijo ? 'text-indigo-600 bg-indigo-50 border border-indigo-100' : 'text-amber-600 bg-amber-50 border border-amber-100'} px-1 rounded">
+                                        ${esFijo ? 'Clase' : 'Evento'}
+                                    </span>
+                                </div>
+                                <h4 class="font-bold text-slate-800 text-[11px] leading-tight mt-1.5 line-clamp-2">${mat.nombre}</h4>
+                            </div>
+                            <div class="text-[9px] font-bold text-slate-400 mt-1 flex items-center justify-between">
+                                <span class="line-clamp-1"><i class="fa-solid fa-location-dot text-[8px] text-slate-300"></i> ${bloqueOcupado.ubicacion}</span>
+                                <button type="button" onclick="event.stopPropagation(); eliminarBloqueHorario('${bloqueOcupado.id}'); abrirTimeline('${diaTimelineActivo}');" class="text-slate-300 hover:text-red-500 transition-colors text-[10px] p-0.5" title="Remover bloque">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Si no hay nada agendado, el sistema dibuja automáticamente una celda de Hora Libre con botón "+"
+                    wrapper.innerHTML += `
+                        <div onclick="prepararFormularioTimeline('${horaStr}')" class="flex-shrink-0 w-44 border border-dashed border-slate-200 bg-slate-50/50 hover:bg-sky-50/40 hover:border-sky-300/60 p-2.5 rounded-xl flex flex-col justify-between items-center text-center cursor-pointer transition-all min-h-[90px] group">
+                            <span class="font-mono font-bold text-slate-400 text-[10px] bg-white px-1.5 py-0.5 rounded border border-slate-100">${horaStr}</span>
+                            <div class="my-auto py-1">
+                                <i class="fa-solid fa-calendar-plus text-slate-300 group-hover:text-sky-500 text-sm transition-colors block mb-0.5"></i>
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider group-hover:text-sky-600 transition-colors">Hora Libre</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function prepararFormularioTimeline(horaSeleccionada) {
+            document.getElementById('time-inicio').value = horaSeleccionada;
+            document.getElementById('time-ubicacion').focus();
+        }
+
+        function agregarBloqueDesdeTimeline(e) {
+            e.preventDefault();
+            if (esPeriodoBloqueado) {
+                alert("Este semestre ha finalizado. No se permiten añadir bloques horarios.");
+                return;
+            }
+
+            const materiaId = document.getElementById('time-materia').value;
+            const horaInicio = document.getElementById('time-inicio').value;
+            const ubicacion = document.getElementById('time-ubicacion').value.trim();
+            const repetirSemanal = document.getElementById('time-repetir').checked; // Captura el estado del cuadrito
+
+            const nuevoBloque = {
+                id: Date.now().toString(),
+                materiaId: materiaId,
+                dia: diaTimelineActivo,
+                inicio: horaInicio,
+                ubicacion: ubicacion,
+                repetir: repetirSemanal // Guardado físico en el documento Firebase
+            };
+
+            listaHorarios.push(nuevoBloque);
+
+            const docHorarioId = (periodoActivoId === "PRIMER SEMESTRE") ? "horario" : "horario_" + periodoActivoId.replace(/ /g, "_");
+            db.collection('usuario_miguel').doc(docHorarioId).set({ lista: listaHorarios })
+                .then(() => {
+                    document.getElementById('form-timeline-rapido').reset();
+                    renderizerTimelineHorizontal(); // Redibujar al instante
+                })
+                .catch((error) => console.error("Error al guardar desde Timeline: ", error));
         }
     </script>
 </body>
