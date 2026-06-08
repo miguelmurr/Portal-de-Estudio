@@ -1602,11 +1602,10 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
                         let liveBadge = esClaseEnVivo ? '<span class="inline-block w-2 h-2 rounded-full bg-white animate-ping mr-1"></span>' : '';
                         
                         let btnBorrar = esPeriodoBloqueado ? '' : `
-                            <button onclick="event.stopPropagation(); eliminarBloqueHorario('${bloque.id}')" class="opacity-0 group-hover:opacity-100 transition-opacity text-white/60 hover:text-red-200 text-[11px] p-0.5 ml-1" title="Quitar bloque">
+                            <button onclick="event.stopPropagation(); eliminarBloqueHorario('${bloque.id}')" class="text-white/80 hover:text-red-200 text-[11px] p-0.5 ml-1" title="Quitar bloque">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         `;
-
                         let bloqueHTML = `
                             <div class="group border p-3 rounded-xl relative overflow-hidden transition-all duration-300 shadow-sm ${claseColorEstilo} ${liveBorde}">
                                 <div class="flex justify-between items-start gap-1">
@@ -1871,7 +1870,7 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
                             <div class="flex justify-between items-center gap-1">
                                 <span class="text-[8px] font-mono font-black text-white bg-white/20 px-1 rounded border border-white/10">${bloque.inicio} - ${bloque.fin}</span>
                                 <button type="button" onclick="event.stopPropagation(); eliminarBloqueHorario('${bloque.id}');"
-                                        class="opacity-0 group-hover/card:opacity-100 transition-opacity text-white/60 hover:text-red-200 text-[10px] p-0.5" title="Remover bloque">
+                                        class="text-white/80 hover:text-red-200 text-[10px] p-0.5" title="Remover bloque">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>
