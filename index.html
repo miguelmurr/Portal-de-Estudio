@@ -1340,11 +1340,20 @@ const firebaseConfig = {
 
             const materiaId = document.getElementById('hor-materia').value;
             const diaId = document.getElementById('hor-dia').value;
-            const horaInicio = document.getElementById('hor-inicio-hora').value;
-            const horaFin = document.getElementById('hor-fin-hora').value;
             const ubicacion = document.getElementById('hor-ubicacion').value.trim();
 
-            // Validación de seguridad cronológica
+            // RECOLECCIÓN Y CONVERSIÓN DE LAS 3 COLUMNAS UX
+            const hIni = document.getElementById('hor-ini-h').value;
+            const mIni = document.getElementById('hor-ini-m').value;
+            const apIni = document.getElementById('hor-ini-ap').value;
+            const horaInicio = convertir12a24(hIni, mIni, apIni);
+
+            const hFin = document.getElementById('hor-fin-h').value;
+            const mFin = document.getElementById('hor-fin-m').value;
+            const apFin = document.getElementById('hor-fin-ap').value;
+            const horaFin = convertir12a24(hFin, mFin, apFin);
+
+            // Validación de seguridad cronológica matemática
             let tIni = parseInt(horaInicio.replace(':', ''));
             let tFin = parseInt(horaFin.replace(':', ''));
             if (tFin <= tIni) {
@@ -1357,21 +1366,21 @@ const firebaseConfig = {
                 materiaId: materiaId,
                 dia: diaId,
                 inicio: horaInicio,
-                fin: horaFin, // Guarda la hora de salida de la materia
+                fin: horaFin,
                 ubicacion: ubicacion,
                 repetir: true
             };
-
+            
             listaHorarios.push(nuevoBloque);
 
             const docHorarioId = (periodoActivoId === "PRIMER SEMESTRE") ? "horario" : "horario_" + periodoActivoId.replace(/ /g, "_");
             db.collection('usuario_miguel').doc(docHorarioId).set({ lista: listaHorarios })
                 .then(() => {
                     document.getElementById('form-horario').reset();
+                    poblarSelectoresHorasTimeline(); // Devuelve las horas a 6:00 AM y 8:00 AM por defecto
                 })
                 .catch((error) => console.error("Error al guardar en horario: ", error));
         }
-
         function eliminarBloqueHorario(idBloque) {
             if (esPeriodoBloqueado) {
                 alert("Acción denegada: El periodo es de solo lectura.");
@@ -1699,11 +1708,27 @@ const firebaseConfig = {
             document.getElementById('time-ubicacion').focus();
         }
 
+           function agregarBloqueDesdeTimeline(e) {
+            e.preventDefault();
+            if (esPeriodoBloqueado) {
+                alert("Este semestre ha finalizado. No se permiten añadir bloques horarios.");
+                return;
+            }
+
             const materiaId = document.getElementById('time-materia').value;
-            const horaInicio = document.getElementById('time-inicio-hora').value;
-            const horaFin = document.getElementById('time-fin-hora').value;
             const ubicacion = document.getElementById('time-ubicacion').value.trim();
             const repetirSemanal = document.getElementById('time-repetir').checked;
+
+            // RECOLECCIÓN Y CONVERSIÓN DE LAS 3 COLUMNAS UX
+            const hIni = document.getElementById('time-ini-h').value;
+            const mIni = document.getElementById('time-ini-m').value;
+            const apIni = document.getElementById('time-ini-ap').value;
+            const horaInicio = convertir12a24(hIni, mIni, apIni);
+
+            const hFin = document.getElementById('time-fin-h').value;
+            const mFin = document.getElementById('time-fin-m').value;
+            const apFin = document.getElementById('time-fin-ap').value;
+            const horaFin = convertir12a24(hFin, mFin, apFin);
 
             // Validación matemática de seguridad de tiempos
             let tIni = parseInt(horaInicio.replace(':', ''));
@@ -1718,12 +1743,12 @@ const firebaseConfig = {
                 materiaId: materiaId,
                 dia: diaTimelineActivo,
                 inicio: horaInicio,
-                fin: horaFin, // Almacenamiento físico de duración variable (Punto 4)
+                fin: horaFin,
                 ubicacion: ubicacion,
                 repetir: repetirSemanal
             };
 
-            // Procesar el nombre manual si es la opción "Otro..." (Punto 3)
+            // Procesar el nombre manual si es la opción "Otro..."
             if (materiaId === 'otro') {
                 const nombreManual = document.getElementById('time-nombre-manual').value.trim();
                 if (!nombreManual) {
@@ -1740,6 +1765,7 @@ const firebaseConfig = {
                 .then(() => {
                     document.getElementById('form-timeline-rapido').reset();
                     document.getElementById('wrapper-materia-manual').classList.add('hidden');
+                    poblarSelectoresHorasTimeline(); // Resetea los selectores
                     renderizarTimelineHorizontal(); // Redibujar con el nuevo mapeo
                 })
                 .catch((error) => console.error("Error al guardar desde Timeline: ", error));
