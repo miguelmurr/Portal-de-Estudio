@@ -1565,55 +1565,61 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
                         </div>
                     `;
                 } else {
-                    clasesDelDia.forEach(bloque => {
+                   clasesDelDia.forEach(bloque => {
                         let esOtro = bloque.materiaId === 'otro';
                         let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (estructuraBase[bloque.materiaId]?.nombre || "Materia");
                         let colorClase = esOtro ? 'slate' : (estructuraBase[bloque.materiaId]?.color || 'violet');
-                        let tema = temasColor[colorClase] || temasColor.violet;
+
+                        // Diccionario técnico de estilos sólidos para garantizar compatibilidad con Tailwind
+                        const estilosSolidos = {
+                            violet: 'bg-purple-600 border-purple-700 text-white shadow-purple-600/10',
+                            rose: 'bg-rose-600 border-rose-700 text-white shadow-rose-600/10',
+                            amber: 'bg-amber-500 border-amber-600 text-white shadow-amber-500/10',
+                            teal: 'bg-teal-600 border-teal-700 text-white shadow-teal-600/10',
+                            sky: 'bg-sky-600 border-sky-700 text-white shadow-sky-600/10',
+                            emerald: 'bg-emerald-600 border-emerald-700 text-white shadow-emerald-600/10',
+                            slate: 'bg-slate-600 border-slate-700 text-white shadow-slate-600/10'
+                        };
+                        let claseColorEstilo = estilosSolidos[colorClase] || estilosSolidos.violet;
            
                         // Evaluar si esta clase en específico está sucediendo en vivo
                         let esClaseEnVivo = false;
-                        if (esHoy) 
-                        {
+                        if (esHoy) {
                             let horaClase = parseInt(bloque.inicio.split(':')[0]);
                             let minClase = parseInt(bloque.inicio.split(':')[1]);
                             let horaActual = ahora.getHours();
-       
                             let minActual = ahora.getMinutes();
                             
                             let tiempoClase = (horaClase * 60) + minClase;
-             
                             let tiempoActual = (horaActual * 60) + minActual;
                             
-                            // Asumimos una duración estándar universitaria de 120 minutos (2 horas) por bloque
-          
                             if (tiempoActual >= tiempoClase && tiempoActual < (tiempoClase + 120)) {
                                 esClaseEnVivo = true;
                             }
                         }
 
-                        let liveBorde = esClaseEnVivo ? 'ring-2 ring-sky-500 ring-offset-1 shadow-md scale-[1.02]' : '';
-                        let liveBadge = esClaseEnVivo ? '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping mr-1"></span>' : '';
+                        let liveBorde = esClaseEnVivo ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-800 scale-[1.02] shadow-lg animate-pulse' : '';
+                        let liveBadge = esClaseEnVivo ? '<span class="inline-block w-2 h-2 rounded-full bg-white animate-ping mr-1"></span>' : '';
+                        
                         let btnBorrar = esPeriodoBloqueado ? '' : `
-                            <button onclick="eliminarBloqueHorario('${bloque.id}')" class="opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-red-500 text-[11px] p-0.5 ml-1" title="Quitar bloque">
+                            <button onclick="event.stopPropagation(); eliminarBloqueHorario('${bloque.id}')" class="opacity-0 group-hover:opacity-100 transition-opacity text-white/60 hover:text-red-200 text-[11px] p-0.5 ml-1" title="Quitar bloque">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         `;
+
                         let bloqueHTML = `
-                            <div class="group border ${tema.borderStrong} ${tema.cardBgSoft} p-3 rounded-xl relative overflow-hidden transition-all duration-300 ${liveBorde}">
-                                <div class="absolute top-0 left-0 bottom-0 w-1 ${tema.borderAccent}"></div>
-                    
+                            <div class="group border p-3 rounded-xl relative overflow-hidden transition-all duration-300 shadow-sm ${claseColorEstilo} ${liveBorde}">
                                 <div class="flex justify-between items-start gap-1">
-                                    <h4 class="font-bold text-slate-800 text-xs leading-tight line-clamp-2">${nombreMostrar}</h4>
+                                    <h4 class="font-bold text-xs leading-tight line-clamp-2 text-white">${nombreMostrar}</h4>
                                     ${btnBorrar}
                                 </div>
-                                <div class="mt-2 space-y-1 text-[10px] font-semibold text-slate-500">
-                                    <div class="flex items-center gap-1 text-slate-600">
-                                        <i class="fa-regular fa-clock text-[9px]"></i> <span>${bloque.inicio}</span>
-                                        <span class="ml-auto flex items-center text-[9px] font-bold uppercase tracking-wider text-sky-700">${liveBadge}</span>
+                                <div class="mt-2 space-y-1 text-[10px] font-semibold text-white/80">
+                                    <div class="flex items-center gap-1">
+                                        <i class="fa-regular fa-clock text-[9px] text-white/70"></i> <span>${bloque.inicio}</span>
+                                        <span class="ml-auto flex items-center text-[9px] font-black uppercase tracking-wider text-white bg-white/20 px-1.5 py-0.5 rounded shadow-sm">${liveBadge}${esClaseEnVivo ? 'En Vivo' : ''}</span>
                                     </div>
-                                    <div class="flex items-center gap-1 text-slate-400 font-medium">
-                                        <i class="fa-solid fa-location-dot text-[9px]"></i> <span class="line-clamp-1">${bloque.ubicacion}</span>
+                                    <div class="flex items-center gap-1 text-white/70 font-medium">
+                                        <i class="fa-solid fa-location-dot text-[9px] text-white/60"></i> <span class="line-clamp-1">${bloque.ubicacion}</span>
                                     </div>
                                 </div>
                             </div>
@@ -1834,7 +1840,6 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
                 let minRelInicio = totalMinInicio - (horaInicioRuler * 60);
                 let minRelFin = totalMinFin - (horaInicioRuler * 60);
                 
-                // Forzar contención dentro de los límites de la regla (6AM a 10PM)
                 if (minRelInicio < 0) minRelInicio = 0;
                 if (minRelFin > totalMinutosTimeline) minRelFin = totalMinutosTimeline;
                 
@@ -1844,28 +1849,37 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
                 let esOtro = bloque.materiaId === 'otro';
                 let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (estructuraBase[bloque.materiaId]?.nombre || "Materia");
                 let colorClase = esOtro ? 'slate' : (estructuraBase[bloque.materiaId]?.color || 'violet');
-                let tema = temasColor[colorClase] || temasColor.violet;
+
+                // Mapeo unificado para tarjetas sólidas en el Gantt horizontal
+                const estilosSolidos = {
+                    violet: 'bg-purple-600 border-purple-700 text-white shadow-purple-600/10',
+                    rose: 'bg-rose-600 border-rose-700 text-white shadow-rose-600/10',
+                    amber: 'bg-amber-500 border-amber-600 text-white shadow-amber-500/10',
+                    teal: 'bg-teal-600 border-teal-700 text-white shadow-teal-600/10',
+                    sky: 'bg-sky-600 border-sky-700 text-white shadow-sky-600/10',
+                    emerald: 'bg-emerald-600 border-emerald-700 text-white shadow-emerald-600/10',
+                    slate: 'bg-slate-600 border-slate-700 text-white shadow-slate-600/10'
+                };
+                let claseColorEstilo = estilosSolidos[colorClase] || estilosSolidos.violet;
                 let esFijo = bloque.repetir !== false;
 
-                // Añadimos stopPropagation para que hacer clic en la tarjeta no dispare el picker de hora libre del lienzo
                 eventosHTML += `
-                    <div class="absolute border ${tema.borderStrong} bg-white p-2 rounded-xl flex flex-col justify-between shadow-sm overflow-hidden h-24 transition-all hover:shadow-md group/card" 
+                    <div class="absolute border p-2 rounded-xl flex flex-col justify-between shadow-sm overflow-hidden h-24 transition-all hover:shadow-md group/card ${claseColorEstilo}" 
                          onclick="event.stopPropagation();"
                          style="left: ${leftBlock}px; width: ${widthBlock}px; top: 6px;">
-                        <div class="absolute top-0 left-0 bottom-0 w-1 ${tema.borderAccent}"></div>
                         <div class="min-w-0">
                             <div class="flex justify-between items-center gap-1">
-                                <span class="text-[8px] font-mono font-black text-sky-700 bg-sky-50 px-1 rounded border border-sky-100">${bloque.inicio} - ${bloque.fin}</span>
+                                <span class="text-[8px] font-mono font-black text-white bg-white/20 px-1 rounded border border-white/10">${bloque.inicio} - ${bloque.fin}</span>
                                 <button type="button" onclick="event.stopPropagation(); eliminarBloqueHorario('${bloque.id}');"
-                                        class="opacity-0 group-hover/card:opacity-100 transition-opacity text-slate-300 hover:text-red-500 text-[10px] p-0.5" title="Remover bloque">
+                                        class="opacity-0 group-hover/card:opacity-100 transition-opacity text-white/60 hover:text-red-200 text-[10px] p-0.5" title="Remover bloque">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>
-                            <h4 class="font-bold text-slate-800 text-[10px] leading-tight mt-1 truncate">${nombreMostrar}</h4>
+                            <h4 class="font-bold text-white text-[10px] leading-tight mt-1 truncate">${nombreMostrar}</h4>
                         </div>
-                        <div class="text-[8px] font-semibold text-slate-400 flex items-center gap-0.5 border-t border-slate-50 pt-1 truncate">
-                            <i class="fa-solid fa-location-dot text-[7px] text-slate-300"></i>
-                            <span class="truncate">${bloque.ubicacion}</span>
+                        <div class="text-[8px] font-semibold text-white/80 flex items-center gap-0.5 border-t border-white/10 pt-1 truncate">
+                            <i class="fa-solid fa-location-dot text-[7px] text-white/60"></i>
+                            <span class="truncate text-white/90">${bloque.ubicacion}</span>
                         </div>
                     </div>
                 `;
