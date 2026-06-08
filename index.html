@@ -1863,8 +1863,8 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
                 let esFijo = bloque.repetir !== false;
 
                 eventosHTML += `
-                    <div class="absolute border p-2 rounded-xl flex flex-col justify-between shadow-sm overflow-hidden h-24 transition-all hover:shadow-md group/card ${claseColorEstilo}" 
-                         onclick="event.stopPropagation();"
+                    <div class="absolute border p-2 rounded-xl flex flex-col justify-between shadow-sm overflow-hidden h-24 transition-all hover:shadow-md group/card cursor-pointer ${claseColorEstilo}" 
+                         onclick="event.stopPropagation(); mostrarDetalleBloque('${bloque.id}');"
                          style="left: ${leftBlock}px; width: ${widthBlock}px; top: 6px;">
                         <div class="min-w-0">
                             <div class="flex justify-between items-center gap-1">
@@ -1929,11 +1929,23 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
             const clickMinutosTotales = Math.floor(clickX / pxPerMin) + (horaInicio * 60);
             
             let h = Math.floor(clickMinutosTotales / 60);
-            let m = Math.floor((clickMinutosTotales % 60) / 15) * 15; // Redondear visualmente al cuarto de hora más cercano
+            let m = Math.floor((clickMinutosTotales % 60) / 15) * 15; 
             if (h > 21) { h = 21; m = 45; }
             
             let horaStr = h.toString().padStart(2, '0') + ":" + m.toString().padStart(2, '0');
             prepararFormularioTimeline(horaStr);
+        }
+
+        // Desplegar un cuadro informativo con la totalidad de los datos para bloques compactos
+        function mostrarDetalleBloque(idBloque) {
+            const bloque = listaHorarios.find(b => b.id === idBloque);
+            if (!bloque) return;
+
+            const esOtro = bloque.materiaId === 'otro';
+            const nombreMateria = esOtro ? bloque.nombrePersonalizado : (estructuraBase[bloque.materiaId]?.nombre || "Materia Completa");
+            const tipoAsignación = bloque.repetir ? "Fijo (Asistencia Semanal)" : "Evento Extra / Temporal";
+
+            alert(`RESUMEN ACADÉMICO DEL BLOQUE\n\n📖 Asignatura: ${nombreMateria}\n⏰ Intervalo: ${bloque.inicio} - ${bloque.fin}\n📍 Ubicación / Salón: ${bloque.ubicacion}\n📌 Régimen: ${tipoAsignación}`);
         }
 
        // Inserción Inteligente: Traduce las cordenadas del Gantt, pre-selecciona y rellena los cuadros de texto unificados sin desbordamientos
