@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Académico Universitario</title>
+   <title>Control Académico Universitario</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2232/2232688.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
@@ -1273,12 +1278,19 @@ const firebaseConfig = {
             });
         }
 
-        // --- CONTROLADOR DE INICIO ADAPTADO ---
+        // --- CONTROLADOR DE INICIO ADAPTADO CON SOPORTE PWA ---
         window.onload = function() {
             inicializarEstructuraPeriodos();
-            poblarSelectoresHorasTimeline(); // <- LLAMA A LA FÁBRICA DE HORAS PARA EL CUADRO SUPERIOR
+            poblarSelectoresHorasTimeline();
             setInterval(procesarPeriodoActual, 60000);
             setInterval(evaluarClaseActualHub, 60000);
+
+            // Registro del Service Worker para habilitar la instalación como App
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(() => console.log('Motor PWA activado con éxito.'))
+                    .catch(err => console.error('Error al activar motor PWA:', err));
+            }
         };
 
         // =================================================================
