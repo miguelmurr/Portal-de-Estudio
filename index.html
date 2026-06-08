@@ -1778,8 +1778,12 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
             const pixelesPorMinuto = 2;
             const horaInicioRuler = 6;
             const horaFinRuler = 22;
-            const totalMinutosTimeline = (horaFinRuler - horaInicioRuler) * 60;
-            const anchoTotalTimeline = totalMinutosTimeline * pixelesPorMinuto;
+           const totalMinutosTimeline = (horaFinRuler - horaInicioRuler) * 60;
+            const anchoBaseTimeline = totalMinutosTimeline * pixelesPorMinuto;
+            
+            // Margen de seguridad para que las etiquetas de los extremos no se corten
+            const offsetLienzo = 40; 
+            const anchoTotalTimeline = anchoBaseTimeline + (offsetLienzo * 2);
 
             // Instanciar lienzo maestro relativo donde se posicionarán las capas
             const lienzo = document.createElement('div');
@@ -1790,7 +1794,7 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
             let rulerHTML = `<div class="absolute top-0 left-0 right-0 h-9 border-b border-slate-200/80 bg-slate-100/60 rounded-t-xl flex relative">`;
             
             for (let min = 0; min <= totalMinutosTimeline; min += 15) {
-                let leftPos = min * pixelesPorMinuto;
+                let leftPos = (min * pixelesPorMinuto) + offsetLienzo; // Aplicar margen de desplazamiento
                 let currentTotalMin = (horaInicioRuler * 60) + min;
                 let h = Math.floor(currentTotalMin / 60);
                 let m = currentTotalMin % 60;
@@ -1800,7 +1804,6 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
                 let minStr = m.toString().padStart(2, '0');
 
                 if (min % 60 === 0) {
-                    // Marcador de hora en punto (Línea extendida y texto completo)
                     rulerHTML += `
                         <div class="absolute top-0 flex flex-col items-center" style="left: ${leftPos}px; transform: translateX(-50%);">
                             <div class="w-0.5 h-2.5 bg-slate-400/80"></div>
@@ -1808,7 +1811,6 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
                         </div>
                     `;
                 } else {
-                    // Marcador de cuartos de hora (Línea corta y solo minutos para evitar amontonamiento)
                     rulerHTML += `
                         <div class="absolute top-0 flex flex-col items-center" style="left: ${leftPos}px; transform: translateX(-50%);">
                             <div class="w-px h-1.5 bg-slate-300"></div>
@@ -1823,9 +1825,8 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
             // --- FASE 2: CAPA DE BLOQUES DINÁMICOS PROPORCIONALES ---
             let eventosHTML = `<div class="absolute top-10 bottom-0 left-0 right-0 relative">`;
             
-            // Renderizar áreas clicables de fondo ("Horas Libres") en las zonas vacías se procesa al hacer clic en el lienzo, 
-            // pero para conservar la creación rápida de bloques, hacemos que todo el fondo del lienzo permita abrir el picker
-            lienzo.setAttribute('onclick', `prepararFormularioDesdeCoordenada(event, ${horaInicioRuler}, ${pixelesPorMinuto})`);
+            // Pasar la variable offsetLienzo al handler del clic para mantener sincronizada la creación manual de bloques
+            lienzo.setAttribute('onclick', `prepararFormularioDesdeCoordenada(event, ${horaInicioRuler}, ${pixelesPorMinuto}, ${offsetLienzo})`);
 
             clasesDelDia.forEach(bloque => {
                 if (!bloque.inicio || !bloque.fin) return;
@@ -1842,7 +1843,7 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
                 if (minRelInicio < 0) minRelInicio = 0;
                 if (minRelFin > totalMinutosTimeline) minRelFin = totalMinutosTimeline;
                 
-                let leftBlock = minRelInicio * pixelesPorMinuto;
+                let leftBlock = (minRelInicio * pixelesPorMinuto) + offsetLienzo; // Aplicar margen de desplazamiento
                 let widthBlock = (minRelFin - minRelInicio) * pixelesPorMinuto;
                 
                 let esOtro = bloque.materiaId === 'otro';
@@ -1892,7 +1893,7 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
                 let minRelActual = totalMinActual - (horaInicioRuler * 60);
 
                 if (minRelActual >= 0 && minRelActual <= totalMinutosTimeline) {
-                    let leftMarker = minRelActual * pixelesPorMinuto;
+                    let leftMarker = (minRelActual * pixelesPorMinuto) + offsetLienzo; // Sincronizar brújula con el margen
                     
                     let markerHTML = `
                         <div id="timeline-live-marker" class="absolute top-0 bottom-0 z-30 pointer-events-none flex flex-col items-center" style="left: ${leftMarker}px;">
@@ -1922,11 +1923,12 @@ unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapsho
             }
         }
 
-        // Función auxiliar para calcular en qué hora hizo clic el usuario dentro del espacio libre del lienzo
-        function prepararFormularioDesdeCoordenada(event, horaInicio, pxPerMin) {
+       // Función auxiliar para calcular en qué hora hizo clic el usuario dentro del espacio libre del lienzo con soporte de margen
+        function prepararFormularioDesdeCoordenada(event, horaInicio, pxPerMin, offsetCanvas) {
             const rect = event.currentTarget.getBoundingClientRect();
-            const clickX = event.clientX - rect.left + event.currentTarget.parentElement.scrollLeft;
-            const clickMinutosTotales = Math.floor(clickX / pxPerMin) + (horaInicio * 60);
+            // Restar el offset de seguridad para obtener la coordenada matemática limpia de los minutos
+            const clickX = (event.clientX - rect.left + event.currentTarget.parentElement.scrollLeft) - offsetCanvas;
+            const clickMinutosTotales = Math.floor(Math.max(0, clickX) / pxPerMin) + (horaInicio * 60);
             
             let h = Math.floor(clickMinutosTotales / 60);
             let m = Math.floor((clickMinutosTotales % 60) / 15) * 15; 
