@@ -16,7 +16,7 @@
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 24px 24px;">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen" style="background-image: radial-gradient(at 0% 0%, rgba(186, 230, 253, 0.25) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(233, 213, 255, 0.25) 0px, transparent 50%); background-attachment: fixed;">
 
     
 
@@ -41,7 +41,7 @@
         </header>
 
        <!-- CUADRO GENERAL INDEPENDIENTE: Progreso del Semestre Activo (Arriba) -->
-        <div class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm relative overflow-hidden group mb-8">
+        <div class="border border-slate-200/80 bg-white rounded-2xl p-6 shadow-[0_20px_40px_rgba(15,23,42,0.04)] relative overflow-hidden group mb-8">
             <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600"></div>
             
             <div class="flex justify-between items-start mb-2 mt-2">
@@ -86,7 +86,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
             <!-- Módulo 1: Control de Notas -->
-            <div onclick="cambiarVista('notas')" class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer relative overflow-hidden group">
+            <div onclick="cambiarVista('notas')" class="border border-slate-200/80 bg-white rounded-2xl p-6 shadow-[0_20px_40px_rgba(15,23,42,0.04)] hover:shadow-[0_30px_60px_rgba(15,23,42,0.08)] hover:-translate-y-0.5 transition-all duration-300 cursor-pointer relative overflow-hidden group">
                 <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600 group-hover:bg-indigo-600 transition-colors"></div>
                 <div class="flex justify-between items-start mb-4 mt-2">
                     <h3 class="text-xl font-bold text-slate-800">Control de Notas</h3>
@@ -112,7 +112,7 @@
             </div>
 
             <!-- Módulo 2: Agenda de Actividades -->
-            <div onclick="cambiarVista('actividades')" class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer relative overflow-hidden group">
+            <div onclick="cambiarVista('actividades')" class="border border-slate-200/80 bg-white rounded-2xl p-6 shadow-[0_20px_40px_rgba(15,23,42,0.04)] hover:shadow-[0_30px_60px_rgba(15,23,42,0.08)] hover:-translate-y-0.5 transition-all duration-300 cursor-pointer relative overflow-hidden group">
                 <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600 group-hover:bg-amber-600 transition-colors"></div>
                 <div class="flex justify-between items-start mb-4 mt-2">
                     <h3 class="text-xl font-bold text-slate-800">Agenda de Actividades</h3>
@@ -127,7 +127,7 @@
             </div>
 
             <!-- Módulo 3: Horario de Clases Semanal -->
-            <div onclick="cambiarVista('horario')" class="border border-slate-200 bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer relative overflow-hidden group">
+            <div onclick="cambiarVista('horario')" class="border border-slate-200/80 bg-white rounded-2xl p-6 shadow-[0_20px_40px_rgba(15,23,42,0.04)] hover:shadow-[0_30px_60px_rgba(15,23,42,0.08)] hover:-translate-y-0.5 transition-all duration-300 cursor-pointer relative overflow-hidden group">
                 <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600 group-hover:bg-sky-600 transition-colors"></div>
                 <div class="flex justify-between items-start mb-4 mt-2">
                     <h3 class="text-xl font-bold text-slate-800">Horario de Clases</h3>
@@ -417,14 +417,14 @@ const firebaseConfig = {
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // --- PALETA DE COLORES ELEGANTES ---
+       // --- PALETA DE COLORES ELEGANTES CON SOMBRAS PROFUNDAS (OPCIÓN B + D) ---
         const temasColor = {
-            violet: { cardBg: 'hover:border-purple-400/50', cardBgSoft: 'bg-purple-50/50', modalBgSoft: 'bg-purple-50/90', borderSoft: 'border-purple-200/40', borderAccent: 'bg-purple-700/70', borderStrong: 'border-purple-700/30', textAccent: 'text-purple-700/80', modalHeader: 'bg-purple-800/90', modalBtn: 'bg-purple-700/80 hover:bg-purple-800', focusRing: 'focus:ring-purple-200/60 focus:border-purple-400/60' },
-            rose: { cardBg: 'hover:border-rose-400/50', cardBgSoft: 'bg-rose-50/40', modalBgSoft: 'bg-rose-50/90', borderSoft: 'border-rose-200/40', borderAccent: 'bg-rose-600/60', borderStrong: 'border-rose-600/30', textAccent: 'text-rose-600/80', modalHeader: 'bg-rose-800/90', modalBtn: 'bg-rose-600/80 hover:bg-rose-700', focusRing: 'focus:ring-rose-200/60 focus:border-rose-400/60' },
-            amber: { cardBg: 'hover:border-amber-400/50', cardBgSoft: 'bg-amber-50/40', modalBgSoft: 'bg-amber-50/90', borderSoft: 'border-amber-200/40', borderAccent: 'bg-amber-600/60', borderStrong: 'border-amber-600/30', textAccent: 'text-amber-600/80', modalHeader: 'bg-amber-800/90', modalBtn: 'bg-amber-600/80 hover:bg-amber-700', focusRing: 'focus:ring-amber-200/60 focus:border-amber-400/60' },
-            teal: { cardBg: 'hover:border-teal-400/50', cardBgSoft: 'bg-teal-50/40', modalBgSoft: 'bg-teal-50/90', borderSoft: 'border-teal-200/40', borderAccent: 'bg-teal-600/60', borderStrong: 'border-teal-600/30', textAccent: 'text-teal-600/80', modalHeader: 'bg-teal-800/90', modalBtn: 'bg-teal-600/80 hover:bg-teal-700', focusRing: 'focus:ring-teal-200/60 focus:border-teal-400/60' },
-            sky: { cardBg: 'hover:border-sky-400/50', cardBgSoft: 'bg-sky-50/40', modalBgSoft: 'bg-sky-50/90', borderSoft: 'border-sky-200/40', borderAccent: 'bg-sky-600/60', borderStrong: 'border-sky-600/30', textAccent: 'text-sky-600/80', modalHeader: 'bg-sky-800/90', modalBtn: 'bg-sky-600/80 hover:bg-sky-700', focusRing: 'focus:ring-sky-200/60 focus:border-sky-400/60' },
-            emerald: { cardBg: 'hover:border-emerald-400/50', cardBgSoft: 'bg-emerald-50/40', modalBgSoft: 'bg-emerald-50/90', borderSoft: 'border-emerald-200/40', borderAccent: 'bg-emerald-600/60', borderStrong: 'border-emerald-600/30', textAccent: 'text-emerald-600/80', modalHeader: 'bg-emerald-800/90', modalBtn: 'bg-emerald-600/80 hover:bg-emerald-700', focusRing: 'focus:ring-emerald-200/60 focus:border-emerald-400/60' }
+            violet: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-purple-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-purple-50/30', modalBgSoft: 'bg-purple-50/90', borderSoft: 'border-purple-200/50', borderAccent: 'bg-purple-700/70', borderStrong: 'border-purple-700/30', textAccent: 'text-purple-700/80', modalHeader: 'bg-purple-800/90', modalBtn: 'bg-purple-700/80 hover:bg-purple-800', focusRing: 'focus:ring-purple-200/60 focus:border-purple-400/60' },
+            rose: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-rose-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-rose-50/30', modalBgSoft: 'bg-rose-50/90', borderSoft: 'border-rose-200/50', borderAccent: 'bg-rose-600/60', borderStrong: 'border-rose-600/30', textAccent: 'text-rose-600/80', modalHeader: 'bg-rose-800/90', modalBtn: 'bg-rose-600/80 hover:bg-rose-700', focusRing: 'focus:ring-rose-200/60 focus:border-rose-400/60' },
+            amber: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-amber-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-amber-50/30', modalBgSoft: 'bg-amber-50/90', borderSoft: 'border-amber-200/50', borderAccent: 'bg-amber-600/60', borderStrong: 'border-amber-600/30', textAccent: 'text-amber-600/80', modalHeader: 'bg-amber-800/90', modalBtn: 'bg-amber-600/80 hover:bg-amber-700', focusRing: 'focus:ring-amber-200/60 focus:border-amber-400/60' },
+            teal: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-teal-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-teal-50/30', modalBgSoft: 'bg-teal-50/90', borderSoft: 'border-teal-200/50', borderAccent: 'bg-teal-600/60', borderStrong: 'border-teal-600/30', textAccent: 'text-teal-600/80', modalHeader: 'bg-teal-800/90', modalBtn: 'bg-teal-600/80 hover:bg-teal-700', focusRing: 'focus:ring-teal-200/60 focus:border-teal-400/60' },
+            sky: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-sky-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-sky-50/30', modalBgSoft: 'bg-sky-50/90', borderSoft: 'border-sky-200/50', borderAccent: 'bg-sky-600/60', borderStrong: 'border-sky-600/30', textAccent: 'text-sky-600/80', modalHeader: 'bg-sky-800/90', modalBtn: 'bg-sky-600/80 hover:bg-sky-700', focusRing: 'focus:ring-sky-400/60 focus:border-sky-400/60' },
+            emerald: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-emerald-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-emerald-50/30', modalBgSoft: 'bg-emerald-50/90', borderSoft: 'border-emerald-200/50', borderAccent: 'bg-emerald-600/60', borderStrong: 'border-emerald-600/30', textAccent: 'text-emerald-600/80', modalHeader: 'bg-emerald-800/90', modalBtn: 'bg-emerald-600/80 hover:bg-emerald-700', focusRing: 'focus:ring-emerald-200/60 focus:border-emerald-400/60' }
         };
 
         const estructuraBase = {
