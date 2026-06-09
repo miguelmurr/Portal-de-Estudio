@@ -172,123 +172,128 @@
                     <h3 class="text-xl font-bold text-slate-800">Progreso del Semestre</h3>
                     <p class="text-sm text-slate-400 mt-0.5">Porcentaje de tiempo transcurrido en el periodo académico seleccionado (calculado día a día).</p>
                 </div>
-                <button onclick="abrirInformeExcelenciaPDF()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-600 transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer whitespace-nowrap self-end sm:self-auto">
-                    <i class="fa-solid fa-file-pdf text-red-400 text-sm"></i> Auditoría de Excelencia
+                <button onclick="abrirInformeExcelenciaPDF()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black px-4 py-2 rounded-xl border border-indigo-700 transition-all flex items-center gap-2 shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 cursor-pointer whitespace-nowrap self-end sm:self-auto uppercase tracking-wider">
+                    <i class="fa-solid fa-file-pdf text-white"></i> Auditoría Beca 4.85
                 </button>
             </div>
 
     <!-- VISOR DIGITAL INTERACTIVO: SIMULACIÓN VISTA PREVIA PDF -->
-    <div id="modal-pdf-informe" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden justify-center items-center z-[99999] p-0 sm:p-4 fade-in">
-        <div class="bg-slate-100 w-full max-w-5xl h-screen sm:h-[92vh] sm:rounded-2xl shadow-2xl overflow-hidden border border-slate-300 flex flex-col">
+    <div id="modal-pdf-informe" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md hidden justify-center items-center z-[99999] p-0 sm:p-4 fade-in">
+        <div class="bg-slate-200 w-full max-w-5xl h-screen sm:h-[95vh] sm:rounded-2xl shadow-2xl overflow-hidden border border-slate-400 flex flex-col relative">
+            
             <!-- Barra de herramientas del visor PDF -->
-            <div class="p-3 bg-slate-800 text-white flex justify-between items-center px-4 border-b border-slate-700 shadow-md">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-file-pdf text-red-400 text-lg"></i>
-                    <span class="text-xs font-mono tracking-wider text-slate-300">VistaPrevia_Informe_Excelencia_2026.pdf</span>
+            <div class="p-3 bg-slate-800 text-white flex justify-between items-center px-4 border-b border-slate-900 shadow-md z-10">
+                <div class="flex items-center gap-3">
+                    <div class="bg-red-500 p-1.5 rounded flex items-center justify-center"><i class="fa-solid fa-file-pdf text-white text-sm"></i></div>
+                    <span class="text-xs font-mono tracking-wider text-slate-300">Auditoria_Excelencia_Beca.pdf</span>
                 </div>
                 <div class="flex items-center gap-4">
-                    <span class="text-[11px] bg-slate-700 font-bold px-2 py-0.5 rounded text-slate-300 uppercase tracking-widest hidden md:inline-block">Modo Impresión A4 habilitado</span>
-                    <button onclick="cerrarInformeExcelenciaPDF()" class="text-slate-400 hover:text-white text-2xl transition font-black leading-none">&times;</button>
+                    <span class="text-[10px] bg-slate-700 font-bold px-2 py-1 rounded text-slate-300 uppercase tracking-widest hidden md:inline-block border border-slate-600">Páginas de Alta Densidad</span>
+                    <button onclick="cerrarInformeExcelenciaPDF()" class="text-slate-400 hover:text-red-400 hover:bg-slate-700 w-8 h-8 rounded flex items-center justify-center transition-colors font-black leading-none text-xl">&times;</button>
                 </div>
             </div>
 
-            <!-- Cuerpo del documento digital simulado -->
-            <div class="p-4 sm:p-8 overflow-y-auto flex-grow space-y-8 bg-slate-200/60" style="scrollbar-width: thin;">
-                <!-- HOJA 1: PORTADA E ÍNDICE -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-300/80 overflow-hidden relative p-6 sm:p-10 min-h-[60vh] flex flex-col justify-between">
-                    <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600"></div>
+            <!-- Cuerpo del documento digital simulado (Scrollable) -->
+            <div class="p-4 sm:p-8 overflow-y-auto flex-grow space-y-12 bg-slate-200/80" style="scrollbar-width: thin; scroll-behavior: smooth;">
+                
+                <!-- HOJA 1: PORTADA Y TERMÓMETRO GENERAL -->
+                <div id="hoja-1" class="bg-white rounded-xl shadow-md border border-slate-300 overflow-hidden relative p-8 min-h-[75vh] flex flex-col justify-between">
+                    <div class="absolute top-0 left-0 right-0 h-4 bg-gradient-to-r from-sky-400 via-indigo-500 to-purple-600"></div>
                     
-                    <div class="text-center my-auto space-y-4">
-                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 shadow-sm animate-pulse mb-2">
-                            <i class="fa-solid fa-crown text-4xl"></i>
+                    <div class="text-center mt-8 space-y-4">
+                        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 border-2 border-indigo-200 text-indigo-600 shadow-inner mb-4">
+                            <i class="fa-solid fa-crown text-5xl"></i>
                         </div>
-                        <h1 class="text-2xl sm:text-4xl font-black text-slate-800 uppercase tracking-tight max-w-2xl mx-auto leading-none">Auditoría de Excelencia Académica</h1>
-                        <p class="text-xs font-bold tracking-widest text-indigo-600 uppercase">Filtro de Control de Alta Exigencia • Rumbo a la Beca 4.85</p>
-                        <div class="w-24 h-1 bg-slate-300 mx-auto rounded-full"></div>
+                        <h1 class="text-3xl sm:text-5xl font-black text-slate-800 uppercase tracking-tighter max-w-3xl mx-auto leading-none">Auditoría de Excelencia</h1>
+                        <p class="text-sm font-black tracking-[0.3em] text-indigo-600 uppercase">Filtro Implacable • Beca de Honor</p>
+                        <div class="w-32 h-1.5 bg-gradient-to-r from-transparent via-slate-300 to-transparent mx-auto rounded-full mt-4"></div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 bg-slate-50 border border-slate-200/80 p-4 rounded-xl gap-4 text-xs font-semibold text-slate-600 mt-6">
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Postulante de Excelencia</p>
-                            <p class="text-sm font-bold text-slate-800">Miguel</p>
-                        </div>
-                        <div class="md:text-right">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Período de Evaluación</p>
-                            <p class="text-sm font-bold text-slate-800" id="inf-periodo-nombre">Semestre Activo</p>
+                    <div class="mt-12 bg-slate-50 rounded-2xl border border-slate-200 p-8 shadow-inner">
+                        <h3 class="text-center text-sm font-black text-slate-500 uppercase tracking-widest mb-6">Termómetro de Rendimiento Global</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                            <div class="text-center md:border-r border-slate-200">
+                                <p class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">Promedio Ponderado Actual</p>
+                                <p id="inf-promedio-num" class="text-7xl font-black transition-colors duration-500">0.00</p>
+                            </div>
+                            <div id="inf-alerta-box" class="p-6 rounded-xl border-2 flex flex-col justify-center text-center transition-all duration-300">
+                                <p class="text-xs font-black uppercase tracking-widest mb-2 text-slate-500">Dictamen del Sistema</p>
+                                <p id="inf-alerta-status" class="text-xl font-black uppercase mb-2">Evaluando...</p>
+                                <p id="inf-alerta-desc" class="text-sm font-medium leading-relaxed text-balance">Procesando datos históricos...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- HOJA 2: RESUMEN METAS DE RENDIMIENTO -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-300/80 p-6 sm:p-8 space-y-6">
-                    <h3 class="text-lg font-black text-slate-700 uppercase tracking-wider border-b pb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-square-poll-vertical text-sky-500"></i> Resumen General Metas de Beca
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-slate-50 border border-slate-200 p-5 rounded-xl text-center">
-                            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Promedio Ponderado Calculado</p>
-                            <p id="inf-promedio-num" class="text-5xl font-black mt-2">0.00</p>
+                <!-- HOJA 2: SIMULADOR DE IMPACTO -->
+                <div id="hoja-2" class="bg-white rounded-xl shadow-md border border-slate-300 p-8 min-h-[70vh]">
+                    <div class="border-b-2 border-slate-100 pb-4 mb-6 flex items-center gap-4">
+                        <div class="bg-sky-100 p-3 rounded-lg text-sky-600"><i class="fa-solid fa-bolt text-2xl"></i></div>
+                        <div>
+                            <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Simulador de Impacto Cruzado</h2>
+                            <p class="text-sm text-slate-500 font-medium">Predicción matemática: ¿Qué materia impulsa más rápido tu promedio si obtienes un 5.0 perfecto?</p>
                         </div>
-                        <div id="inf-alerta-box" class="p-5 rounded-xl border flex flex-col justify-center items-center text-center transition-all duration-300">
-                            <p class="text-xs font-bold uppercase tracking-wider mb-1">Estado de Meta Corporativa</p>
-                            <p id="inf-alerta-status" class="text-base font-bold uppercase">Evaluando Historial...</p>
-                            <p id="inf-alerta-desc" class="text-[11px] font-medium mt-1 leading-tight text-balance">Verificando métricas de simulación.</p>
-                        </div>
+                    </div>
+                    <div id="inf-lista-simulador" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- JS inyectará las tarjetas predictivas aquí -->
                     </div>
                 </div>
 
-                <!-- HOJA 3: COMPONENTES ANALÍTICOS CRÍTICOS -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Componente 1: Cuadrante de Eficiencia -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-300/80 p-6 flex flex-col justify-between">
+                <!-- HOJA 3: AUDITOR DE CONSISTENCIA CRONOLÓGICA -->
+                <div id="hoja-3" class="bg-white rounded-xl shadow-md border border-slate-300 p-8 min-h-[70vh]">
+                    <div class="border-b-2 border-slate-100 pb-4 mb-6 flex items-center gap-4">
+                        <div class="bg-purple-100 p-3 rounded-lg text-purple-600"><i class="fa-solid fa-clock-rotate-left text-2xl"></i></div>
                         <div>
-                            <h4 class="font-black text-slate-700 text-sm uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                                <i class="fa-solid fa-chart-gantt text-purple-500"></i> 1. Cuadrante de Eficiencia Operativa
-                            </h4>
-                            <p class="text-[11px] text-slate-400 font-medium mb-4 leading-tight">Clasifica el rendimiento cruzando la nota promedio con la antelación real en días de tus entregas.</p>
-                            <div id="inf-lista-eficiencia" class="space-y-2.5"></div>
+                            <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Auditor de Consistencia (C1 vs C2)</h2>
+                            <p class="text-sm text-slate-500 font-medium">Detector de fatiga académica. Evalúa si tu disciplina decae con el paso de los meses.</p>
                         </div>
                     </div>
-
-                    <!-- Componente 2: Semáforo de Créditos en Riesgo -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-300/80 p-6 flex flex-col justify-between">
-                        <div>
-                            <h4 class="font-black text-slate-700 text-sm uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                                <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> 2. Semáforo de Créditos en Riesgo
-                            </h4>
-                            <p class="text-[11px] text-slate-400 font-medium mb-4 leading-tight">Alerta de intolerancia estricta sobre asignaturas. Meta base mínima aprobatoria para Beca: 4.75.</p>
-                            <div id="inf-lista-semaforo" class="space-y-2.5"></div>
-                        </div>
-                    </div>
-
-                    <!-- Componente 3: Colchón Matemático de Margen Decimal -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-300/80 p-6 lg:col-span-2">
-                        <h4 class="font-black text-slate-700 text-sm uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                            <i class="fa-solid fa-shield-halved text-emerald-500"></i> 3. Colchón Matemático de Margen Decimal Permitido
-                        </h4>
-                        <p class="text-[11px] text-slate-400 font-medium mb-4 leading-tight">Muestra de forma invertida cuántas décimas te quedan de margen de error en el semestre para no perder el promedio objetivo de 4.85.</p>
-                        <div id="inf-lista-colchon" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+                    <div id="inf-lista-consistencia" class="space-y-4">
+                        <!-- JS inyectará el análisis de consistencia aquí -->
                     </div>
                 </div>
+
+                <!-- HOJA 4: SEMÁFORO DE CRÉDITOS EN RIESGO -->
+                <div id="hoja-4" class="bg-white rounded-xl shadow-md border border-slate-300 p-8 min-h-[70vh]">
+                    <div class="border-b-2 border-slate-100 pb-4 mb-6 flex items-center gap-4">
+                        <div class="bg-amber-100 p-3 rounded-lg text-amber-600"><i class="fa-solid fa-traffic-light text-2xl"></i></div>
+                        <div>
+                            <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Semáforo de Créditos Críticos</h2>
+                            <p class="text-sm text-slate-500 font-medium">Intolerancia absoluta. Las asignaturas de mayor peso no pueden bajar de 4.75 bajo ninguna circunstancia.</p>
+                        </div>
+                    </div>
+                    <div id="inf-lista-semaforo" class="grid grid-cols-1 gap-3">
+                        <!-- JS inyectará las alertas rojas/amarillas aquí -->
+                    </div>
+                </div>
+
+                <!-- HOJA 5: COLCHÓN MATEMÁTICO INVERTIDO -->
+                <div id="hoja-5" class="bg-white rounded-xl shadow-md border border-slate-300 p-8 min-h-[70vh]">
+                    <div class="border-b-2 border-slate-100 pb-4 mb-6 flex items-center gap-4">
+                        <div class="bg-emerald-100 p-3 rounded-lg text-emerald-600"><i class="fa-solid fa-shield-halved text-2xl"></i></div>
+                        <div>
+                            <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Colchón Matemático de Seguridad</h2>
+                            <p class="text-sm text-slate-500 font-medium">Calcula las décimas exactas de margen de error que te quedan antes de arruinar el 4.85 por asignatura.</p>
+                        </div>
+                    </div>
+                    <div id="inf-lista-colchon" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- JS inyectará el margen de caída aquí -->
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
     <script>
         // =================================================================
-        // MOTOR ANALÍTICO INYECTABLE: AUDITORÍA DE EXCELENCIA DE CONTROL BECA
+        // MOTOR MATEMÁTICO: AUDITORÍA DE EXCELENCIA (5 PÁGINAS)
         // =================================================================
         function abrirInformeExcelenciaPDF() {
             const modal = document.getElementById('modal-pdf-informe');
             if(!modal) return;
-            
             modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Congelar scroll del fondo
-            
-            // Sincronizar identificador del período activo
-            document.getElementById('inf-periodo-nombre').innerText = periodoActivoId;
-            
-            // Invocar el cálculo analítico consolidado
+            document.body.style.overflow = 'hidden';
             ejecutarAuditoriaMatematicaBeca();
         }
 
@@ -303,7 +308,7 @@
             let sumaPonderada = 0;
             let materiasArray = [];
 
-            // 1. Procesamiento matemático unificado de promedios ponderados
+            // RECOLECCIÓN Y CÁLCULO BASE
             for (let id in materiasData) {
                 let mat = materiasData[id];
                 if (!mat || !mat.nombre) continue;
@@ -314,149 +319,166 @@
                 totalCreditos += creds;
                 sumaPonderada += (prom * creds);
 
-                // Calcular antelación de entregas de la materia en días
-                let tareasMateria = listaActividades.filter(t => t.materiaId === id && t.estado === 'entregada');
-                let acumuladoDiasAntelacion = 0;
-                
-                tareasMateria.forEach(t => {
-                    const asignacion = new Date(t.fechaAsignacion + "T00:00:00");
-                    const entrega = new Date(t.fechaEntrega + "T00:00:00");
-                    let dif = Math.ceil((entrega - asignacion) / (1000 * 60 * 60 * 24));
-                    acumuladoDiasAntelacion += Math.max(0, dif);
-                });
-                
-                let promedioAntelacionDias = tareasMateria.length > 0 ? (acumuladoDiasAntelacion / tareasMateria.length) : 0;
+                // Promedios específicos por corte (Para el Auditor de Consistencia)
+                let promCorte1 = calcularPromedioCorte(id, 1).promedio;
+                let promCorte2 = calcularPromedioCorte(id, 2).promedio;
 
                 materiasArray.push({
                     id: id,
                     nombre: mat.nombre,
                     creditos: creds,
                     definitiva: prom,
-                    antelacion: promedioAntelacionDias
+                    promC1: promCorte1,
+                    promC2: promCorte2,
+                    color: mat.color
                 });
             }
 
             let promedioGlobalCalculado = totalCreditos > 0 ? (sumaPonderada / totalCreditos) : 0;
             
-            // Actualizar interfaz del resumen principal del visor PDF
+            // HOJA 1: RESUMEN Y TERMÓMETRO
             const elProm = document.getElementById('inf-promedio-num');
-            elProm.innerText = promedioGlobalCalculado.toFixed(2);
+            elProm.innerText = promedioGlobalCalculado.toFixed(3); // Mayor precisión para la beca
 
             const elAlertaBox = document.getElementById('inf-alerta-box');
             const elAlertaStatus = document.getElementById('inf-alerta-status');
             const elAlertaDesc = document.getElementById('inf-alerta-desc');
 
-            // Criterio estricto de Meta de Excelencia Corporativa 4.85
             if (promedioGlobalCalculado >= 4.85) {
-                elProm.className = "text-5xl font-black mt-2 text-emerald-600";
-                elAlertaBox.className = "p-5 rounded-xl border flex flex-col justify-center items-center text-center bg-emerald-50 border-emerald-200 text-emerald-800";
-                elAlertaStatus.innerText = "¡BECA ASEGURADA!";
-                elAlertaDesc.innerText = `Mantienes el ritmo corporativo de excelencia. Estás por encima del umbral de resguardo de 4.85 por ${(promedioGlobalCalculado - 4.85).toFixed(2)} décimas.`;
+                elProm.className = "text-7xl font-black text-emerald-600 transition-colors duration-500";
+                elAlertaBox.className = "p-6 rounded-xl border-2 flex flex-col justify-center text-center bg-emerald-50 border-emerald-300 text-emerald-800 shadow-[0_0_20px_rgba(16,185,129,0.15)]";
+                elAlertaStatus.innerText = "¡CANDIDATURA ASEGURADA!";
+                elAlertaDesc.innerText = `Matemática perfecta. Mantienes un margen de seguridad de +${(promedioGlobalCalculado - 4.85).toFixed(3)} sobre la línea roja de la beca. Sigue así.`;
             } else {
-                elProm.className = "text-5xl font-black mt-2 text-rose-600";
-                elAlertaBox.className = "p-5 rounded-xl border flex flex-col justify-center items-center text-center bg-rose-50 border-rose-200 text-rose-800 animate-pulse";
-                elAlertaStatus.innerText = "ALERTA: DEFICIT DE EXCELENCIA";
-                
-                // Cálculo de recuperación milimétrica para llegar a 4.85
+                elProm.className = "text-7xl font-black text-rose-600 transition-colors duration-500";
+                elAlertaBox.className = "p-6 rounded-xl border-2 flex flex-col justify-center text-center bg-rose-50 border-rose-300 text-rose-800 shadow-[0_0_20px_rgba(225,29,72,0.15)] animate-pulse";
+                elAlertaStatus.innerText = "DEFICIT CRÍTICO DETECTADO";
                 let puntosFaltantes = (4.85 * totalCreditos) - sumaPonderada;
-                elAlertaDesc.innerText = `Estás por debajo del umbral mínimo de competencia de 4.85. Requieres acumular un equivalente neto de +${puntosFaltantes.toFixed(2)} puntos perfectos en los cortes restantes para restaurar la beca.`;
+                elAlertaDesc.innerHTML = `Estás fuera de competencia. Necesitas acumular una fuerza neta de <strong>+${puntosFaltantes.toFixed(2)} puntos ponderados</strong> para cruzar la frontera del 4.85. Tienes prohibido fallar.`;
             }
 
-            // 2. Renderizado de Componente 1: Cuadrante de Eficiencia Operativa
-            const contenedorEficiencia = document.getElementById('inf-lista-eficiencia');
-            contenedorEficiencia.innerHTML = '';
+            // HOJA 2: SIMULADOR DE IMPACTO DE NOTAS CRUZADAS
+            const contenedorSimulador = document.getElementById('inf-lista-simulador');
+            contenedorSimulador.innerHTML = '';
             
-            materiasArray.forEach(m => {
-                let cuadrante = "";
-                let badgeColor = "";
+            let simuladorArray = [...materiasArray].sort((a, b) => b.creditos - a.creditos); // Ordenar por peso
+            
+            simuladorArray.forEach(m => {
+                // Cálculo: Si saca 5.0, ¿cuánto suma? (5.0 * creditos) / totalCreditos
+                let impactoPotencial = (5.0 * m.creditos) / totalCreditos;
                 
-                if (m.definitiva >= 4.75 && m.antelacion >= 2) {
-                    cuadrante = "Zona de Maestría";
-                    badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-200";
-                } else if (m.definitiva >= 4.75 && m.antelacion < 2) {
-                    cuadrante = "Esfuerzo Heroico (Riesgo Burnout)";
-                    badgeColor = "bg-amber-100 text-amber-800 border-amber-200";
-                } else if (m.definitiva < 4.75 && m.antelacion >= 2) {
-                    cuadrante = "Ajuste de Comprensión Tec.";
-                    badgeColor = "bg-sky-100 text-sky-800 border-sky-200";
-                } else {
-                    cuadrante = "Zona Crítica de Colapso";
-                    badgeColor = "bg-red-100 text-red-800 border-red-200 font-bold";
-                }
-
-                contenedorEficiencia.innerHTML += `
-                    <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200 gap-4 text-xs">
-                        <div class="min-w-0 flex-grow">
-                            <p class="font-bold text-slate-800 truncate">${m.nombre}</p>
-                            <p class="text-[10px] text-slate-400 font-medium uppercase mt-0.5">Antelación media: ${m.antelacion.toFixed(1)} días de gracia</p>
+                contenedorSimulador.innerHTML += `
+                    <div class="border border-slate-200 bg-slate-50 p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                        <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-sky-500 group-hover:bg-sky-400 transition-colors"></div>
+                        <h4 class="font-black text-slate-800 text-sm mb-1">${m.nombre} <span class="text-[10px] bg-slate-200 text-slate-500 px-2 py-0.5 rounded ml-2">${m.creditos} Créditos</span></h4>
+                        <div class="flex justify-between items-end mt-4">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Impacto de un 5.0</p>
+                                <p class="text-xl font-black text-sky-600">+${impactoPotencial.toFixed(3)} <span class="text-xs font-semibold text-slate-500">al global</span></p>
+                            </div>
+                            <i class="fa-solid fa-arrow-trend-up text-slate-300 text-2xl group-hover:text-sky-200 transition-colors"></i>
                         </div>
-                        <span class="px-2.5 py-1 rounded text-[10px] font-bold border ${badgeColor} whitespace-nowrap">${cuadrante}</span>
                     </div>
                 `;
             });
 
-            // 3. Renderizado de Componente 2: Semáforo de Créditos en Riesgo (Intolerancia Absoluta)
+            // HOJA 3: AUDITOR DE CONSISTENCIA (FATIGA ACADÉMICA)
+            const contenedorConsistencia = document.getElementById('inf-lista-consistencia');
+            contenedorConsistencia.innerHTML = '';
+            
+            materiasArray.forEach(m => {
+                let dif = m.promC2 - m.promC1;
+                let estadoHTML = "";
+                let bgTarjeta = "bg-slate-50 border-slate-200";
+
+                if (m.promC1 === 0 && m.promC2 === 0) {
+                    estadoHTML = `<span class="text-slate-400 text-xs font-bold"><i class="fa-solid fa-hourglass-empty"></i> Sin datos suficientes</span>`;
+                } else if (dif < -0.2) {
+                    bgTarjeta = "bg-rose-50 border-rose-200";
+                    estadoHTML = `<span class="text-rose-600 text-xs font-black uppercase"><i class="fa-solid fa-arrow-trend-down mr-1"></i> Desgaste Severo (${dif.toFixed(2)})</span>`;
+                } else if (dif < 0) {
+                    bgTarjeta = "bg-amber-50 border-amber-200";
+                    estadoHTML = `<span class="text-amber-600 text-xs font-black uppercase"><i class="fa-solid fa-caret-down mr-1"></i> Fatiga Leve (${dif.toFixed(2)})</span>`;
+                } else {
+                    bgTarjeta = "bg-emerald-50 border-emerald-200";
+                    estadoHTML = `<span class="text-emerald-600 text-xs font-black uppercase"><i class="fa-solid fa-arrow-trend-up mr-1"></i> En Crecimiento (+${dif.toFixed(2)})</span>`;
+                }
+
+                contenedorConsistencia.innerHTML += `
+                    <div class="border ${bgTarjeta} p-4 rounded-xl flex items-center justify-between">
+                        <div class="min-w-0">
+                            <p class="font-bold text-slate-800 text-sm truncate">${m.nombre}</p>
+                            <div class="flex gap-4 mt-1 text-[11px] font-mono font-semibold text-slate-500">
+                                <span>Corte 1: ${m.promC1.toFixed(2)}</span>
+                                <span>Corte 2: ${m.promC2.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <div class="text-right whitespace-nowrap pl-4">
+                            ${estadoHTML}
+                        </div>
+                    </div>
+                `;
+            });
+
+            // HOJA 4: SEMÁFORO DE CRÉDITOS EN RIESGO (INTOLERANTE)
             const contenedorSemaforo = document.getElementById('inf-lista-semaforo');
             contenedorSemaforo.innerHTML = '';
-
-            // Clasificar de mayor importancia según cantidad de créditos
-            materiasArray.sort((a,b) => b.creditos - a.creditos);
-
+            
             materiasArray.forEach(m => {
-                let statusColor = "";
-                let textAlerta = "";
-                
-                if(m.definitiva >= 4.85) {
-                    statusColor = "bg-emerald-500 shadow-emerald-500/20 shadow-md";
-                    textAlerta = "Trayectoria Perfecta";
-                } else if(m.definitiva >= 4.75) {
-                    statusColor = "bg-amber-500 shadow-amber-500/20 shadow-md";
-                    textAlerta = "Margen de Alerta Mínima";
+                let alertColor = "";
+                let alertText = "";
+                let iconSemaforo = "";
+
+                if (m.definitiva >= 4.90) {
+                    alertColor = "bg-emerald-500 shadow-emerald-500/30 text-white border-emerald-600";
+                    alertText = "Óptimo";
+                    iconSemaforo = "fa-check-circle";
+                } else if (m.definitiva >= 4.75) {
+                    alertColor = "bg-amber-400 shadow-amber-400/30 text-amber-900 border-amber-500";
+                    alertText = "Precaución: Cerca del Abismo";
+                    iconSemaforo = "fa-triangle-exclamation";
                 } else {
-                    statusColor = "bg-red-500 shadow-red-500/20 shadow-md animate-ping";
-                    textAlerta = "Pérdida Crítica Inadmisible";
+                    alertColor = "bg-red-500 shadow-red-500/40 text-white border-red-600 animate-pulse";
+                    alertText = "FALLA CRÍTICA";
+                    iconSemaforo = "fa-skull-crossbones";
                 }
 
                 contenedorSemaforo.innerHTML += `
-                    <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200 gap-4 text-xs">
-                        <div class="flex items-center gap-2.5 min-w-0">
-                            <div class="w-2.5 h-2.5 rounded-full ${statusColor} flex-shrink-0"></div>
-                            <div class="min-w-0">
-                                <p class="font-bold text-slate-800 truncate">${m.nombre}</p>
-                                <p class="text-[10px] text-slate-400 font-semibold uppercase mt-0.5">${m.creditos} Créditos Académicos</p>
+                    <div class="border p-4 rounded-xl flex items-center justify-between ${alertColor} shadow-md">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid ${iconSemaforo} text-2xl opacity-80"></i>
+                            <div>
+                                <p class="font-black text-sm uppercase tracking-wider">${m.nombre}</p>
+                                <p class="text-[10px] font-bold uppercase tracking-widest opacity-80">${m.creditos} Créditos (Definitiva: ${m.definitiva.toFixed(2)})</p>
                             </div>
                         </div>
-                        <span class="text-[10px] font-black uppercase text-slate-500">${textAlerta}</span>
+                        <span class="font-black text-xs uppercase px-3 py-1 bg-black/10 rounded-lg">${alertText}</span>
                     </div>
                 `;
             });
 
-            // 4. Renderizado de Componente 3: Colchón Matemático de Margen Decimal Permitido
+            // HOJA 5: COLCHÓN MATEMÁTICO INVERTIDO
             const contenedorColchon = document.getElementById('inf-lista-colchon');
             contenedorColchon.innerHTML = '';
-
+            
             materiasArray.forEach(m => {
-                // El colchón matemático define cuánto te puedes permitir bajar antes de comprometer la meta
-                let colchonDecimal = m.definitiva - 4.85;
-                let colorTarjeta = "";
-                let textoDesviacion = "";
+                let colchon = m.definitiva - 4.85;
+                let bgColchon = "";
+                let textColchon = "";
 
-                if(colchonDecimal >= 0) {
-                    colorTarjeta = "border-emerald-200 bg-emerald-50/40 text-emerald-900";
-                    textoDesviacion = `Colchón a salvo: +${colchonDecimal.toFixed(2)} décimas disponibles`;
+                if (colchon >= 0) {
+                    bgColchon = "bg-white border-slate-200";
+                    textColchon = `<span class="text-emerald-500 text-2xl font-black">+${colchon.toFixed(2)}</span> <br> <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Décimas de gracia</span>`;
                 } else {
-                    colorTarjeta = "border-red-200 bg-red-50/40 text-red-900";
-                    textoDesviacion = `Déficit crítico: ${colchonDecimal.toFixed(2)} décimas abajo`;
+                    bgColchon = "bg-rose-50 border-rose-200 shadow-inner";
+                    textColchon = `<span class="text-rose-600 text-2xl font-black">${colchon.toFixed(2)}</span> <br> <span class="text-[9px] text-rose-400 font-bold uppercase tracking-widest">Décimas en contra</span>`;
                 }
 
                 contenedorColchon.innerHTML += `
-                    <div class="border p-3.5 rounded-xl flex flex-col justify-between text-xs font-semibold ${colorTarjeta}">
+                    <div class="border p-6 rounded-2xl flex flex-col justify-between text-center ${bgColchon}">
+                        <h4 class="font-bold text-slate-700 text-xs mb-4 line-clamp-1">${m.nombre}</h4>
                         <div>
-                            <p class="font-bold truncate text-slate-800">${m.nombre}</p>
-                            <p class="text-[11px] font-mono font-black mt-2">Nota Actual: ${m.definitiva.toFixed(2)}</p>
-                        </div>
-                        <div class="text-[10px] uppercase font-bold mt-3 border-t pt-2 border-slate-200/60 text-slate-500">
-                            ${textoDesviacion}
+                            ${textColchon}
                         </div>
                     </div>
                 `;
