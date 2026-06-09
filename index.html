@@ -859,30 +859,14 @@
         </section>
 
         <!-- SECCIÓN 2: TABLA DE ORDEN DE ENTREGA (AUTOMATIZADA COMO EXCEL) -->
-        <h2 class="text-xl font-bold text-slate-700 mb-4">
-            <i class="fa-solid fa-list-ol mr-2 text-slate-600"></i> Orden de Entrega Inteligente
+       <h2 class="text-xl font-bold text-slate-700 mb-4">
+            <i class="fa-solid fa-layer-group mr-2 text-slate-600"></i> Centro de Ejecución Estratégico
         </h2>
-        <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-800 text-white text-xs uppercase tracking-wider font-bold">
-                            <th class="p-4">Materia</th>
-                            <th class="p-4">Actividad</th>
-                            <th class="p-4">Fecha Asignación</th>
-                            <th class="p-4">Fecha Entrega</th>
-                            <th class="p-4 text-center">Días Restantes</th>
-                            <th class="p-4 text-center">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-actividades-body" class="divide-y divide-slate-100 text-sm">
-                        <!-- Renderizado dinámico -->
-                    </tbody>
-                </table>
-            </div>
-            <div id="tabla-actividades-vacia" class="hidden p-8 text-center text-slate-400 font-medium">
-                <i class="fa-solid fa-clipboard-check text-3xl block mb-2 text-slate-300"></i>
-                No tienes actividades pendientes. ¡Al día!
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-5 overflow-hidden">
+            <div id="tablero-prioridades-agenda" class="flex-grow space-y-5 overflow-y-auto pr-2" style="scrollbar-width: thin; max-h-[60vh];">
+                <div class="flex items-center justify-center h-32 text-slate-400 text-sm font-medium">
+                    <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Procesando prioridades matemáticas...
+                </div>
             </div>
         </div>
 
@@ -2143,88 +2127,128 @@ function cerrarModal() {
         }
 
         function renderizarTablaActividades() {
-            const tbody = document.getElementById('tabla-actividades-body');
-            const mensajeVacio = document.getElementById('tabla-actividades-vacia');
+            const tablero = document.getElementById('tablero-prioridades-agenda');
             const contadorHub = document.getElementById('hub-total-actividades');
             
-            tbody.innerHTML = '';
-            let tareasPendientes = listaActividades.filter(tarea => tarea.estado !== 'entregada');
-            contadorHub.innerText = tareasPendientes.length;
+            if (!tablero) return;
 
-            if (tareasPendientes.length === 0) {
-                mensajeVacio.classList.remove('hidden');
-                return;
-            } else {
-                mensajeVacio.classList.add('hidden');
+            let tareasPendientes = listaActividades.filter(tarea => tarea.estado !== 'entregada');
+            if (contadorHub) contadorHub.innerText = tareasPendientes.length;
+
+            let zonas = {
+                inmediatas: [],   // < 48h y (nota < 4.85 o créditos altos)
+                estrategicas: [], // Créditos >= 3 y entrega <= 7 días
+                rutina: [],       // Créditos < 3 y nota >= 4.5
+                mantenimiento: [] // El resto (ventanas muertas)
+            };
+
+            const hoy = new Date();
+            hoy.setHours(0,0,0,0);
+
+            // 1. Clasificación Matemática de Tareas Pendientes
+            tareasPendientes.forEach(tarea => {
+                // Sincronizar datos de la materia usando la estructura base unificada
+                let mat = materiasData[tarea.materiaId] || estructuraBase[tarea.materiaId];
+                if (!mat) return;
+
+                let definitiva = calcularDefinitivaMateria(tarea.materiaId) || 0;
+                let creditos = mat.creditos || 0;
+                
+                let fechaEntrega = new Date(tarea.fechaEntrega + "T23:59:59");
+                let diasRestantes = Math.ceil((fechaEntrega - hoy) / (1000 * 60 * 60 * 24));
+
+                tarea.materiaNombre = mat.nombre;
+                tarea.color = mat.color || 'slate';
+                tarea.diasRestantes = diasRestantes;
+
+                // ALGORITMO DE ASIGNACIÓN (Criterio Beca 4.85)
+                if (diasRestantes <= 2 && (definitiva < 4.85 || creditos >= 3)) {
+                    zonas.inmediatas.push(tarea);
+                } else if (creditos >= 3 && diasRestantes <= 7) {
+                    zonas.estrategicas.push(tarea);
+                } else if (definitiva >= 4.5 && creditos < 3) {
+                    zonas.rutina.push(tarea);
+                } else {
+                    zonas.mantenimiento.push(tarea);
+                }
+            });
+
+            // Ordenar cada zona para que la entrega más próxima quede arriba
+            for (let key in zonas) {
+                zonas[key].sort((a, b) => a.diasRestantes - b.diasRestantes);
             }
 
-            let actividadesProcesadas = tareasPendientes.map(tarea => {
-                const hoy = new Date();
-                hoy.setHours(0,0,0,0);
-                const entrega = new Date(tarea.fechaEntrega + "T00:00:00");
-                const diffTiempo = entrega - hoy;
-                const diasRestantes = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
-                return { ...tarea, diasRestantes: diasRestantes };
-            });
-
-            actividadesProcesadas.sort((a, b) => a.diasRestantes - b.diasRestantes);
-
-            actividadesProcesadas.forEach(tarea => {
-                const infoMateria = estructuraBase[tarea.materiaId] || { nombre: "Desconocida", color: "slate" };
-                const tema = temasColor[infoMateria.color] || temasColor.violet;
-
-                let badgeClase = "";
-                let textoDias = "";
-
-                if (tarea.diasRestantes < 0) {
-                    badgeClase = "bg-red-100 text-red-800 border-red-200 animate-pulse font-bold";
-                    textoDias = `Vencida (${Math.abs(tarea.diasRestantes)} d)`;
-                } else if (tarea.diasRestantes === 0) {
-                    badgeClase = "bg-red-500 text-white border-red-600 font-black animate-bounce";
-                    textoDias = "¡ENTREGA HOY!";
-                } else if (tarea.diasRestantes <= 3) {
-                    badgeClase = "bg-amber-100 text-amber-800 border-amber-200 font-bold";
-                    textoDias = `${tarea.diasRestantes} días`;
-                } else {
-                    badgeClase = "bg-emerald-50 text-emerald-700 border-emerald-200";
-                    textoDias = `${tarea.diasRestantes} días`;
-                }
-
-                // Deshabilitamos visualmente las acciones si el periodo está congelado
-                const btnCheckHTML = esPeriodoBloqueado ? '' : `
-                    <button onclick="marcarComoEntregada('${tarea.id}')" class="text-emerald-500 hover:text-emerald-700 transition-colors mr-3" title="Marcar como entregada">
-                        <i class="fa-solid fa-circle-check text-base"></i>
-                    </button>
-                `;
-                const btnTrashHTML = esPeriodoBloqueado ? '<span class="text-xs text-slate-400 font-bold">Bloqueado</span>' : `
-                    <button onclick="eliminarActividad('${tarea.id}')" class="text-red-400 hover:text-red-600 transition-colors" title="Eliminar actividad">
-                        <i class="fa-solid fa-trash-can text-base"></i>
-                    </button>
-                `;
-
-                const filaHTML = `
-                    <tr class="hover:bg-slate-50/80 transition-colors">
-                        <td class="p-4 font-bold text-slate-700">
-                            <span class="inline-block w-2.5 h-2.5 rounded-full ${tema.borderAccent} mr-2"></span>
-                            ${infoMateria.nombre}
-                        </td>
-                        <td class="p-4 text-slate-600 font-medium">${tarea.nombre}</td>
-                        <td class="p-4 text-slate-500 font-mono text-xs">${tarea.fechaAsignacion}</td>
-                        <td class="p-4 text-slate-500 font-mono text-xs">${tarea.fechaEntrega}</td>
-                        <td class="p-4 text-center">
-                            <span class="px-2.5 py-1 text-xs rounded-full border ${badgeClase}">
-                                ${textoDias}
-                            </span>
-                        </td>
-                        <td class="p-4 text-center whitespace-nowrap">
-                            ${btnCheckHTML}
-                            ${btnTrashHTML}
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += filaHTML;
-            });
+            tablero.innerHTML = '';
             
+            // 2. Función generadora de tarjetas visuales
+            const generarTarjeta = (t) => {
+                const tema = temasColor[t.color] || temasColor.slate;
+                const esHex = t.color.startsWith('#');
+                const accentStyle = esHex ? `style="background-color: ${t.color}"` : '';
+                const accentClass = esHex ? '' : tema.borderAccent;
+                
+                const badgeDias = t.diasRestantes < 0 
+                    ? `<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded uppercase font-black animate-pulse">Vencida</span>` 
+                    : (t.diasRestantes === 0 ? `<span class="bg-red-500 text-white px-2 py-0.5 rounded uppercase font-black animate-bounce">HOY</span>` : `${t.diasRestantes} días`);
+
+                const btnCheck = esPeriodoBloqueado ? '' : `<button onclick="marcarComoEntregada('${t.id}')" class="text-slate-300 hover:text-emerald-500 transition-colors mr-2"><i class="fa-solid fa-circle-check text-xl"></i></button>`;
+                const btnTrash = esPeriodoBloqueado ? '' : `<button onclick="eliminarActividad('${t.id}')" class="text-slate-200 hover:text-red-400 transition-colors"><i class="fa-solid fa-trash-can text-sm"></i></button>`;
+
+                return `
+                <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between relative overflow-hidden group">
+                    <div class="absolute left-0 top-0 bottom-0 w-1.5 ${accentClass}" ${accentStyle}></div>
+                    <div class="flex-grow pl-3 pr-4">
+                        <h5 class="text-sm font-bold text-slate-800 line-clamp-1">${t.nombre}</h5>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 truncate">${t.materiaNombre}</p>
+                    </div>
+                    <div class="flex items-center gap-4 flex-shrink-0">
+                        <div class="text-[10px] font-bold text-slate-500 text-right">
+                            <span class="block uppercase tracking-widest opacity-70">Corte ${t.corte}</span>
+                            <span class="mt-0.5 block">${badgeDias}</span>
+                        </div>
+                        <div class="flex items-center border-l border-slate-100 pl-3">
+                            ${btnCheck}
+                            ${btnTrash}
+                        </div>
+                    </div>
+                </div>`;
+            };
+
+            // 3. Renderizado Condicional de Cuadrantes
+            if (zonas.inmediatas.length > 0) {
+                tablero.innerHTML += `
+                    <div class="mb-5">
+                        <h4 class="text-xs font-black text-rose-600 uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fa-solid fa-fire"></i> Acción Inmediata (Crítico)</h4>
+                        <div class="space-y-2 bg-rose-50/50 p-2.5 rounded-2xl border border-rose-100">${zonas.inmediatas.map(generarTarjeta).join('')}</div>
+                    </div>`;
+            }
+
+            if (zonas.estrategicas.length > 0) {
+                tablero.innerHTML += `
+                    <div class="mb-5">
+                        <h4 class="text-xs font-black text-amber-600 uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fa-solid fa-chess-knight"></i> Estratégicas (Alto Impacto)</h4>
+                        <div class="space-y-2 bg-amber-50/50 p-2.5 rounded-2xl border border-amber-100">${zonas.estrategicas.map(generarTarjeta).join('')}</div>
+                    </div>`;
+            }
+
+            let secundarias = [...zonas.rutina, ...zonas.mantenimiento].sort((a,b) => a.diasRestantes - b.diasRestantes);
+            if (secundarias.length > 0) {
+                tablero.innerHTML += `
+                    <div class="mb-2">
+                        <h4 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fa-solid fa-inbox"></i> Flujo de Rutina</h4>
+                        <div class="space-y-2 p-2.5 bg-slate-50 border border-slate-100 rounded-2xl">${secundarias.map(generarTarjeta).join('')}</div>
+                    </div>`;
+            }
+
+            if (tareasPendientes.length === 0) {
+                tablero.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-48 text-center px-4 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
+                        <div class="w-14 h-14 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center text-3xl mb-3 shadow-inner"><i class="fa-solid fa-check"></i></div>
+                        <p class="text-sm font-bold text-slate-700 uppercase tracking-wider">Agenda Completamente Despejada</p>
+                        <p class="text-xs font-semibold text-slate-400 mt-1">No hay tareas que comprometan tu beca.</p>
+                    </div>`;
+            }
+
             if (document.getElementById('modal-historial').style.display === 'flex') {
                 renderizarHistorial();
             }
