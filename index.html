@@ -698,47 +698,53 @@ const firebaseConfig = {
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-       // --- PALETA DE COLORES ELEGANTES CON TARJETAS OPACAS (FIX DOT GRID) ---
+      // --- CONFIGURACIÓN GLOBAL DE VARIABLES DE ENTORNO ---
+        let configuracionCortes = { 1: 0.30, 2: 0.30, 3: 0.40 };
+        const mapaColoresHexPorDefecto = {
+            violet: '#a855f7',
+            rose: '#f43f5e',
+            amber: '#f59e0b',
+            teal: '#14b8a6',
+            sky: '#0ea5e9',
+            emerald: '#10b981',
+            slate: '#64748b'
+        };
+
         const temasColor = {
             violet: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-purple-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-white', modalBgSoft: 'bg-purple-50/90', borderSoft: 'border-purple-200/60', borderAccent: 'bg-purple-700/70', borderStrong: 'border-purple-700/30', textAccent: 'text-purple-700/80', modalHeader: 'bg-purple-800/90', modalBtn: 'bg-purple-700/80 hover:bg-purple-800', focusRing: 'focus:ring-purple-200/60 focus:border-purple-400/60' },
             rose: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-rose-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-white', modalBgSoft: 'bg-rose-50/90', borderSoft: 'border-rose-200/60', borderAccent: 'bg-rose-600/60', borderStrong: 'border-rose-600/30', textAccent: 'text-rose-600/80', modalHeader: 'bg-rose-800/90', modalBtn: 'bg-rose-600/80 hover:bg-rose-700', focusRing: 'focus:ring-rose-200/60 focus:border-rose-400/60' },
-            amber: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-amber-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-white', modalBgSoft: 'bg-amber-50/90', borderSoft: 'border-amber-200/60', borderAccent: 'bg-amber-600/60', borderStrong: 'bg-amber-600/30', textAccent: 'text-amber-600/80', modalHeader: 'bg-amber-800/90', modalBtn: 'bg-amber-600/80 hover:bg-amber-700', focusRing: 'focus:ring-amber-200/60 focus:border-amber-400/60' },
+            amber: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-amber-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-white', modalBgSoft: 'bg-amber-50/90', borderSoft: 'border-amber-200/60', borderAccent: 'bg-amber-600/60', borderStrong: 'border-amber-600/30', textAccent: 'text-amber-600/80', modalHeader: 'bg-amber-800/90', modalBtn: 'bg-amber-600/80 hover:bg-amber-700', focusRing: 'focus:ring-amber-200/60 focus:border-amber-400/60' },
             teal: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-teal-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-white', modalBgSoft: 'bg-teal-50/90', borderSoft: 'border-teal-200/60', borderAccent: 'bg-teal-600/60', borderStrong: 'border-teal-600/30', textAccent: 'text-teal-600/80', modalHeader: 'bg-teal-800/90', modalBtn: 'bg-teal-600/80 hover:bg-teal-700', focusRing: 'focus:ring-teal-200/60 focus:border-teal-400/60' },
             sky: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-sky-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-white', modalBgSoft: 'bg-sky-50/90', borderSoft: 'border-sky-200/60', borderAccent: 'bg-sky-600/60', borderStrong: 'bg-sky-600/30', textAccent: 'text-sky-600/80', modalHeader: 'bg-sky-800/90', modalBtn: 'bg-sky-600/80 hover:bg-sky-700', focusRing: 'focus:ring-sky-400/60 focus:border-sky-400/60' },
-            emerald: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-emerald-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-white', modalBgSoft: 'bg-emerald-50/90', borderSoft: 'border-emerald-200/60', borderAccent: 'bg-emerald-600/60', borderStrong: 'bg-emerald-600/30', textAccent: 'text-emerald-600/80', modalHeader: 'bg-emerald-800/90', modalBtn: 'bg-emerald-600/80 hover:bg-emerald-700', focusRing: 'focus:ring-emerald-200/60 focus:border-emerald-400/60' }
+            emerald: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-emerald-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-white', modalBgSoft: 'bg-emerald-50/90', borderSoft: 'border-emerald-200/60', borderAccent: 'bg-emerald-600/60', borderStrong: 'border-emerald-600/30', textAccent: 'text-emerald-600/80', modalHeader: 'bg-emerald-800/90', modalBtn: 'bg-emerald-600/80 hover:bg-emerald-700', focusRing: 'focus:ring-emerald-200/60 focus:border-emerald-400/60' }
         };
 
         const estructuraBase = {
-            comunicacion: { nombre: "Comunicación Oral y Escrita", creditos: 4, color: "violet", icono: "fa-comments", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
-            ciudadana: { nombre: "Formación Ciudadana 1", creditos: 3, color: "rose", icono: "fa-handshake-angle", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
-            matematicas: { nombre: "Fundamentos en Matemáticas", creditos: 3, color: "amber", icono: "fa-calculator", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
-            digital: { nombre: "Entorno Digital", creditos: 3, color: "teal", icono: "fa-laptop-code", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
-            mercadeo: { nombre: "Fundamentos de Mercadeo", creditos: 3, color: "sky", icono: "fa-bullhorn", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
-            economia: { nombre: "Fundamentos de Economía", creditos: 2, color: "emerald", icono: "fa-chart-line", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } }
+            comunicacion: { nombre: "Comunicación Oral y Escrita", creditos: 4, color: "violet", icono: "fa-comments" },
+            ciudadana: { nombre: "Formación Ciudadana 1", creditos: 3, color: "rose", icono: "fa-handshake-angle" },
+            matematicas: { nombre: "Fundamentos en Matemáticas", creditos: 3, color: "amber", icono: "fa-calculator" },
+            digital: { nombre: "Entorno Digital", creditos: 3, color: "teal", icono: "fa-laptop-code" },
+            mercadeo: { nombre: "Fundamentos de Mercadeo", creditos: 3, color: "sky", icono: "fa-bullhorn" },
+            economia: { nombre: "Fundamentos de Economía", creditos: 2, color: "emerald", icono: "fa-chart-line" }
         };
 
-        
-        // --- VARIABLES DE CONTROL MULTI-SEMESTRE ---
         let materiasData = {};
         let listaActividades = [];
         let materiaActivaId = null;
-        
         let periodosLista = [];
         let periodoActivoId = "PRIMER SEMESTRE";
         let esPeriodoBloqueado = false;
 
-        // Desuscripciones en tiempo real de Firebase
         let unsubscribeMaterias = null;
         let unsubscribeActividades = null;
+        let unsubscribeHorario = null;
+        let unsubscribeCortes = null;
 
         const nombresSemestres = [
             "PRIMER SEMESTRE", "SEGUNDO SEMESTRE", "TERCER SEMESTRE", "CUARTO SEMESTRE",
             "QUINTO SEMESTRE", "SEXTO SEMESTRE", "SÉPTIMO SEMESTRE", "OCTAVO SEMESTRE"
         ];
-
-        // Variables globales añadidas para el Horario de Clases (Paso 3)
         let listaHorarios = [];
-        let unsubscribeHorario = null;
         const diasNombresCortos = ["", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
         function cambiarVista(vista) {
@@ -747,7 +753,7 @@ const firebaseConfig = {
             document.getElementById('vista-actividades').classList.add('hidden');
             document.getElementById('vista-horario').classList.add('hidden');
             document.getElementById('vista-configuracion').classList.add('hidden');
-
+            
             if (vista === 'hub') {
                 document.getElementById('vista-hub').classList.remove('hidden');
             } else if (vista === 'notas') {
@@ -763,9 +769,6 @@ const firebaseConfig = {
             }
         }
 
-       
-
-        // --- SISTEMA MAESTRO DE CONTROL TEMPORAL ---
         function inicializarEstructuraPeriodos() {
             db.collection('usuario_miguel').doc('config_periodos').onSnapshot((doc) => {
                 if (doc.exists) {
@@ -773,7 +776,6 @@ const firebaseConfig = {
                     periodosLista = data.periodos || [];
                     periodoActivoId = data.periodoActivoId || "PRIMER SEMESTRE";
                 } else {
-                    // Inicialización reglamentaria del Primer Semestre de Miguel
                     periodosLista = [{
                         id: "PRIMER SEMESTRE",
                         fechaInicio: "2026-07-27",
@@ -793,7 +795,6 @@ const firebaseConfig = {
         function renderizarSelectorPeriodos() {
             const select = document.getElementById('selector-periodos');
             select.innerHTML = '';
-
             periodosLista.forEach(p => {
                 const opt = document.createElement('option');
                 opt.value = p.id;
@@ -801,7 +802,6 @@ const firebaseConfig = {
                 if (p.id === periodoActivoId) opt.selected = true;
                 select.appendChild(opt);
             });
-
             const optNuevo = document.createElement('option');
             optNuevo.value = "NUEVO_PERIODO";
             optNuevo.innerText = "+ AGREGAR NUEVO PERIODO";
@@ -810,84 +810,64 @@ const firebaseConfig = {
 
         function cambiarPeriodoActivo(valor) {
             if (valor === "NUEVO_PERIODO") {
-                // Volvemos a seleccionar el periodo activo en el diseño visual por si se cancela la acción
                 document.getElementById('selector-periodos').value = periodoActivoId;
                 crearNuevoPeriodo();
                 return;
             }
-            
             periodoActivoId = valor;
             db.collection('usuario_miguel').doc('config_periodos').update({ periodoActivoId: periodoActivoId });
         }
 
         function crearNuevoPeriodo() {
-            // Buscamos el último periodo registrado para evaluar su candado de vencimiento
             const ultimoPeriodo = periodosLista[periodosLista.length - 1];
             const fechaFinVigente = new Date(ultimoPeriodo.fechaFin + "T23:59:59");
             const ahora = new Date();
-
             if (ahora <= fechaFinVigente) {
-                alert("Bloqueo de seguridad: No puedes crear un nuevo semestre hasta que finalice el periodo actual vigente (" + ultimoPeriodo.fechaFin + " a las 11:59:59 PM).");
+                alert("Bloqueo de seguridad: No puedes crear un nuevo semestre hasta que finalice el periodo actual vigente.");
                 return;
             }
-
             const siguienteIndice = periodosLista.length;
             if (siguienteIndice >= nombresSemestres.length) {
                 alert("Has alcanzado el límite de semestres configurados en la carrera.");
                 return;
             }
-
             const proximoNombre = nombresSemestres[siguienteIndice];
-            
-            const fechaInicioInput = prompt("Creando " + proximoNombre + ".\nIngresa la fecha de INICIO (Formato: AAAA-MM-DD):");
+            const fechaInicioInput = prompt("Creando " + proximoNombre + ".\nIngresa la fecha de INICIO:");
             if (!fechaInicioInput) return;
-            
-            const fechaFinInput = prompt("Ingresa la fecha de FINALIZACIÓN (Formato: AAAA-MM-DD):");
+            const fechaFinInput = prompt("Ingresa la fecha de FINALIZACIÓN:");
             if (!fechaFinInput) return;
-
-            // Validación de formato básico de fechas
             const regexFecha = /^\d{4}-\d{2}-\d{2}$/;
             if (!regexFecha.test(fechaInicioInput) || !regexFecha.test(fechaFinInput)) {
-                alert("Error: Las fechas ingresadas no tienen un formato válido (AAAA-MM-DD). Inténtalo de nuevo.");
+                alert("Error: Las fechas ingresadas no tienen un formato válido.");
                 return;
             }
-
             const nuevoPeriodoObj = {
                 id: proximoNombre,
                 fechaInicio: fechaInicioInput,
                 fechaFin: fechaFinInput
             };
-
             periodosLista.push(nuevoPeriodoObj);
             periodoActivoId = proximoNombre;
-
             db.collection('usuario_miguel').doc('config_periodos').set({
                 periodos: periodosLista,
                 periodoActivoId: periodoActivoId
             });
-            
-            alert(proximoNombre + " creado y seleccionado exitosamente con un entorno de datos limpio.");
+            alert(proximoNombre + " creado exitosamente.");
         }
 
         function procesarPeriodoActual() {
             const periodoActual = periodosLista.find(p => p.id === periodoActivoId);
             if (!periodoActual) return;
-
             const ahora = new Date();
             const inicio = new Date(periodoActual.fechaInicio + "T00:00:00");
             const fin = new Date(periodoActual.fechaFin + "T23:59:59");
-
-            // Evaluación estricta del candado de lectura
             esPeriodoBloqueado = ahora > fin;
-
-            // Gestión de textos informativos en el Hub
             const anioText = periodoActual.fechaInicio.split('-')[0];
             document.getElementById('navbar-anio-texto').innerText = "PERIODO ACADÉMICO " + anioText;
             document.getElementById('hub-semestre-titulo').innerText = periodoActual.id;
             document.getElementById('hub-semestre-fechas').innerText = periodoActual.fechaInicio + " al " + periodoActual.fechaFin;
             document.getElementById('carrera-semestre-calculado').innerText = periodoActual.id + " DE LA CARRERA";
 
-            // Cálculo matemático milimétrico del progreso por día del semestre seleccionado
             let porcentajeProgreso = 0;
             if (ahora > fin) {
                 porcentajeProgreso = 100;
@@ -898,21 +878,15 @@ const firebaseConfig = {
                 const tiempoTranscurrido = ahora - inicio;
                 porcentajeProgreso = (tiempoTranscurrido / tiempoTotal) * 100;
             }
-
             document.getElementById('carrera-porcentaje').innerText = porcentajeProgreso.toFixed(4) + "%";
             document.getElementById('carrera-barra').style.width = porcentajeProgreso + "%";
-
-            // Aplicar protecciones visuales inmediatas en los formularios
             gestionarBloqueosFormularios();
-
-            // Reiniciar y reconectar los escuchas de datos con aislamiento
             conectarEscuchasDatosPeriodo();
         }
 
         function gestionarBloqueosFormularios() {
             const formActividad = document.getElementById('form-actividad');
             const inputsForm = formActividad.querySelectorAll('input, select, button');
-            
             if (esPeriodoBloqueado) {
                 inputsForm.forEach(el => el.disabled = true);
                 formActividad.classList.add('opacity-50', 'cursor-not-allowed');
@@ -921,8 +895,6 @@ const firebaseConfig = {
                 formActividad.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
-
-      let unsubscribeCortes = null;
 
         function conectarEscuchasDatosPeriodo() {
             if (unsubscribeMaterias) unsubscribeMaterias();
@@ -935,13 +907,9 @@ const firebaseConfig = {
             const docHorarioId = (periodoActivoId === "PRIMER SEMESTRE") ? "horario" : "horario_" + periodoActivoId.replace(/ /g, "_");
             const docCortesId = "config_cortes_" + periodoActivoId.replace(/ /g, "_");
 
-            // 1. Escucha en tiempo real para la configuración de cortes
             unsubscribeCortes = db.collection('usuario_miguel').doc(docCortesId).onSnapshot((doc) => {
                 if (doc.exists) {
-                    const data = doc.data();
-                    configuracionCortes[1] = data[1] !== undefined ? data[1] : 0.30;
-                    configuracionCortes[2] = data[2] !== undefined ? data[2] : 0.30;
-                    configuracionCortes[3] = data[3] !== undefined ? data[3] : 0.40;
+                    configuracionCortes = doc.data();
                 } else {
                     configuracionCortes = { 1: 0.30, 2: 0.30, 3: 0.40 };
                     db.collection('usuario_miguel').doc(docCortesId).set(configuracionCortes);
@@ -949,10 +917,8 @@ const firebaseConfig = {
                 renderizarDashboard();
             });
 
-            // 2. Escucha en tiempo real para materias (CON FUSIÓN PROTECTORA)
             unsubscribeMaterias = db.collection('usuario_miguel').doc(docMateriasId).onSnapshot((doc) => {
                 if (doc.exists) {
-                    // Si Firestore tiene datos, úsalos; si falta algo, completa con la base.
                     materiasData = { ...JSON.parse(JSON.stringify(estructuraBase)), ...doc.data() };
                 } else {
                     materiasData = JSON.parse(JSON.stringify(estructuraBase));
@@ -962,7 +928,6 @@ const firebaseConfig = {
                 actualizarSelectoresMateriasFormularios();
             });
 
-            // 3. Escucha en tiempo real para actividades
             unsubscribeActividades = db.collection('usuario_miguel').doc(docActividadesId).onSnapshot((doc) => {
                 if (doc.exists) {
                     listaActividades = doc.data().lista || [];
@@ -974,7 +939,6 @@ const firebaseConfig = {
                 evaluarAlertasInmediatas();
             });
 
-            // 4. Escucha en tiempo real para el horario
             unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapshot((doc) => {
                 if (doc.exists) {
                     listaHorarios = doc.data().lista || [];
@@ -985,7 +949,7 @@ const firebaseConfig = {
                     renderizarEstructuraHorario();
                 }
                 const modalTimeline = document.getElementById('modal-timeline');
-                if (modalTimeline && modalTimeline.style.display === 'flex') {
+                if (modalTimeline && !modalTimeline.classList.contains('hidden')) {
                     renderizarTimelineHorizontal();
                 }
                 evaluarClaseActualHub();
@@ -993,29 +957,25 @@ const firebaseConfig = {
             });
         }
 
-        // --- MOTOR DE CÁLCULO PONDERADO POR CORTES (PASO A y B) ---
-function calcularDefinitivaMateria(idMateria) {
-    let corte1 = calcularPromedioCorte(idMateria, 1).promedio;
-    let corte2 = calcularPromedioCorte(idMateria, 2).promedio;
-    let corte3 = calcularPromedioCorte(idMateria, 3).promedio;
-    
-    // Multiplicación milimétrica por los pesos de la estación de control
-    let notaDefinitiva = (corte1 * configuracionCortes[1]) + 
-                         (corte2 * configuracionCortes[2]) + 
-                         (corte3 * configuracionCortes[3]);
-    return notaDefinitiva;
-}
+        function calcularDefinitivaMateria(idMateria) {
+            let notaDefinitiva = 0;
+            for (let c in configuracionCortes) {
+                let calc = calcularPromedioCorte(idMateria, parseInt(c));
+                notaDefinitiva += calc.promedio * (configuracionCortes[c] || 0);
+            }
+            return notaDefinitiva;
+        }
 
-function obtenerEstilosRendimiento(prom, esGlobal = false) {
-    if (prom < 4.0) return { texto: 'FUERA DE COMP.', clasesCard: 'bg-red-50/90 border-red-200/60 text-red-800', clasesNum: 'text-red-700' };
-    if (prom < 4.5) return { texto: 'CASI EN COMP.', clasesCard: 'bg-amber-50/90 border-amber-200/60 text-amber-800', clasesNum: 'text-amber-700' };
-    if (prom < 5.0) return { texto: '¡EN COMPETENCIA!', clasesCard: 'bg-emerald-50/90 border-emerald-200/60 text-emerald-800', clasesNum: 'text-emerald-700' };
-    return { 
-        texto: esGlobal ? '¡BECA ASEGURADA!' : 'PUNTAJE PERFECTO', 
-        clasesCard: 'bg-emerald-800 text-white border-emerald-900 shadow-sm font-bold', 
-        clasesNum: 'text-emerald-900 font-black' 
-    };
-}
+        function obtenerEstilosRendimiento(prom, esGlobal = false) {
+            if (prom < 4.0) return { texto: 'FUERA DE COMP.', clasesCard: 'bg-red-50/90 border-red-200/60 text-red-800', clasesNum: 'text-red-700' };
+            if (prom < 4.5) return { texto: 'CASI EN COMP.', clasesCard: 'bg-amber-50/90 border-amber-200/60 text-amber-800', clasesNum: 'text-amber-700' };
+            if (prom < 5.0) return { texto: '¡EN COMPETENCIA!', clasesCard: 'bg-emerald-50/90 border-emerald-200/60 text-emerald-800', clasesNum: 'text-emerald-700' };
+            return { 
+                texto: esGlobal ? '¡BECA ASEGURADA!' : 'PUNTAJE PERFECTO', 
+                clasesCard: 'bg-emerald-800 text-white border-emerald-900 shadow-sm font-bold', 
+                clasesNum: 'text-emerald-900 font-black' 
+            };
+        }
 
 function renderizarDashboard() {
     const grid = document.getElementById('materias-grid');
@@ -1102,19 +1062,7 @@ function renderizarDashboard() {
     if (elPromedioGlobal) elPromedioGlobal.className = `text-4xl font-black mt-1 transition-colors duration-300 ${estGlobal.clasesNum}`;
 }
         
-        // --- ESTACIÓN DE CONTROL DE PORCENTAJES ACADÉMICOS GLOBALES (MODIFICABLE) ---
-let configuracionCortes = { 1: 0.30, 2: 0.30, 3: 0.40 };
-
-// Diccionario de respaldo para mapear nombres de colores antiguos a códigos HEX reales
-const mapaColoresHexPorDefecto = {
-    violet: '#a855f7',
-    rose: '#f43f5e',
-    amber: '#f59e0b',
-    teal: '#14b8a6',
-    sky: '#0ea5e9',
-    emerald: '#10b981',
-    slate: '#64748b'
-};
+       
 
 function inicializarCamposConfiguracionPanel() {
     // Contar cuántos cortes hay configurados actualmente en el objeto
@@ -1374,13 +1322,13 @@ function abrirModal(id) {
     document.getElementById('modal-materia-titulo').innerText = mat.nombre;
     document.getElementById('modal-materia-creditos').innerText = (mat.creditos || 0) + " Créditos";
     document.getElementById('modal-materia-icono').className = `fa-solid ${mat.icono || 'fa-book'}`;
-
+    
     if (esHex) {
         document.getElementById('modal-header').style.backgroundColor = mat.color;
         document.getElementById('modal-header').className = `p-4 flex justify-between items-center sticky top-0 z-10 text-white transition-colors duration-300 shadow-sm`;
         document.getElementById('modal-content').style.backgroundColor = '#ffffff';
         document.getElementById('modal-content').className = `rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transition-all duration-300`;
-        document.getElementById('modal-promedio-box').style.borderColor = mat.color + '40'; 
+        document.getElementById('modal-promedio-box').style.borderColor = mat.color + '40';
         document.getElementById('modal-promedio-box').className = `flex justify-between items-center mb-6 bg-white/70 backdrop-blur-sm p-4 rounded-lg border transition-all duration-300`;
     } else {
         document.getElementById('modal-header').style.backgroundColor = '';
@@ -1390,7 +1338,29 @@ function abrirModal(id) {
     }
 
     renderizarMenuCortes();
-    document.getElementById('modal-notas').style.display = 'flex';
+    document.getElementById('modal-notas').classList.remove('hidden');
+    document.getElementById('modal-notas').classList.add('flex');
+}
+
+function cerrarModal() {
+    document.getElementById('modal-notas').classList.add('hidden');
+    document.getElementById('modal-notas').classList.remove('flex');
+    if (materiaActivaId && !esPeriodoBloqueado) {
+        const docActividadesId = (periodoActivoId === "PRIMER SEMESTRE") ? "actividades" : "actividades_" + periodoActivoId.replace(/ /g, "_");
+        db.collection('usuario_miguel').doc(docActividadesId).set({ lista: listaActividades });
+    }
+    materiaActivaId = null;
+}
+
+function abrirHistorial() {
+    document.getElementById('modal-historial').classList.remove('hidden');
+    document.getElementById('modal-historial').classList.add('flex');
+    renderizarHistorial();
+}
+
+function cerrarHistorial() {
+    document.getElementById('modal-historial').classList.add('hidden');
+    document.getElementById('modal-historial').classList.remove('flex');
 }
 
 function renderizarMenuCortes() {
@@ -1604,14 +1574,7 @@ function actualizarPromedioModalCorte(numCorte) {
     }
 }
 
-function cerrarModal() {
-    document.getElementById('modal-notas').style.display = 'none';
-    if (materiaActivaId && !esPeriodoBloqueado) {
-        const docActividadesId = (periodoActivoId === "PRIMER SEMESTRE") ? "actividades" : "actividades_" + periodoActivoId.replace(/ /g, "_");
-        db.collection('usuario_miguel').doc(docActividadesId).set({ lista: listaActividades });
-    }
-    materiaActivaId = null;
-}
+
         
 
        function agregarNuevaActividad(e) {
@@ -1705,7 +1668,7 @@ function cerrarModal() {
             actividadesProcesadas.sort((a, b) => a.diasRestantes - b.diasRestantes);
 
             actividadesProcesadas.forEach(tarea => {
-                const infoMateria = estructuraBase[tarea.materiaId] || { nombre: "Desconocida", color: "slate" };
+                const infoMateria = materiasData[tarea.materiaId] || { nombre: "Desconocida", color: "slate" };
                 const tema = temasColor[infoMateria.color] || temasColor.violet;
 
                 let badgeClase = "";
@@ -1760,19 +1723,12 @@ function cerrarModal() {
                 tbody.innerHTML += filaHTML;
             });
             
-            if (document.getElementById('modal-historial').style.display === 'flex') {
+           if (!document.getElementById('modal-historial').classList.contains('hidden')) {
                 renderizarHistorial();
             }
         }
 
-        function abrirHistorial() {
-            document.getElementById('modal-historial').style.display = 'flex';
-            renderizarHistorial();
-        }
-
-        function cerrarHistorial() {
-            document.getElementById('modal-historial').style.display = 'none';
-        }
+        
 
         function eliminarRegistroHistorial(idTarea) {
             if (esPeriodoBloqueado) {
@@ -1815,7 +1771,7 @@ function cerrarModal() {
             }
 
             entregadas.forEach(tarea => {
-                const infoMateria = estructuraBase[tarea.materiaId] || { nombre: "Desconocida", color: "slate" };
+                const infoMateria = materiasData[tarea.materiaId] || { nombre: "Desconocida", color: "slate" };
                 const tema = temasColor[infoMateria.color] || temasColor.violet;
 
                 const btnEliminarHistorial = esPeriodoBloqueado ? '<span class="text-slate-400 font-bold">Congelado</span>' : `
@@ -1877,7 +1833,7 @@ function cerrarModal() {
             let tareasUrgentes = listaActividades.filter(t => t.fechaEntrega === fechaHoyStr && t.estado !== 'entregada');
             
             tareasUrgentes.forEach(tarea => {
-                const infoMateria = estructuraBase[tarea.materiaId] || { nombre: "Materia" };
+                const infoMateria = materiasData[tarea.materiaId] || { nombre: "Materia" };
                 alertasHTML += `
                     <div class="flex items-center justify-between bg-white border border-slate-200/60 p-3 rounded-xl shadow-sm gap-4">
                         <div class="flex items-center gap-2.5 min-w-0">
@@ -1905,7 +1861,7 @@ function cerrarModal() {
                 const diferencia = tiempoClaseMinutos - tiempoActualMinutos;
 
                 if (diferencia > 0 && diferencia <= 20) {
-                    const infoMateria = estructuraBase[bloque.materiaId] || { nombre: bloque.nombrePersonalizado || "Clase" };
+                    const infoMateria = materiasData[bloque.materiaId] || { nombre: bloque.nombrePersonalizado || "Clase" };
                     alertasHTML += `
                         <div class="flex items-center justify-between bg-white border border-slate-200/60 p-3 rounded-xl shadow-sm gap-4">
                             <div class="flex items-center gap-2.5 min-w-0">
@@ -2066,9 +2022,8 @@ function cerrarModal() {
                    clasesDelDia.forEach(bloque => {
                         if (!bloque.inicio) return;
                         let esOtro = bloque.materiaId === 'otro';
-                        let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (estructuraBase[bloque.materiaId]?.nombre || "Materia");
-                        let colorClase = esOtro ? 'slate' : (estructuraBase[bloque.materiaId]?.color || 'violet');
-
+                        let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (materiasData[bloque.materiaId]?.nombre || "Materia");
+                        let colorClase = esOtro ? 'slate' : (materiasData[bloque.materiaId]?.color || 'violet');
                         const estilosSolidos = {
                             violet: 'bg-purple-600 border-purple-700 text-white shadow-purple-600/10',
                             rose: 'bg-rose-600 border-rose-700 text-white shadow-rose-600/10',
@@ -2157,7 +2112,7 @@ function cerrarModal() {
                 }
             });
             if (claseActual) {
-                const mat = estructuraBase[claseActual.materiaId] || { nombre: claseActual.nombrePersonalizado || "Clase" };
+                const mat = materiasData[claseActual.materiaId] || { nombre: claseActual.nombrePersonalizado || "Clase" };
                 elEstadoHub.className = "text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 rounded-md animate-pulse flex items-center gap-1";
                 elEstadoHub.innerHTML = `<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> En curso: ${mat.nombre}`;
             } else {
@@ -2170,23 +2125,38 @@ function cerrarModal() {
         // INTERFAZ DE LÍNEA DE TIEMPO HORIZONTAL CON MAPPING DE HORAS LIBRES
         // =================================================================
         let diaTimelineActivo = null;
-
         function abrirTimeline(idDia) {
             diaTimelineActivo = idDia;
             document.getElementById('timeline-dia-nombre').innerText = diasNombresCortos[idDia];
-            
-            // UX: Limpiar selectores nativos al cambiar de día
             renderTimelineNativoLimpiarCampos();
-            
             if (document.getElementById('wrapper-materia-manual')) {
                 document.getElementById('wrapper-materia-manual').classList.add('hidden');
             }
             if (document.getElementById('time-materia')) {
                 document.getElementById('time-materia').value = "";
             }
-            
             renderizarTimelineHorizontal();
-            document.getElementById('modal-timeline').style.display = 'flex';
+            document.getElementById('modal-timeline').classList.remove('hidden');
+            document.getElementById('modal-timeline').classList.add('flex');
+        }
+
+        function cerrarTimeline() {
+            document.getElementById('modal-timeline').classList.add('hidden');
+            document.getElementById('modal-timeline').classList.remove('flex');
+            document.getElementById('form-timeline-rapido').reset();
+            document.getElementById('wrapper-materia-manual').classList.add('hidden');
+            diaTimelineActivo = null;
+        }
+
+        function abrirReporteInteligente() {
+            document.getElementById('modal-reporte').classList.remove('hidden');
+            document.getElementById('modal-reporte').classList.add('flex');
+            generarMagazineAcademico();
+        }
+
+        function cerrarReporte() {
+            document.getElementById('modal-reporte').classList.add('hidden');
+            document.getElementById('modal-reporte').classList.remove('flex');
         }
 
        function renderTimelineNativoLimpiarCampos() {
@@ -2285,8 +2255,8 @@ function cerrarModal() {
                 let widthBlock = (minRelFin - minRelInicio) * pixelesPorMinuto;
                 
                 let esOtro = bloque.materiaId === 'otro';
-                let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (estructuraBase[bloque.materiaId]?.nombre || "Materia");
-                let colorClase = esOtro ? 'slate' : (estructuraBase[bloque.materiaId]?.color || 'violet');
+               let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (materiasData[bloque.materiaId]?.nombre || "Materia");
+               let colorClase = esOtro ? 'slate' : (materiasData[bloque.materiaId]?.color || 'violet');
 
                 // Mapeo unificado para tarjetas sólidas en el Gantt horizontal
                 const estilosSolidos = {
@@ -2414,12 +2384,7 @@ function cerrarModal() {
             document.getElementById('time-ubicacion').focus();
         }
 
-           function cerrarTimeline() {
-            document.getElementById('modal-timeline').style.display = 'none';
-            document.getElementById('form-timeline-rapido').reset();
-            document.getElementById('wrapper-materia-manual').classList.add('hidden');
-            diaTimelineActivo = null;
-        }
+           
 
         function evaluarMateriaOtroTimeline(valor) {
             const wrapperManual = document.getElementById('wrapper-materia-manual');
@@ -2498,15 +2463,7 @@ function cerrarModal() {
         // =================================================================
         // MOTOR ANALÍTICO DE INTELIGENCIA ACADÉMICA - MAGAZINE PDF DE MIGUEL
         // =================================================================
-        function abrirReporteInteligente() {
-            document.getElementById('modal-reporte').style.display = 'flex';
-            generarMagazineAcademico();
-        }
-
-        function cerrarReporte() {
-            document.getElementById('modal-reporte').style.display = 'none';
-        }
-
+      
         function saltarAPaginaMagazine(idHojatarget) {
             const el = document.getElementById(idHojatarget);
             if(el) el.scrollIntoView({ behavior: 'smooth' });
