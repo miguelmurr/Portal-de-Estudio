@@ -40,22 +40,116 @@
     <!-- BARRA DE NAVEGACIÓN MODIFICADA CON BOTÓN SUPERIOR IZQUIERDO -->
     <nav class="bg-slate-800 text-white p-4 shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
        <div class="flex items-center gap-3 w-full sm:w-auto justify-start">
-      
-       <h1 class="text-2xl font-bold tracking-wide"><i class="fa-solid fa-graduation-cap mr-2"></i> Portal Universitario</h1>
+           <h1 class="text-2xl font-bold tracking-wide"><i class="fa-solid fa-graduation-cap mr-2"></i> Portal Universitario</h1>
         </div>
         <div class="flex items-center gap-3">
-            <button type="button" onclick="toggleFiltroBrillo()" title="Atenuar brillo ocular" class="bg-slate-700 hover:bg-slate-600 text-slate-200 hover:text-white p-2 rounded-lg border border-slate-600 transition-colors flex items-center justify-center w-8 h-8 cursor-pointer">
-                <i class="fa-solid fa-eye-low-vision text-sm"></i>
+            <button type="button" onclick="cambiarVista('configuracion')" title="Configuración del Portal" class="bg-slate-700 hover:bg-slate-600 text-slate-200 hover:text-white p-2 rounded-lg border border-slate-600 transition-colors flex items-center justify-center w-8 h-8 cursor-pointer">
+                <i class="fa-solid fa-gear text-sm"></i>
             </button>
-    
-         <select id="selector-periodos" onchange="cambiarPeriodoActivo(this.value)" class="bg-slate-700 text-white text-xs font-bold uppercase p-2 rounded-lg outline-none border border-slate-600 focus:border-slate-400 cursor-pointer">
-                </select>
+            <select id="selector-periodos" onchange="cambiarPeriodoActivo(this.value)" class="bg-slate-700 text-white text-xs font-bold uppercase p-2 rounded-lg outline-none border border-slate-600 focus:border-slate-400 cursor-pointer">
+            </select>
             <div class="text-sm font-semibold tracking-wider opacity-90 bg-slate-900/40 px-3 py-2 rounded-lg border border-slate-700/50" id="navbar-anio-texto">
                 SEMESTRE ACTIVO 2026
             </div>
         </div>
- 
     </nav>
+
+    <main id="vista-configuracion" class="max-w-6xl mx-auto p-4 mt-6 hidden fade-in">
+        <button onclick="cambiarVista('hub')" class="mb-6 bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow transition-colors">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Menú Principal
+        </button>
+
+        <header class="mb-8">
+            <h2 class="text-3xl font-black text-slate-700"><i class="fa-solid fa-sliders mr-2 text-slate-600"></i> Panel de Configuración General</h2>
+            <p class="text-slate-500 mt-1">Personaliza las materias, ajusta el esquema de cortes académicos y calibra las preferencias visuales del sistema.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="space-y-6 lg:col-span-1">
+                <section class="bg-white rounded-2xl shadow-md p-6 border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">
+                        <i class="fa-solid fa-circle-half-stroke mr-2 text-indigo-600"></i> Preferencias Visuales
+                    </h3>
+                    <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="min-w-0 pr-2">
+                            <p class="text-sm font-bold text-slate-700">Atenuación Lumínica</p>
+                            <p class="text-[11px] text-slate-400 mt-0.5 leading-tight">Activa la capa protectora ocular estilo gafas de sol.</p>
+                        </div>
+                        <button type="button" onclick="toggleFiltroBrillo()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer flex-shrink-0">
+                            <i class="fa-solid fa-eye-low-vision"></i> Alternar
+                        </button>
+                    </div>
+                </section>
+
+                <section class="bg-white rounded-2xl shadow-md p-6 border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">
+                        <i class="fa-solid fa-percent mr-2 text-amber-600"></i> Estación de Cortes
+                    </h3>
+                    <form id="form-config-cortes" onsubmit="guardarConfiguracionCortesGlobal(event)" class="space-y-4 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-500 uppercase mb-1">Porcentaje Corte 1</label>
+                            <div class="relative">
+                                <input type="number" id="cfg-corte-1" min="0" max="100" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-bold text-slate-700">
+                                <span class="absolute right-3 top-2.5 text-sm font-bold text-slate-400">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-500 uppercase mb-1">Porcentaje Corte 2</label>
+                            <div class="relative">
+                                <input type="number" id="cfg-corte-2" min="0" max="100" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-bold text-slate-700">
+                                <span class="absolute right-3 top-2.5 text-sm font-bold text-slate-400">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-500 uppercase mb-1">Porcentaje Corte 3</label>
+                            <div class="relative">
+                                <input type="number" id="cfg-corte-3" min="0" max="100" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-bold text-slate-700">
+                                <span class="absolute right-3 top-2.5 text-sm font-bold text-slate-400">%</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-2.5 rounded-xl font-bold uppercase tracking-wider transition-colors shadow-sm text-[11px]">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Distribución
+                        </button>
+                    </form>
+                </section>
+            </div>
+
+            <div class="lg:col-span-2">
+                <section class="bg-white rounded-2xl shadow-md p-6 border border-slate-200 h-full flex flex-col">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">
+                        <i class="fa-solid fa-book-bookmark mr-2 text-sky-600"></i> Banco de Materias del Semestre
+                    </h3>
+                    
+                    <form id="form-config-materia" onsubmit="guardarMateriaConfig(event)" class="bg-slate-50 p-4 rounded-xl border border-slate-200/60 grid grid-cols-1 md:grid-cols-3 gap-4 items-end text-xs mb-6">
+                        <input type="hidden" id="cfg-materia-id">
+                        <div class="md:col-span-1">
+                            <label class="block font-bold text-slate-500 uppercase mb-1">Nombre Asignatura</label>
+                            <input type="text" id="cfg-materia-nombre" placeholder="Ej: Cálculo Multivariable" required class="w-full p-2.5 bg-white border border-slate-200 rounded-lg outline-none text-sm font-semibold text-slate-700">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-500 uppercase mb-1">Créditos Académicos</label>
+                            <input type="number" id="cfg-materia-creditos" min="1" max="10" required class="w-full p-2.5 bg-white border border-slate-200 rounded-lg outline-none text-sm font-bold text-slate-700 text-center">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-500 uppercase mb-1">Tono de Color Personalizado</label>
+                            <div class="flex gap-2">
+                                <input type="color" id="cfg-materia-color" class="w-12 h-[38px] p-0.5 bg-white border border-slate-200 rounded-lg outline-none cursor-pointer flex-shrink-0">
+                                <button type="submit" id="btn-submit-materia-cfg" class="w-full bg-sky-600 hover:bg-sky-500 text-white h-[38px] rounded-lg font-bold uppercase tracking-wider transition-colors shadow-sm text-[10px]">
+                                    <i class="fa-solid fa-plus mr-1"></i> Añadir Materia
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="flex-grow flex flex-col">
+                        <div class="text-[11px] font-black text-slate-400 uppercase tracking-wider mb-2 px-1">Materias en curso detectadas</div>
+                        <div id="lista-config-materias-dinamicas" class="space-y-2 max-h-[35vh] overflow-y-auto pr-1 flex-grow">
+                            </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
 
     <main id="vista-hub" class="max-w-6xl mx-auto p-4 mt-6 fade-in">
         <header class="mb-8">
@@ -671,6 +765,7 @@ const firebaseConfig = {
             document.getElementById('vista-notas').classList.add('hidden');
             document.getElementById('vista-actividades').classList.add('hidden');
             document.getElementById('vista-horario').classList.add('hidden');
+            document.getElementById('vista-configuracion').classList.add('hidden');
 
             if (vista === 'hub') {
                 document.getElementById('vista-hub').classList.remove('hidden');
@@ -681,6 +776,9 @@ const firebaseConfig = {
             } else if (vista === 'horario') {
                 document.getElementById('vista-horario').classList.remove('hidden');
                 renderizarEstructuraHorario();
+            } else if (vista === 'configuracion') {
+                document.getElementById('vista-configuracion').classList.remove('hidden');
+                inicializarCamposConfiguracionPanel();
             }
         }
 
@@ -843,13 +941,34 @@ const firebaseConfig = {
             }
         }
 
-       function conectarEscuchasDatosPeriodo() {
+      let unsubscribeCortes = null;
+
+        function conectarEscuchasDatosPeriodo() {
             if (unsubscribeMaterias) unsubscribeMaterias();
             if (unsubscribeActividades) unsubscribeActividades();
+            if (unsubscribeHorario) unsubscribeHorario();
+            if (unsubscribeCortes) unsubscribeCortes();
 
             const docMateriasId = (periodoActivoId === "PRIMER SEMESTRE") ? "materias" : "materias_" + periodoActivoId.replace(/ /g, "_");
             const docActividadesId = (periodoActivoId === "PRIMER SEMESTRE") ? "actividades" : "actividades_" + periodoActivoId.replace(/ /g, "_");
+            const docHorarioId = (periodoActivoId === "PRIMER SEMESTRE") ? "horario" : "horario_" + periodoActivoId.replace(/ /g, "_");
+            const docCortesId = "config_cortes_" + periodoActivoId.replace(/ /g, "_");
 
+            // 1. Escucha en tiempo real para la configuración de cortes académicos del periodo
+            unsubscribeCortes = db.collection('usuario_miguel').doc(docCortesId).onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    configuracionCortes[1] = data[1] !== undefined ? data[1] : 0.30;
+                    configuracionCortes[2] = data[2] !== undefined ? data[2] : 0.30;
+                    configuracionCortes[3] = data[3] !== undefined ? data[3] : 0.40;
+                } else {
+                    configuracionCortes = { 1: 0.30, 2: 0.30, 3: 0.40 };
+                    db.collection('usuario_miguel').doc(docCortesId).set(configuracionCortes);
+                }
+                renderizarDashboard();
+            });
+
+            // 2. Escucha en tiempo real para el banco de materias del periodo
             unsubscribeMaterias = db.collection('usuario_miguel').doc(docMateriasId).onSnapshot((doc) => {
                 if (doc.exists) {
                     materiasData = doc.data();
@@ -858,40 +977,35 @@ const firebaseConfig = {
                     db.collection('usuario_miguel').doc(docMateriasId).set(materiasData);
                 }
                 renderizarDashboard();
+                actualizarSelectoresMateriasFormularios();
             });
 
-            // Al escuchar las actividades, actualizamos ambas pantallas para tener conexión en tiempo real
-          unsubscribeActividades = db.collection('usuario_miguel').doc(docActividadesId).onSnapshot((doc) => {
+            // 3. Escucha en tiempo real para la lista de actividades evaluadas
+            unsubscribeActividades = db.collection('usuario_miguel').doc(docActividadesId).onSnapshot((doc) => {
                 if (doc.exists) {
                     listaActividades = doc.data().lista || [];
                 } else {
-            
                     listaActividades = [];
                 }
                 renderizarTablaActividades();
                 renderizarDashboard();
-                evaluarAlertasInmediatas(); // Sincronización reactiva por cambio de actividades
+                evaluarAlertasInmediatas();
             });
-// ESCUCHA EN TIEMPO REAL DEL HORARIO SEMANAL (PASO 3)
-            if (unsubscribeHorario) unsubscribeHorario();
-const docHorarioId = (periodoActivoId === "PRIMER SEMESTRE") ? "horario" : "horario_" + periodoActivoId.replace(/ /g, "_");
-unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapshot((doc) => {
+
+            // 4. Escucha en tiempo real para el horario semanal de clases
+            unsubscribeHorario = db.collection('usuario_miguel').doc(docHorarioId).onSnapshot((doc) => {
                 if (doc.exists) {
                     listaHorarios = doc.data().lista || [];
                 } else {
                     listaHorarios = [];
-              
                 }
                 if (!document.getElementById('vista-horario').classList.contains('hidden')) {
                     renderizarEstructuraHorario();
                 }
-                
-                // Si tienes el planificador Gantt abierto al recibir cambios de la DB, actualizar tarjetas al instante
                 const modalTimeline = document.getElementById('modal-timeline');
                 if (modalTimeline && modalTimeline.style.display === 'flex') {
                     renderizarTimelineHorizontal();
                 }
-                
                 evaluarClaseActualHub();
                 evaluarAlertasInmediatas();
             });
@@ -986,8 +1100,235 @@ function renderizarDashboard() {
     if (elTextoGlobal) elTextoGlobal.innerText = estGlobal.texto;
     if (elPromedioGlobal) elPromedioGlobal.className = `text-4xl font-black mt-1 transition-colors duration-300 ${estGlobal.clasesNum}`;
 }
-        // --- ESTACIÓN DE CONTROL DE PORCENTAJES ACADÉMICOS GLOBALES (30% - 30% - 40%) ---
-const configuracionCortes = { 1: 0.30, 2: 0.30, 3: 0.40 };
+        // --- ESTACIÓN DE CONTROL DE PORCENTAJES ACADÉMICOS GLOBALES (MODIFICABLE) ---
+let configuracionCortes = { 1: 0.30, 2: 0.30, 3: 0.40 };
+
+// Diccionario de respaldo para mapear nombres de colores antiguos a códigos HEX reales
+const mapaColoresHexPorDefecto = {
+    violet: '#a855f7',
+    rose: '#f43f5e',
+    amber: '#f59e0b',
+    teal: '#14b8a6',
+    sky: '#0ea5e9',
+    emerald: '#10b981',
+    slate: '#64748b'
+};
+
+function inicializarCamposConfiguracionPanel() {
+    // Cargar porcentajes actuales mapeados desde la estación de control hacia la interfaz (multiplicados por 100)
+    document.getElementById('cfg-corte-1').value = Math.round((configuracionCortes[1] || 0) * 100);
+    document.getElementById('cfg-corte-2').value = Math.round((configuracionCortes[2] || 0) * 100);
+    document.getElementById('cfg-corte-3').value = Math.round((configuracionCortes[3] || 0) * 100);
+    
+    // Resetear el formulario de materias para evitar residuos de ediciones previas
+    document.getElementById('form-config-materia').reset();
+    document.getElementById('cfg-materia-id').value = '';
+    document.getElementById('btn-submit-materia-cfg').innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Añadir Materia`;
+    
+    // Renderizar listado de asignaturas activas
+    renderizarMateriasConfigPanel();
+}
+
+function renderizarMateriasConfigPanel() {
+    const contenedor = document.getElementById('lista-config-materias-dinamicas');
+    if (!contenedor) return;
+    contenedor.innerHTML = '';
+
+    for (let id in materiasData) {
+        let mat = materiasData[id];
+        
+        // Determinar el color HEX real: si ya es un código hexadecimal de Excel se usa directamente,
+        // si es un nombre de clase antiguo (ej: 'violet') se extrae su equivalente del mapa.
+        let colorPrevisualizacion = mat.color.startsWith('#') ? mat.color : (mapaColoresHexPorDefecto[mat.color] || '#64748b');
+
+        contenedor.innerHTML += `
+            <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200 gap-4 fade-in">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-4 h-4 rounded-full flex-shrink-0 shadow-inner border border-slate-300" style="background-color: ${colorPrevisualizacion}"></div>
+                    <div class="min-w-0">
+                        <p class="font-bold text-slate-700 text-xs truncate">${mat.nombre}</p>
+                        <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">${mat.creditos} Créditos</p>
+                    </div>
+                </div>
+                <div class="flex gap-2 flex-shrink-0">
+                    <button type="button" onclick="cargarMateriaParaEditar('${id}')" class="text-sky-600 hover:text-sky-800 bg-white border border-slate-200 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all shadow-sm cursor-pointer">
+                        <i class="fa-solid fa-pen mr-0.5"></i> Editar
+                    </button>
+                    <button type="button" onclick="eliminarMateriaConfig('${id}')" class="text-red-500 hover:text-red-700 bg-white border border-slate-200 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all shadow-sm cursor-pointer">
+                        <i class="fa-solid fa-trash-can mr-0.5"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    if (Object.keys(materiasData).length === 0) {
+        contenedor.innerHTML = `
+            <div class="text-center p-6 text-slate-400 font-medium border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+                <i class="fa-solid fa-book-open text-xl block mb-1 opacity-50"></i> No tienes asignaturas configuradas en este periodo.
+            </div>
+        `;
+    }
+}
+        function cargarMateriaParaEditar(idMateria) {
+    const mat = materiasData[idMateria];
+    if (!mat) return;
+
+    // Poblar los campos ocultos y visibles del formulario de configuración
+    document.getElementById('cfg-materia-id').value = idMateria;
+    document.getElementById('cfg-materia-nombre').value = mat.nombre;
+    document.getElementById('cfg-materia-creditos').value = mat.creditos;
+    
+    // Si el color guardado es un formato de clase antiguo (ej: 'violet'), mapear a HEX para el Color Picker
+    let colorHex = mat.color.startsWith('#') ? mat.color : (mapaColoresHexPorDefecto[mat.color] || '#64748b');
+    document.getElementById('cfg-materia-color').value = colorHex;
+
+    // Mutar visualmente el botón de acción a estado de edición
+    document.getElementById('btn-submit-materia-cfg').innerHTML = `<i class="fa-solid fa-floppy-disk mr-1"></i> Actualizar Materia`;
+    document.getElementById('cfg-materia-nombre').focus();
+}
+
+function guardarMateriaConfig(e) {
+    e.preventDefault();
+    if (esPeriodoBloqueado) {
+        alert("Acción denegada: El periodo actual está congelado.");
+        return;
+    }
+
+    const idInput = document.getElementById('cfg-materia-id').value;
+    const nombreInput = document.getElementById('cfg-materia-nombre').value.trim();
+    const creditosInput = parseInt(document.getElementById('cfg-materia-creditos').value);
+    const colorInput = document.getElementById('cfg-materia-color').value;
+
+    // Si existe un idInput estamos editando; de lo contrario, generamos una llave técnica única basada en texto
+    let idMateria = idInput || 'mat_' + Date.now().toString();
+
+    // Mantener el icono previo si existe, de lo contrario asignar un icono genérico de libro
+    let iconoPrevio = (materiasData[idMateria] && materiasData[idMateria].icono) ? materiasData[idMateria].icono : 'fa-book';
+
+    // Construir/Actualizar el nodo dentro de nuestro mapa local
+    materiasData[idMateria] = {
+        nombre: nombreInput,
+        creditos: creditosInput,
+        color: colorInput,
+        icono: iconoPrevio
+    };
+
+    // Determinar el documento correspondiente al semestre activo para guardar de forma aislada
+    const docMateriasId = (periodoActivoId === "PRIMER SEMESTRE") ? "materias" : "materias_" + periodoActivoId.replace(/ /g, "_");
+
+    db.collection('usuario_miguel').doc(docMateriasId).set(materiasData)
+        .then(() => {
+            alert(idInput ? "Materia actualizada con éxito." : "Nueva materia añadida al periodo.");
+            inicializarCamposConfiguracionPanel(); // Limpia el formulario y refresca la lista
+            actualizarSelectoresMateriasFormularios(); // Sincroniza dinámicamente los formularios de la Agenda
+        })
+        .catch(error => console.error("Error al guardar materia en configuración: ", error));
+}
+
+function eliminarMateriaConfig(idMateria) {
+    if (esPeriodoBloqueado) {
+        alert("Acción denegada: El periodo actual está congelado.");
+        return;
+    }
+
+    // Centinela de seguridad: Validar si la asignatura tiene entregas registradas en este periodo
+    let actividadesAsociadas = listaActividades.filter(t => t.materiaId === idMateria);
+    if (actividadesAsociadas.length > 0) {
+        if (!confirm(`Alerta: La materia tiene ${actividadesAsociadas.length} actividades registradas en la agenda.\n¿Estás seguro de que deseas eliminarla? Las notas y tareas vinculadas quedarán huérfanas.`)) {
+            return;
+        }
+    } else {
+        if (!confirm("¿Deseas eliminar permanentemente esta asignatura de tu control académico?")) {
+            return;
+        }
+    }
+
+    // Remover la propiedad del mapa de datos
+    delete materiasData[idMateria];
+
+    const docMateriasId = (periodoActivoId === "PRIMER SEMESTRE") ? "materias" : "materias_" + periodoActivoId.replace(/ /g, "_");
+
+    db.collection('usuario_miguel').doc(docMateriasId).set(materiasData)
+        .then(() => {
+            inicializarCamposConfiguracionPanel();
+            actualizarSelectoresMateriasFormularios();
+        })
+        .catch(error => console.error("Error al remover asignatura: ", error));
+}
+        function guardarConfiguracionCortesGlobal(e) {
+    e.preventDefault();
+    if (esPeriodoBloqueado) {
+        alert("Acción denegada: El periodo actual está congelado.");
+        return;
+    }
+
+    // Extraer los valores enteros digitados por el usuario
+    const c1 = parseInt(document.getElementById('cfg-corte-1').value) || 0;
+    const c2 = parseInt(document.getElementById('cfg-corte-2').value) || 0;
+    const c3 = parseInt(document.getElementById('cfg-corte-3').value) || 0;
+
+    // Centinela de validación matemática absoluta
+    if ((c1 + c2 + c3) !== 100) {
+        alert(`Error de distribución: La suma de los tres cortes debe ser exactamente igual al 100%. (Suma detectada actualmente: ${c1 + c2 + c3}%)`);
+        return;
+    }
+
+    // Convertir a base decimal para el motor de cálculo matemático de la suite
+    configuracionCortes[1] = c1 / 100;
+    configuracionCortes[2] = c2 / 100;
+    configuracionCortes[3] = c3 / 100;
+
+    // Persistir de forma aislada la configuración de cortes del semestre activo
+    const docCortesId = "config_cortes_" + periodoActivoId.replace(/ /g, "_");
+    
+    db.collection('usuario_miguel').doc(docCortesId).set(configuracionCortes)
+        .then(() => {
+            alert("Estación de control actualizada. Distribución de cortes aplicada con éxito.");
+            renderizarDashboard(); // Recalcular promedios del home con los nuevos pesos
+        })
+        .catch(error => console.error("Error al guardar estación de cortes: ", error));
+}
+
+function actualizarSelectoresMateriasFormularios() {
+    // Lista de IDs de los elementos select estáticos en la Agenda, Horario y Timeline
+    const selectoresIds = ['reg-materia', 'hor-materia', 'time-materia'];
+
+    selectoresIds.forEach(id => {
+        const selectEl = document.getElementById(id);
+        if (!selectEl) return;
+
+        // Respaldar el valor seleccionado por el usuario para no romper la UX
+        const valorPreexistente = selectEl.value;
+        selectEl.innerHTML = '';
+
+        // Crear la opción neutra por defecto
+        const optDefecto = document.createElement('option');
+        optDefecto.value = "";
+        optDefecto.disabled = true;
+        optDefecto.selected = !valorPreexistente;
+        optDefecto.innerText = (id === 'time-materia') ? "Materia o Tipo" : "Selecciona una materia";
+        selectEl.appendChild(optDefecto);
+
+        // Poblar dinámicamente con las llaves del mapa de materias activo
+        for (let matId in materiasData) {
+            const opt = document.createElement('option');
+            opt.value = matId;
+            opt.innerText = materiasData[matId].nombre;
+            if (matId === valorPreexistente) opt.selected = true;
+            selectEl.appendChild(opt);
+        }
+
+        // Mantener la opción comodín "Otro..." exclusivamente en el planificador Timeline rápido
+        if (id === 'time-materia') {
+            const optOtro = document.createElement('option');
+            optOtro.value = "otro";
+            optOtro.innerText = "Otro...";
+            if (valorPreexistente === "otro") optOtro.selected = true;
+            selectEl.appendChild(optOtro);
+        }
+    });
+}
 
 function calcularPromedioCorte(idMateria, numCorte) {
     let total = 0;
