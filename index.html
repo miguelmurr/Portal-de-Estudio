@@ -1026,7 +1026,7 @@ function renderizarMenuCortes() {
     const mat = materiasData[materiaActivaId];
     const tema = temasColor[mat.color || 'violet'];
     
-    // Sincronización forzada del promedio global de la materia en el encabezado superior
+    // Sincronización forzada inmediata del promedio global de la materia en el encabezado superior
     const promedioGlobalMateria = calcularDefinitivaMateria(materiaActivaId);
     const elPromedioHeader = document.getElementById('modal-materia-promedio');
     if (elPromedioHeader) {
@@ -1061,118 +1061,15 @@ function renderizarMenuCortes() {
     contenedorNotas.innerHTML = cortesHTML;
     
     const btnGuardar = document.getElementById('modal-save-btn');
-    if (btnGuardar) {
-        btnGuardar.classList.remove('hidden');
-        if (esPeriodoBloqueado) {
-            btnGuardar.className = `text-white px-6 py-2 rounded-lg shadow font-semibold transition-colors bg-slate-500 hover:bg-slate-600`;
-            btnGuardar.innerHTML = `<i class="fa-solid fa-lock mr-2"></i> Cerrar Ventana`;
-        } else {
-            btnGuardar.className = `text-white px-6 py-2 rounded-lg shadow font-semibold transition-colors ${tema.modalBtn}`;
-            btnGuardar.innerHTML = `<i class="fa-solid fa-check mr-2"></i> Guardar y Cerrar`;
-        }
-        btnGuardar.setAttribute('onclick', 'cerrarModal()');
-    }
-}
-
-function verActividadesCorte(numCorte) {
-    const contenedorNotas = document.getElementById('contenedor-notas-dinamicas');
-    const mat = materiasData[materiaActivaId];
-    const tema = temasColor[mat.color || 'violet'];
-    
-    contenedorNotas.innerHTML = '';
-    
-    let encabezadoCorteHTML = `
-        <button onclick="renderizarMenuCortes()" class="mb-4 bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow transition-colors flex items-center gap-1.5">
-            <i class="fa-solid fa-arrow-left"></i> Volver a los Cortes
-        </button>
-        <div class="text-xs font-black text-slate-400 uppercase tracking-wider mb-3 px-1">
-            Actividades Evaluadas - Corte ${numCorte}
-        </div>
-    `;
-    
-    let actividadesCorte = listaActividades.filter(t => t.materiaId === materiaActivaId && t.corte === numCorte.toString() && t.estado === 'entregada');
-    actividadesCorte.sort((a, b) => b.id - a.id);
-    
-    let listaTareasHTML = '';
-    if (actividadesCorte.length === 0) {
-        listaTareasHTML = `<div class="text-center p-6 text-slate-400 font-medium border border-dashed rounded-xl ${tema.borderStrong} bg-white/50"><i class="fa-solid fa-box-open text-2xl block mb-2 opacity-50"></i>No hay actividades entregadas en este corte aún.</div>`;
+    btnGuardar.classList.remove('hidden');
+    if (esPeriodoBloqueado) {
+        btnGuardar.className = `text-white px-6 py-2 rounded-lg shadow font-semibold transition-colors bg-slate-500 hover:bg-slate-600`;
+        btnGuardar.innerHTML = `<i class="fa-solid fa-lock mr-2"></i> Cerrar Ventana`;
     } else {
-        actividadesCorte.forEach(tarea => {
-            let notaVal = tarea.nota !== undefined ? tarea.nota : '';
-            let porcVal = tarea.porcentaje !== undefined ? tarea.porcentaje : '';
-            const disabledAttr = esPeriodoBloqueado ? 'disabled' : '';
-
-            listaTareasHTML += `
-                <div class="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-xl shadow-sm border ${tema.borderStrong} gap-4 transition-all hover:shadow-md fade-in mb-3">
-                    <div class="flex-grow w-full">
-                        <p class="font-bold text-slate-700 text-sm line-clamp-1">${tarea.nombre}</p>
-                        <p class="text-[10px] text-slate-400 font-mono mt-0.5"><i class="fa-regular fa-calendar mr-1"></i> Entregada: ${tarea.fechaEntrega}</p>
-                    </div>
-                    <div class="flex gap-3 w-full sm:w-auto">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nota (0-5)</label>
-                            <input type="number" min="0" max="5" step="0.1" 
-                                oninput="guardarNotaTemporal('${tarea.id}', 'nota', this); actualizarPromedioModalCorte(${numCorte});" 
-                                value="${notaVal}" 
-                                ${disabledAttr}
-                                class="w-20 p-2 text-sm border border-slate-200 rounded-lg outline-none font-bold text-slate-700 text-center ${tema.focusRing}">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">% Valor Corte</label>
-                            <div class="relative">
-                                <input type="number" min="0" max="100" step="1" 
-                                    oninput="guardarNotaTemporal('${tarea.id}', 'porcentaje', this); actualizarPromedioModalCorte(${numCorte});" 
-                                    value="${porcVal}" 
-                                    ${disabledAttr}
-                                    class="w-20 p-2 pr-5 text-sm border border-slate-200 rounded-lg outline-none font-bold text-slate-700 text-center ${tema.focusRing}">
-                                <span class="absolute right-2 top-2 text-xs font-bold text-slate-400">%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-    }
-    
-    contenedorNotas.innerHTML = encabezadoCorteHTML + `<div>${listaTareasHTML}</div>`;
-    actualizarPromedioModalCorte(numCorte);
-    
-    const btnGuardar = document.getElementById('modal-save-btn');
-    if (btnGuardar) {
         btnGuardar.className = `text-white px-6 py-2 rounded-lg shadow font-semibold transition-colors ${tema.modalBtn}`;
-        btnGuardar.innerHTML = `<i class="fa-solid fa-arrow-left mr-2"></i> Guardar y Volver`;
-        btnGuardar.setAttribute('onclick', 'renderizarMenuCortes()');
+        btnGuardar.innerHTML = `<i class="fa-solid fa-check mr-2"></i> Guardar y Cerrar`;
     }
-}
-
-function guardarNotaTemporal(idTarea, campo, inputEl) {
-    let rawVal = inputEl.value;
-    let valNum = parseFloat(rawVal);
-    
-    if (campo === 'nota') {
-        let digits = rawVal.replace(/\D/g, '');
-        if (digits.length > 1) {
-            rawVal = digits[0] + '.' + digits.slice(1);
-            valNum = parseFloat(rawVal);
-        }
-        if (isNaN(valNum)) valNum = 0;
-        if (valNum > 5) {
-            valNum = 5;
-            rawVal = "5";
-        }
-        inputEl.value = rawVal;
-    } else if (campo === 'porcentaje') {
-        if (isNaN(valNum)) valNum = 0;
-        if (valNum > 100) {
-            valNum = 100;
-            inputEl.value = "100";
-        }
-    }
-    
-    let tarea = listaActividades.find(t => t.id === idTarea);
-    if (tarea) {
-        tarea[campo] = valNum;
-    }
+    btnGuardar.setAttribute('onclick', 'cerrarModal()');
 }
 
 function actualizarPromedioModalCorte(numCorte) {
@@ -1188,20 +1085,6 @@ function actualizarPromedioModalCorte(numCorte) {
         const estModal = obtenerEstilosRendimiento(promedioGlobalMateria);
         elPromedioHeader.className = "text-3xl font-black " + estModal.clasesNum;
     }
-    
-    const contenedorAlerta = document.getElementById('alerta-porcentaje-contenedor');
-    if (contenedorAlerta) {
-        if (sumaPorc > 100) {
-            contenedorAlerta.innerHTML = `<div class="w-full mb-4 text-xs font-bold text-center rounded-lg p-2 bg-red-100 text-red-700 border border-red-200 fade-in"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ¡Alerta! La suma supera el 100% de este corte (Actual: ${sumaPorc}%)</div>`;
-        } else if (sumaPorc > 0 && sumaPorc < 100) {
-            contenedorAlerta.innerHTML = `<div class="w-full mb-4 text-xs font-bold text-center rounded-lg p-2 bg-amber-100 text-amber-700 border border-amber-200 fade-in"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Falta para el 100% de este corte (Actual: ${sumaPorc}%)</div>`;
-        } else if (sumaPorc === 100) {
-            contenedorAlerta.innerHTML = `<div class="w-full mb-4 text-xs font-bold text-center rounded-lg p-2 bg-emerald-100 text-emerald-700 border border-emerald-200 fade-in"><i class="fa-solid fa-check-double mr-1"></i> Porcentajes de corte perfectos (100%)</div>`;
-        } else {
-            contenedorAlerta.innerHTML = '';
-        }
-    }
-}
     
     const contenedorAlerta = document.getElementById('alerta-porcentaje-contenedor');
     if (sumaPorc > 100) {
