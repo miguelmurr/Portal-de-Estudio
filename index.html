@@ -1878,11 +1878,11 @@ function cerrarModal() {
             }
         }
 
-        // --- CONTROLADOR DE INICIO CON INTEGRACIÓN DE CONFORT VISUAL Y PWA ---
+        
+       // --- CONTROLADOR DE INICIO CON INTEGRACIÓN DE CONFORT VISUAL Y PWA ---
         window.onload = function() {
             aplicarPreferenciaBrillo();
             inicializarEstructuraPeriodos();
-            poblarSelectoresHorasTimeline(); 
             
             // Ciclo maestro de sincronización forzada cada 60 segundos (1 minuto)
             setInterval(() => {
@@ -1912,16 +1912,14 @@ function cerrarModal() {
             const diaId = document.getElementById('hor-dia').value;
             const ubicacion = document.getElementById('hor-ubicacion').value.trim();
 
-            // RECOLECCIÓN Y CONVERSIÓN DE LAS 3 COLUMNAS UX
-            const hIni = document.getElementById('hor-ini-h').value;
-            const mIni = document.getElementById('hor-ini-m').value;
-            const apIni = document.getElementById('hor-ini-ap').value;
-            const horaInicio = convertir12a24(hIni, mIni, apIni);
+            // Captura directa desde los nuevos inputs nativos ("HH:MM")
+            const horaInicio = document.getElementById('hor-inicio-nativo').value;
+            const horaFin = document.getElementById('hor-fin-nativo').value;
 
-            const hFin = document.getElementById('hor-fin-h').value;
-            const mFin = document.getElementById('hor-fin-m').value;
-            const apFin = document.getElementById('hor-fin-ap').value;
-            const horaFin = convertir12a24(hFin, mFin, apFin);
+            if (!horaInicio || !horaFin) {
+                alert("Por favor, seleccione las horas de inicio y salida.");
+                return;
+            }
 
             // Validación de seguridad cronológica matemática
             let tIni = parseInt(horaInicio.replace(':', ''));
@@ -1935,22 +1933,21 @@ function cerrarModal() {
                 id: Date.now().toString(),
                 materiaId: materiaId,
                 dia: diaId,
-                inicio: horaInicio,
+                inicio: horaInicio, // Guardado limpio en formato 24h
                 fin: horaFin,
                 ubicacion: ubicacion,
                 repetir: true
             };
-            
             listaHorarios.push(nuevoBloque);
 
             const docHorarioId = (periodoActivoId === "PRIMER SEMESTRE") ? "horario" : "horario_" + periodoActivoId.replace(/ /g, "_");
             db.collection('usuario_miguel').doc(docHorarioId).set({ lista: listaHorarios })
                 .then(() => {
                     document.getElementById('form-horario').reset();
-                    poblarSelectoresHorasTimeline(); // Devuelve las horas a 6:00 AM y 8:00 AM por defecto
                 })
-                .catch((error) => console.error("Error al guardar en horario: ", error));
+                 .catch((error) => console.error("Error al guardar en horario: ", error));
         }
+        
         function eliminarBloqueHorario(idBloque) {
             if (esPeriodoBloqueado) {
                 alert("Acción denegada: El periodo es de solo lectura.");
@@ -2116,13 +2113,14 @@ function cerrarModal() {
             diaTimelineActivo = idDia;
             document.getElementById('timeline-dia-nombre').innerText = diasNombresCortos[idDia];
             
-            // UX: Inicializa selectores fijos y oculta el campo manual previo
-            poblarSelectoresHorasTimeline();
+            // UX: Limpiar selectores nativos al cambiar de día
+            renderTimelineNativoLimpiarCampos();
+            
             if (document.getElementById('wrapper-materia-manual')) {
                 document.getElementById('wrapper-materia-manual').classList.add('hidden');
             }
             if (document.getElementById('time-materia')) {
-                document.getElementById('time-materia').value = "comunicacion";
+                document.getElementById('time-materia').value = "";
             }
             
             renderizarTimelineHorizontal();
@@ -2389,16 +2387,14 @@ function cerrarModal() {
             const ubicacion = document.getElementById('time-ubicacion').value.trim();
             const repetirSemanal = document.getElementById('time-repetir').checked;
 
-            // RECOLECCIÓN DEL CUADRO UNIFICADO DE TIEMPO 12H
-            const hIni = document.getElementById('time-ini-h').value;
-            const mIni = document.getElementById('time-ini-m').value;
-            const apIni = document.getElementById('time-ini-ap').value;
-            const horaInicio = convertir12a24(hIni, mIni, apIni);
+            // Recolección limpia del Time Picker Nativo
+            const horaInicio = document.getElementById('time-inicio-nativo').value;
+            const horaFin = document.getElementById('time-fin-nativo').value;
 
-            const hFin = document.getElementById('time-fin-h').value;
-            const mFin = document.getElementById('time-fin-m').value;
-            const apFin = document.getElementById('time-fin-ap').value;
-            const horaFin = convertir12a24(hFin, mFin, apFin);
+            if (!horaInicio || !horaFin) {
+                alert("Por favor, seleccione las horas de inicio y salida.");
+                return;
+            }
 
             let tIni = parseInt(horaInicio.replace(':', ''));
             let tFin = parseInt(horaFin.replace(':', ''));
@@ -2416,7 +2412,6 @@ function cerrarModal() {
                 ubicacion: ubicacion,
                 repetir: repetirSemanal
             };
-
             if (materiaId === 'otro') {
                 const nombreManual = document.getElementById('time-nombre-manual').value.trim();
                 if (!nombreManual) {
@@ -2427,13 +2422,12 @@ function cerrarModal() {
             }
 
             listaHorarios.push(nuevoBloque);
-
             const docHorarioId = (periodoActivoId === "PRIMER SEMESTRE") ? "horario" : "horario_" + periodoActivoId.replace(/ /g, "_");
             db.collection('usuario_miguel').doc(docHorarioId).set({ lista: listaHorarios })
                 .then(() => {
                     document.getElementById('form-timeline-rapido').reset();
                     document.getElementById('wrapper-materia-manual').classList.add('hidden');
-                    poblarSelectoresHorasTimeline();
+                    renderTimelineNativoLimpiarCampos();
                     renderizarTimelineHorizontal();
                 })
                 .catch((error) => console.error("Error al guardar desde Timeline: ", error));
