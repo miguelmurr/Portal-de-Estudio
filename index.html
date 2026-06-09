@@ -2023,20 +2023,21 @@ function cerrarModal() {
             }
         }
 
-        function renderizarEstructuraHorario() {
+       function renderizarEstructuraHorario() {
             const contenedor = document.getElementById('contenedor-grid-semanal');
+            if (!contenedor) return;
             contenedor.innerHTML = '';
 
             const ahora = new Date();
-            const diaActualSemana = ahora.getDay(); // 1 = Lunes, 2 = Martes...
+            const diaActualSemana = ahora.getDay();
 
-            // Dibujar las columnas de Lunes (1) a Sábado (6)
             for (let d = 1; d <= 6; d++) {
-                let clasesDelDia = listaHorarios.filter(b => parseInt(b.dia) === d);
+                // Filtrar asegurando de forma estricta que solo entren elementos con hora asignada
+                let clasesDelDia = listaHorarios.filter(b => parseInt(b.dia) === d && b.inicio);
                 
-                // Ordenar cronológicamente por hora de inicio
-                clasesDelDia.sort((a, b) => a.inicio.localeCompare(b.inicio));
-
+                // Ordenar cronológicamente con salvaguarda de cadena vacía ante nulos
+                clasesDelDia.sort((a, b) => (a.inicio || '').localeCompare(b.inicio || ''));
+                
                 let esHoy = (d === diaActualSemana);
                 let bgColumna = esHoy ? 'bg-slate-50/80 border-sky-400 shadow-[0_15px_30px_rgba(15,23,42,0.03)]' : 'bg-white border-slate-200/60 shadow-[0_10px_20px_rgba(0,0,0,0.01)]';
                 let badgeHoy = esHoy ? '<span class="text-[9px] bg-sky-500 text-white px-1.5 py-0.5 rounded-full font-black uppercase tracking-wider animate-pulse">Hoy</span>' : '';
@@ -2046,13 +2047,13 @@ function cerrarModal() {
                             <h3 class="font-bold text-slate-700 text-sm tracking-wide uppercase group-hover:text-sky-600 transition-colors">${diasNombresCortos[d]}</h3>
                             ${badgeHoy}
                         </div>
-                        <div class="flex flex-col gap-3 flex-grow overflow-y-auto" id="columna-dia-${d}">
-                            </div>
+                        <div class="flex flex-col gap-3 flex-grow overflow-y-auto" id="columna-dia-${d}"></div>
                     </div>
                 `;
                 contenedor.innerHTML += columnaHTML;
 
                 const contenedorDia = document.getElementById(`columna-dia-${d}`);
+                if (!contenedorDia) continue;
 
                 if (clasesDelDia.length === 0) {
                     contenedorDia.innerHTML = `
@@ -2063,11 +2064,11 @@ function cerrarModal() {
                     `;
                 } else {
                    clasesDelDia.forEach(bloque => {
+                        if (!bloque.inicio) return;
                         let esOtro = bloque.materiaId === 'otro';
                         let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (estructuraBase[bloque.materiaId]?.nombre || "Materia");
                         let colorClase = esOtro ? 'slate' : (estructuraBase[bloque.materiaId]?.color || 'violet');
 
-                        // Diccionario técnico de estilos sólidos para garantizar compatibilidad con Tailwind
                         const estilosSolidos = {
                             violet: 'bg-purple-600 border-purple-700 text-white shadow-purple-600/10',
                             rose: 'bg-rose-600 border-rose-700 text-white shadow-rose-600/10',
@@ -2079,11 +2080,10 @@ function cerrarModal() {
                         };
                         let claseColorEstilo = estilosSolidos[colorClase] || estilosSolidos.violet;
            
-                        // Evaluar si esta clase en específico está sucediendo en vivo
                         let esClaseEnVivo = false;
                         if (esHoy) {
-                            let horaClase = parseInt(bloque.inicio.split(':')[0]);
-                            let minClase = parseInt(bloque.inicio.split(':')[1]);
+                            let horaClase = parseInt(bloque.inicio.split(':')[0]) || 0;
+                            let minClase = parseInt(bloque.inicio.split(':')[1]) || 0;
                             let horaActual = ahora.getHours();
                             let minActual = ahora.getMinutes();
                             
@@ -2115,7 +2115,7 @@ function cerrarModal() {
                                         <span class="ml-auto flex items-center text-[9px] font-black uppercase tracking-wider text-white bg-white/20 px-1.5 py-0.5 rounded shadow-sm">${liveBadge}${esClaseEnVivo ? 'En Vivo' : ''}</span>
                                     </div>
                                     <div class="flex items-center gap-1 text-white/70 font-medium">
-                                        <i class="fa-solid fa-location-dot text-[9px] text-white/60"></i> <span class="line-clamp-1">${bloque.ubicacion}</span>
+                                        <i class="fa-solid fa-location-dot text-[9px] text-white/60"></i> <span class="line-clamp-1">${bloque.ubicacion || '--'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -2143,11 +2143,12 @@ function cerrarModal() {
             let tiempoActual = (horaActual * 60) + minActual;
 
             let claseActual = null;
-
             listaHorarios.forEach(bloque => {
+                // Protección Poka-Yoke: Evitar procesar bloques corruptos de la base de datos
+                if (!bloque.inicio) return;
                 if (parseInt(bloque.dia) === diaHoy) {
-                    let hClase = parseInt(bloque.inicio.split(':')[0]);
-                    let mClase = parseInt(bloque.inicio.split(':')[1]);
+                    let hClase = parseInt(bloque.inicio.split(':')[0]) || 0;
+                    let mClase = parseInt(bloque.inicio.split(':')[1]) || 0;
                     let tClase = (hClase * 60) + mClase;
 
                     if (tiempoActual >= tClase && tiempoActual < (tClase + 120)) {
@@ -2155,15 +2156,13 @@ function cerrarModal() {
                     }
                 }
             });
-
             if (claseActual) {
-                const mat = estructuraBase[claseActual.materiaId] ||
-{ nombre: "Clase" };
+                const mat = estructuraBase[claseActual.materiaId] || { nombre: claseActual.nombrePersonalizado || "Clase" };
                 elEstadoHub.className = "text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 rounded-md animate-pulse flex items-center gap-1";
- elEstadoHub.innerHTML = `<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> En curso: ${mat.nombre}`;
- } else {
+                elEstadoHub.innerHTML = `<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> En curso: ${mat.nombre}`;
+            } else {
                 elEstadoHub.className = "text-xs font-bold text-slate-500 bg-slate-50 border border-slate-100 px-2.5 py-0.5 rounded-md";
- elEstadoHub.innerText = "Fuera de horario";
+                elEstadoHub.innerText = "Fuera de horario";
             }
         }
 
