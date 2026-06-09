@@ -87,26 +87,19 @@
                     </h3>
                     <form id="form-config-cortes" onsubmit="guardarConfiguracionCortesGlobal(event)" class="space-y-4 text-xs">
                         <div>
-                            <label class="block font-bold text-slate-500 uppercase mb-1">Porcentaje Corte 1</label>
-                            <div class="relative">
-                                <input type="number" id="cfg-corte-1" min="0" max="100" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-bold text-slate-700">
-                                <span class="absolute right-3 top-2.5 text-sm font-bold text-slate-400">%</span>
-                            </div>
+                            <label class="block font-bold text-slate-500 uppercase mb-1">Cantidad de Cortes del Periodo</label>
+                            <select id="cfg-cantidad-cortes" onchange="generarInputsCortesDinamicos(this.value)" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-bold text-slate-700 cursor-pointer">
+                                <option value="1">1 Corte</option>
+                                <option value="2">2 Cortes</option>
+                                <option value="3">3 Cortes</option>
+                                <option value="4">4 Cortes</option>
+                                <option value="5">5 Cortes</option>
+                            </select>
                         </div>
-                        <div>
-                            <label class="block font-bold text-slate-500 uppercase mb-1">Porcentaje Corte 2</label>
-                            <div class="relative">
-                                <input type="number" id="cfg-corte-2" min="0" max="100" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-bold text-slate-700">
-                                <span class="absolute right-3 top-2.5 text-sm font-bold text-slate-400">%</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block font-bold text-slate-500 uppercase mb-1">Porcentaje Corte 3</label>
-                            <div class="relative">
-                                <input type="number" id="cfg-corte-3" min="0" max="100" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-bold text-slate-700">
-                                <span class="absolute right-3 top-2.5 text-sm font-bold text-slate-400">%</span>
-                            </div>
-                        </div>
+                        
+                        <!-- Contenedor dinámico de campos de porcentaje -->
+                        <div id="contenedor-inputs-cortes-dinamicos" class="space-y-3"></div>
+
                         <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-2.5 rounded-xl font-bold uppercase tracking-wider transition-colors shadow-sm text-[11px]">
                             <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Distribución
                         </button>
@@ -1136,18 +1129,44 @@ const mapaColoresHexPorDefecto = {
 };
 
 function inicializarCamposConfiguracionPanel() {
-    // Cargar porcentajes actuales mapeados desde la estación de control hacia la interfaz (multiplicados por 100)
-    document.getElementById('cfg-corte-1').value = Math.round((configuracionCortes[1] || 0) * 100);
-    document.getElementById('cfg-corte-2').value = Math.round((configuracionCortes[2] || 0) * 100);
-    document.getElementById('cfg-corte-3').value = Math.round((configuracionCortes[3] || 0) * 100);
+    // Contar cuántos cortes hay configurados actualmente en el objeto
+    const llavesCortes = Object.keys(configuracionCortes).map(Number);
+    const cantidadActualCortes = llavesCortes.length > 0 ? Math.max(...llavesCortes) : 3;
+
+    // Sincronizar el selector de cantidad
+    document.getElementById('cfg-cantidad-cortes').value = cantidadActualCortes;
     
-    // Resetear el formulario de materias para evitar residuos de ediciones previas
+    // Forzar la creación de las casillas numéricas según la cantidad detectada
+    generarInputsCortesDinamicos(cantidadActualCortes);
+
+    // Resetear el formulario de materias
     document.getElementById('form-config-materia').reset();
     document.getElementById('cfg-materia-id').value = '';
     document.getElementById('btn-submit-materia-cfg').innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Añadir Materia`;
     
-    // Renderizar listado de asignaturas activas
     renderizarMateriasConfigPanel();
+}
+
+function generarInputsCortesDinamicos(cantidad) {
+    const contenedor = document.getElementById('contenedor-inputs-cortes-dinamicos');
+    if (!contenedor) return;
+    contenedor.innerHTML = '';
+
+    const cantNum = parseInt(cantidad) || 3;
+    for (let c = 1; c <= cantNum; c++) {
+        // Traer el porcentaje actual si existe (multiplicado por 100), sino dejarlo vacío
+        let valorPorc = configuracionCortes[c] !== undefined ? Math.round(configuracionCortes[c] * 100) : '';
+        
+        contenedor.innerHTML += `
+            <div>
+                <label class="block font-bold text-slate-500 uppercase mb-1">Porcentaje Corte ${c}</label>
+                <div class="relative">
+                    <input type="number" id="cfg-corte-${c}" min="0" max="100" value="${valorPorc}" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-bold text-slate-700">
+                    <span class="absolute right-3 top-2.5 text-sm font-bold text-slate-400">%</span>
+                </div>
+            </div>
+        `;
+    }
 }
 
 function renderizarMateriasConfigPanel() {
@@ -1157,9 +1176,6 @@ function renderizarMateriasConfigPanel() {
 
     for (let id in materiasData) {
         let mat = materiasData[id];
-        
-        // Determinar el color HEX real: si ya es un código hexadecimal de Excel se usa directamente,
-        // si es un nombre de clase antiguo (ej: 'violet') se extrae su equivalente del mapa.
         let colorPrevisualizacion = mat.color.startsWith('#') ? mat.color : (mapaColoresHexPorDefecto[mat.color] || '#64748b');
 
         contenedor.innerHTML += `
@@ -1191,20 +1207,18 @@ function renderizarMateriasConfigPanel() {
         `;
     }
 }
-        function cargarMateriaParaEditar(idMateria) {
+
+function cargarMateriaParaEditar(idMateria) {
     const mat = materiasData[idMateria];
     if (!mat) return;
 
-    // Poblar los campos ocultos y visibles del formulario de configuración
     document.getElementById('cfg-materia-id').value = idMateria;
     document.getElementById('cfg-materia-nombre').value = mat.nombre;
     document.getElementById('cfg-materia-creditos').value = mat.creditos;
     
-    // Si el color guardado es un formato de clase antiguo (ej: 'violet'), mapear a HEX para el Color Picker
     let colorHex = mat.color.startsWith('#') ? mat.color : (mapaColoresHexPorDefecto[mat.color] || '#64748b');
     document.getElementById('cfg-materia-color').value = colorHex;
 
-    // Mutar visualmente el botón de acción a estado de edición
     document.getElementById('btn-submit-materia-cfg').innerHTML = `<i class="fa-solid fa-floppy-disk mr-1"></i> Actualizar Materia`;
     document.getElementById('cfg-materia-nombre').focus();
 }
@@ -1221,13 +1235,9 @@ function guardarMateriaConfig(e) {
     const creditosInput = parseInt(document.getElementById('cfg-materia-creditos').value);
     const colorInput = document.getElementById('cfg-materia-color').value;
 
-    // Si existe un idInput estamos editando; de lo contrario, generamos una llave técnica única basada en texto
     let idMateria = idInput || 'mat_' + Date.now().toString();
-
-    // Mantener el icono previo si existe, de lo contrario asignar un icono genérico de libro
     let iconoPrevio = (materiasData[idMateria] && materiasData[idMateria].icono) ? materiasData[idMateria].icono : 'fa-book';
 
-    // Construir/Actualizar el nodo dentro de nuestro mapa local
     materiasData[idMateria] = {
         nombre: nombreInput,
         creditos: creditosInput,
@@ -1235,14 +1245,13 @@ function guardarMateriaConfig(e) {
         icono: iconoPrevio
     };
 
-    // Determinar el documento correspondiente al semestre activo para guardar de forma aislada
     const docMateriasId = (periodoActivoId === "PRIMER SEMESTRE") ? "materias" : "materias_" + periodoActivoId.replace(/ /g, "_");
 
     db.collection('usuario_miguel').doc(docMateriasId).set(materiasData)
         .then(() => {
             alert(idInput ? "Materia actualizada con éxito." : "Nueva materia añadida al periodo.");
-            inicializarCamposConfiguracionPanel(); // Limpia el formulario y refresca la lista
-            actualizarSelectoresMateriasFormularios(); // Sincroniza dinámicamente los formularios de la Agenda
+            inicializarCamposConfiguracionPanel();
+            actualizarSelectoresMateriasFormularios();
         })
         .catch(error => console.error("Error al guardar materia en configuración: ", error));
 }
@@ -1253,7 +1262,6 @@ function eliminarMateriaConfig(idMateria) {
         return;
     }
 
-    // Centinela de seguridad: Validar si la asignatura tiene entregas registradas en este periodo
     let actividadesAsociadas = listaActividades.filter(t => t.materiaId === idMateria);
     if (actividadesAsociadas.length > 0) {
         if (!confirm(`Alerta: La materia tiene ${actividadesAsociadas.length} actividades registradas en la agenda.\n¿Estás seguro de que deseas eliminarla? Las notas y tareas vinculadas quedarán huérfanas.`)) {
@@ -1265,9 +1273,7 @@ function eliminarMateriaConfig(idMateria) {
         }
     }
 
-    // Remover la propiedad del mapa de datos
     delete materiasData[idMateria];
-
     const docMateriasId = (periodoActivoId === "PRIMER SEMESTRE") ? "materias" : "materias_" + periodoActivoId.replace(/ /g, "_");
 
     db.collection('usuario_miguel').doc(docMateriasId).set(materiasData)
@@ -1277,36 +1283,39 @@ function eliminarMateriaConfig(idMateria) {
         })
         .catch(error => console.error("Error al remover asignatura: ", error));
 }
-        function guardarConfiguracionCortesGlobal(e) {
+
+function guardarConfiguracionCortesGlobal(e) {
     e.preventDefault();
     if (esPeriodoBloqueado) {
         alert("Acción denegada: El periodo actual está congelado.");
         return;
     }
 
-    // Extraer los valores enteros digitados por el usuario
-    const c1 = parseInt(document.getElementById('cfg-corte-1').value) || 0;
-    const c2 = parseInt(document.getElementById('cfg-corte-2').value) || 0;
-    const c3 = parseInt(document.getElementById('cfg-corte-3').value) || 0;
+    const cantidadCortes = parseInt(document.getElementById('cfg-cantidad-cortes').value) || 3;
+    let nuevoObjetoCortes = {};
+    let sumaVerificacion = 0;
 
-    // Centinela de validación matemática absoluta
-    if ((c1 + c2 + c3) !== 100) {
-        alert(`Error de distribución: La suma de los tres cortes debe ser exactamente igual al 100%. (Suma detectada actualmente: ${c1 + c2 + c3}%)`);
+    // Recorrer dinámicamente según la cantidad elegida
+    for (let c = 1; c <= cantidadCortes; c++) {
+        const inputVal = parseInt(document.getElementById(`cfg-corte-${c}`).value) || 0;
+        sumaVerificacion += inputVal;
+        nuevoObjetoCortes[c] = inputVal / 100;
+    }
+
+    if (sumaVerificacion !== 100) {
+        alert(`Error de distribución: La suma de todos los cortes configurados debe dar exactamente igual al 100%. (Suma detectada actualmente: ${sumaVerificacion}%)`);
         return;
     }
 
-    // Convertir a base decimal para el motor de cálculo matemático de la suite
-    configuracionCortes[1] = c1 / 100;
-    configuracionCortes[2] = c2 / 100;
-    configuracionCortes[3] = c3 / 100;
+    // Actualizar el puntero en memoria global de la suite
+    configuracionCortes = nuevoObjetoCortes;
 
-    // Persistir de forma aislada la configuración de cortes del semestre activo
     const docCortesId = "config_cortes_" + periodoActivoId.replace(/ /g, "_");
     
     db.collection('usuario_miguel').doc(docCortesId).set(configuracionCortes)
         .then(() => {
-            alert("Estación de control actualizada. Distribución de cortes aplicada con éxito.");
-            renderizarDashboard(); // Recalcular promedios del home con los nuevos pesos
+            alert("Estación de control actualizada. Estructura de cortes modificada con éxito.");
+            renderizarDashboard();
         })
         .catch(error => console.error("Error al guardar estación de cortes: ", error));
 }
@@ -1413,9 +1422,13 @@ function renderizarMenuCortes() {
     document.getElementById('alerta-porcentaje-contenedor').innerHTML = '';
     
     let cortesHTML = `<div class="grid grid-cols-1 gap-4 mt-2">`;
-    [1, 2, 3].forEach(c => {
+    
+    // Extraer de forma dinámica las llaves del objeto de configuración de cortes
+    const cortesActivosLista = Object.keys(configuracionCortes).map(Number).sort((a, b) => a - b);
+
+    cortesActivosLista.forEach(c => {
         const calc = calcularPromedioCorte(materiaActivaId, c);
-        const pesoCortePercent = (configuracionCortes[c] * 100).toFixed(0);
+        const pesoCortePercent = ((configuracionCortes[c] || 0) * 100).toFixed(0);
         
         let estiloBordeCorte = esHex ? `style="border-color: ${mat.color}40"` : '';
         let claseBordeCorte = esHex ? '' : tema.borderStrong;
