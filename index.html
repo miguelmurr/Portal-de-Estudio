@@ -910,11 +910,15 @@ function calcularDefinitivaMateria(idMateria) {
     return notaDefinitiva;
 }
 
-function obtenerEstilosRendimiento(prom) {
+function obtenerEstilosRendimiento(prom, esGlobal = false) {
     if (prom < 4.0) return { texto: 'FUERA DE COMP.', clasesCard: 'bg-red-50/90 border-red-200/60 text-red-800', clasesNum: 'text-red-700' };
     if (prom < 4.5) return { texto: 'CASI EN COMP.', clasesCard: 'bg-amber-50/90 border-amber-200/60 text-amber-800', clasesNum: 'text-amber-700' };
     if (prom < 5.0) return { texto: '¡EN COMPETENCIA!', clasesCard: 'bg-emerald-50/90 border-emerald-200/60 text-emerald-800', clasesNum: 'text-emerald-700' };
-    return { texto: '¡BECA ASEGURADA!', clasesCard: 'bg-emerald-800 text-white border-emerald-900 shadow-sm font-bold', clasesNum: 'text-emerald-900 font-black' };
+    return { 
+        texto: esGlobal ? '¡BECA ASEGURADA!' : 'PUNTAJE PERFECTO', 
+        clasesCard: 'bg-emerald-800 text-white border-emerald-900 shadow-sm font-bold', 
+        clasesNum: 'text-emerald-900 font-black' 
+    };
 }
 
 function renderizarDashboard() {
@@ -977,7 +981,7 @@ function renderizarDashboard() {
     if (elHubPctTexto) elHubPctTexto.innerText = pctRendimiento.toFixed(2) + "%";
     if (elHubPctBarra) elHubPctBarra.style.width = pctRendimiento + "%";
 
-    let estGlobal = obtenerEstilosRendimiento(promedioGlobal);
+    let estGlobal = obtenerEstilosRendimiento(promedioGlobal, true);
     if (elCardGlobal) elCardGlobal.className = `p-4 rounded-xl border flex flex-col justify-center items-center transition-all duration-300 ${estGlobal.clasesCard}`;
     if (elTextoGlobal) elTextoGlobal.innerText = estGlobal.texto;
     if (elPromedioGlobal) elPromedioGlobal.className = `text-4xl font-black mt-1 transition-colors duration-300 ${estGlobal.clasesNum}`;
