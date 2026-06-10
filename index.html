@@ -1550,6 +1550,53 @@ function renderizarDashboard() {
     if (elTextoGlobal) elTextoGlobal.innerText = estGlobal.texto;
     if (elPromedioGlobal) elPromedioGlobal.className = `text-4xl font-black mt-1 transition-colors duration-300 ${estGlobal.clasesNum}`;
 }
+
+        // Función maestra para preparar y limpiar todo el panel de configuración general
+function inicializarCamposConfiguracionPanel() {
+    const cantidadCortes = Object.keys(configuracionCortes).length || 3;
+    const selectorCortes = document.getElementById('cfg-cantidad-cortes');
+    if (selectorCortes) selectorCortes.value = cantidadCortes;
+
+    // Construir los inputs de porcentaje según la cantidad guardada
+    generarInputsCortesDinamicos(cantidadCortes);
+
+    // Resetear por completo el formulario de añadir/editar materias
+    const idInput = document.getElementById('cfg-materia-id');
+    const nombreInput = document.getElementById('cfg-materia-nombre');
+    const creditosInput = document.getElementById('cfg-materia-creditos');
+    const colorInput = document.getElementById('cfg-materia-color');
+    const btnSubmit = document.getElementById('btn-submit-materia-cfg');
+
+    if (idInput) idInput.value = '';
+    if (nombreInput) nombreInput.value = '';
+    if (creditosInput) creditosInput.value = '';
+    if (colorInput) colorInput.value = '#64748b'; 
+    if (btnSubmit) btnSubmit.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Añadir Materia`;
+
+    // Cargar visualmente el banco de asignaturas
+    renderizarMateriasConfigPanel();
+}
+
+// Generador dinámico en el DOM para los campos numéricos de la estación de cortes
+function generarInputsCortesDinamicos(cantidad) {
+    const contenedor = document.getElementById('contenedor-inputs-cortes-dinamicos');
+    if (!contenedor) return;
+    contenedor.innerHTML = '';
+    cantidad = parseInt(cantidad);
+
+    for (let c = 1; c <= cantidad; c++) {
+        // Multiplicar por 100 para mostrar como entero el valor flotante guardado en base de datos
+        let valorGuardado = configuracionCortes[c] !== undefined ? Math.round(configuracionCortes[c] * 100) : '';
+        
+        contenedor.innerHTML += `
+            <div>
+                <label class="block font-bold text-slate-400 uppercase mb-1">Porcentaje Corte ${c} (%)</label>
+                <input type="number" id="cfg-corte-${c}" min="0" max="100" value="${valorGuardado}" required 
+                    class="w-full p-2 bg-white border border-slate-200 rounded-lg outline-none text-sm font-bold text-slate-700 text-center focus:ring-2 focus:ring-amber-100">
+            </div>
+        `;
+    }
+}
         
 function renderizarMateriasConfigPanel() {
     const contenedor = document.getElementById('lista-config-materias-dinamicas');
