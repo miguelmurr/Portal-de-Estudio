@@ -25,17 +25,336 @@
             content: "";
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.08); /* Se reduce un poco el tinte opaco */
-            backdrop-filter: brightness(0.90) sepia(0.12); /* Brillo calibrado al 80% */
+            background: rgba(15, 23, 42, 0.08);
+            backdrop-filter: brightness(0.90) sepia(0.12);
             -webkit-backdrop-filter: brightness(0.90) sepia(0.12);
             pointer-events: none; 
             z-index: 99999; 
             transition: all 0.3s ease;
         }
+
+     /* ======================================================== */
+        /* SKIN FRUTIGER AERO / ACUÁTICO - PASO 1 (BASE, NAV Y HUB) */
+        /* ======================================================== */
+        
+      /* Fondo Global con palmeras, cañas de bambú, brotes florales y hojas grandes de la costa integradas en los espacios libres */
+        body.theme-frutiger-aero {
+            background-image: 
+                /* Esquina Superior Izquierda (Palmera Lima) */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0,0 C30,20 40,50 100,100 C75,85 55,65 52,50 C65,60 82,72 88,75 C70,58 52,42 45,30 C60,42 74,50 80,52 C62,36 48,22 40,10 C50,20 62,26 68,28 C50,15 35,8 0,0' fill='%23b5ff00' fill-opacity='0.22'/%3E%3C/svg%3E"),
+                /* Esquina Inferior Izquierda (Palmera Lima) */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0,100 C30,80 40,50 100,0 C75,15 55,35 52,50 C35,40 18,28 12,25 C30,42 48,58 55,70 C40,58 26,50 20,48 C38,64 52,78 60,90 C50,80 38,74 32,72 C50,85 35,92 0,100' fill='%23b5ff00' fill-opacity='0.22'/%3E%3C/svg%3E"),
+                /* Esquina Superior Derecha (Palmera Lima) */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M100,0 C70,20 60,50 0,100 C25,85 45,65 48,50 C35,60 18,72 12,75 C30,58 48,42 55,30 C40,42 26,50 20,52 C38,36 52,22 60,10 C50,20 38,26 32,28 C50,15 65,8 100,0' fill='%23b5ff00' fill-opacity='0.20'/%3E%3C/svg%3E"),
+                /* Esquina Inferior Derecha (Palmera Lima) */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M100,100 C70,80 60,50 0,0 C25,15 45,35 48,50 C35,40 18,28 12,25 C30,42 48,58 55,70 C40,58 26,50 20,48 C38,64 52,78 60,90 C50,80 38,74 32,72 C50,85 65,92 100,100' fill='%23b5ff00' fill-opacity='0.25'/%3E%3C/svg%3E"),
+                /* Lateral Izquierdo: Cañas de Bambú Esmeralda */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 200'%3E%3Cpath d='M0,200 Q25,100 15,0 Q35,90 0,200 M0,160 Q45,130 55,105 Q22,145 0,165 M0,110 Q50,75 65,45 Q18,85 0,115 M0,60 Q35,35 50,15 Q15,45 0,65' fill='%23007a48' fill-opacity='0.18'/%3E%3C/svg%3E"),
+                /* Lateral Derecho: Cañas de Bambú Esmeralda */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 200'%3E%3Cpath d='M100,200 Q75,100 85,0 Q65,90 100,200 M100,160 Q55,130 45,105 Q78,145 100,165 M100,110 Q50,75 35,45 Q82,85 100,115 M100,60 Q65,35 50,15 Q85,45 100,65' fill='%23007a48' fill-opacity='0.18'/%3E%3C/svg%3E"),
+                /* Flores Lateral Izquierdo (Intercaladas: 2 Amarillas, 2 Violetas) */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 200'%3E%3Cg transform='translate%2820, 35%29' fill='%23fde047' fill-opacity='0.22'%3E%3Ccircle cx='0' cy='-10' r='11'/%3E%3Ccircle cx='0' cy='10' r='11'/%3E%3Ccircle cx='-10' cy='0' r='11'/%3E%3Ccircle cx='10' cy='0' r='11'/%3E%3Ccircle cx='0' cy='0' r='5' fill='%23fff' fill-opacity='0.6'/%3E%3C/g%3E%3Cg transform='translate%2845, 80%29' fill='%23a855f7' fill-opacity='0.22'%3E%3Ccircle cx='0' cy='-10' r='11'/%3E%3Ccircle cx='0' cy='10' r='11'/%3E%3Ccircle cx='-10' cy='0' r='11'/%3E%3Ccircle cx='10' cy='0' r='11'/%3E%3Ccircle cx='0' cy='0' r='5' fill='%23fff' fill-opacity='0.6'/%3E%3C/g%3E%3Cg transform='translate%2818, 125%29' fill='%23fde047' fill-opacity='0.18'%3E%3Ccircle cx='0' cy='-8' r='9'/%3E%3Ccircle cx='0' cy='8' r='9'/%3E%3Ccircle cx='-8' cy='0' r='9'/%3E%3Ccircle cx='8' cy='0' r='9'/%3E%3Ccircle cx='0' cy='0' r='4' fill='%23fff' fill-opacity='0.6'/%3E%3C/g%3E%3Cg transform='translate%2838, 170%29' fill='%23a855f7' fill-opacity='0.18'%3E%3Ccircle cx='0' cy='-8' r='9'/%3E%3Ccircle cx='0' cy='8' r='9'/%3E%3Ccircle cx='-8' cy='0' r='9'/%3E%3Ccircle cx='8' cy='0' r='9'/%3E%3Ccircle cx='0' cy='0' r='4' fill='%23fff' fill-opacity='0.6'/%3E%3C/g%3E%3C/svg%3E"),
+                /* Flores Lateral Derecho (Intercaladas: 2 Violetas, 2 Amarillas) */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 200'%3E%3Cg transform='translate%2875, 40%29' fill='%23a855f7' fill-opacity='0.22'%3E%3Ccircle cx='0' cy='-10' r='11'/%3E%3Ccircle cx='0' cy='10' r='11'/%3E%3Ccircle cx='-10' cy='0' r='11'/%3E%3Ccircle cx='10' cy='0' r='11'/%3E%3Ccircle cx='0' cy='0' r='5' fill='%23fff' fill-opacity='0.6'/%3E%3C/g%3E%3Cg transform='translate%2850, 85%29' fill='%23fde047' fill-opacity='0.22'%3E%3Ccircle cx='0' cy='-10' r='11'/%3E%3Ccircle cx='0' cy='10' r='11'/%3E%3Ccircle cx='-10' cy='0' r='11'/%3E%3Ccircle cx='10' cy='0' r='11'/%3E%3Ccircle cx='0' cy='0' r='5' fill='%23fff' fill-opacity='0.6'/%3E%3C/g%3E%3Cg transform='translate%2880, 130%29' fill='%23a855f7' fill-opacity='0.18'%3E%3Ccircle cx='0' cy='-8' r='9'/%3E%3Ccircle cx='0' cy='8' r='9'/%3E%3Ccircle cx='-8' cy='0' r='9'/%3E%3Ccircle cx='8' cy='0' r='9'/%3E%3Ccircle cx='0' cy='0' r='4' fill='%23fff' fill-opacity='0.6'/%3E%3C/g%3E%3Cg transform='translate%2855, 175%29' fill='%23fde047' fill-opacity='0.18'%3E%3Ccircle cx='0' cy='-8' r='9'/%3E%3Ccircle cx='0' cy='8' r='9'/%3E%3Ccircle cx='-8' cy='0' r='9'/%3E%3Ccircle cx='8' cy='0' r='9'/%3E%3Ccircle cx='0' cy='0' r='4' fill='%23fff' fill-opacity='0.6'/%3E%3C/g%3E%3C/svg%3E"),
+                /* Nueva Capa: Hoja Grande de la Costa Izquierda (Verde Hoja Intermedio) */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0,25 C25,15 65,35 85,75 C55,80 25,70 0,25 Z M0,25 C15,30 35,50 45,75' stroke='%2349b322' stroke-opacity='0.15' stroke-width='1.2' fill='%2349b322' fill-opacity='0.16'/%3E%3C/svg%3E"),
+                /* Nueva Capa: Hoja Grande de la Costa Derecha (Verde Hoja Intermedio) */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M100,25 C75,15 35,35 15,75 C45,80 75,70 100,25 Z M100,25 C85,30 65,50 55,75' stroke='%2349b322' stroke-opacity='0.15' stroke-width='1.2' fill='%2349b322' fill-opacity='0.16'/%3E%3C/svg%3E"),
+                /* Capas de Iluminación y Degradados Líquidos Base */
+                radial-gradient(circle at 10% 20%, rgba(14, 235, 255, 0.2) 0%, transparent 45%),
+                radial-gradient(circle at 85% 75%, rgba(16, 220, 130, 0.15) 0%, transparent 45%),
+                linear-gradient(135deg, #e0fcf7 0%, #b2f2e1 50%, #f1fcf6 100%) !important;
+            
+            background-position: 
+                top -45px left -45px, 
+                bottom -55px left -45px, 
+                top -45px right -45px, 
+                bottom -55px right -55px, 
+                center left -10px, 
+                center right -10px, 
+                center left 25px, 
+                center right 25px, 
+                top 22% left -40px, 
+                bottom 22% right -40px, 
+                0 0, 0 0, 0 0 !important;
+                
+            background-size: 
+                350px 350px, 350px 350px, 350px 350px, 350px 350px, 200px 400px, 200px 400px, 
+                180px 360px, 180px 360px, 
+                230px 230px, 230px 230px, 
+                100% 100%, 100% 100%, 100% 100% !important;
+                
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+            animation: swayPalms 28s ease-in-out infinite alternate !important;
+        }
+
+        /* Balanceo coordinado de toda la flora y las hojas costeras intermedias */
+        @keyframes swayPalms {
+            0% {
+                background-position: 
+                    top -45px left -45px, bottom -55px left -45px, 
+                    top -45px right -45px, bottom -55px right -55px, 
+                    center left -10px, center right -10px, 
+                    center left 25px, center right 25px, 
+                    top 22% left -40px, bottom 22% right -40px, 
+                    0 0, 0 0, 0 0;
+            }
+            100% {
+                background-position: 
+                    top -35px left -35px, bottom -45px left -35px, 
+                    top -35px right -35px, bottom -45px right -40px, 
+                    center left 5px, center right 5px, 
+                    center left 32px, center right 18px, 
+                    top 24% left -30px, bottom 24% right -30px, 
+                    0 0, 0 0, 0 0;
+            }
+        }
+
+        /* ======================================================== */
+        /* SKIN FRUTIGER AERO - PASO 2 (RESTO DE SECCIONES Y GRIDS) */
+        /* ======================================================== */
+
+        /* 1. Vidrio Pulido para todas las tarjetas estáticas y dinámicas del Portal */
+        body.theme-frutiger-aero #vista-configuracion section,
+        body.theme-frutiger-aero #vista-configuracion form,
+        body.theme-frutiger-aero #vista-notas section,
+        body.theme-frutiger-aero #vista-notas .bg-slate-50,
+        body.theme-frutiger-aero #materias-grid > div,
+        body.theme-frutiger-aero #vista-actividades section,
+        body.theme-frutiger-aero #vista-actividades .bg-white,
+        body.theme-frutiger-aero #tablero-prioridades-agenda > div,
+        body.theme-frutiger-aero #vista-horario section,
+        body.theme-frutiger-aero #contenedor-grid-semanal > div,
+        body.theme-frutiger-aero .bg-white\/60,
+        body.theme-frutiger-aero .bg-slate-50\/40 {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.35) 100%) !important;
+            backdrop-filter: blur(16px) saturate(120%) !important;
+            -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.82) !important;
+            box-shadow: 0 8px 32px 0 rgba(0, 137, 123, 0.06), inset 0 1px 1px rgba(255,255,255,1) !important;
+            border-radius: 22px !important;
+            color: #004d40 !important;
+        }
+
+        /* Sutil destello extra al pasar el mouse en los módulos del menú */
+        body.theme-frutiger-aero #vista-hub .group:hover,
+        body.theme-frutiger-aero #materias-grid > div:hover,
+        body.theme-frutiger-aero #contenedor-grid-semanal > div:hover {
+            border-color: rgba(0, 229, 255, 0.5) !important;
+            box-shadow: 0 12px 35px 0 rgba(0, 229, 255, 0.15), inset 0 1px 1px rgba(255,255,255,1) !important;
+        }
+
+        /* 2. Ajuste de Textos e Indicadores Secundarios (Corregido para tu Nombre) */
+        body.theme-frutiger-aero h2,
+        body.theme-frutiger-aero h3,
+        body.theme-frutiger-aero h4,
+        body.theme-frutiger-aero label {
+            color: #006064 !important;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.7);
+        }
+        body.theme-frutiger-aero p,
+        body.theme-frutiger-aero .text-slate-500,
+        body.theme-frutiger-aero .text-slate-400 {
+            color: #00838f !important;
+        }
+        /* Fuerza el degradado azul difuminado original sin interferencias */
+        body.theme-frutiger-aero .bg-clip-text {
+            background-image: linear-gradient(to right, #00b4db, #0083b0) !important;
+            color: transparent !important;
+            text-shadow: none !important; /* Evita que el sombreado gris opaque el degradado */
+        }
+
+        /* 3. Inputs y Selects Estilo Vidrio Hundido */
+        body.theme-frutiger-aero input[type="text"],
+        body.theme-frutiger-aero input[type="number"],
+        body.theme-frutiger-aero input[type="date"],
+        body.theme-frutiger-aero input[type="time"],
+        body.theme-frutiger-aero select {
+            background: rgba(255, 255, 255, 0.6) !important;
+            border: 1px solid rgba(255, 255, 255, 0.85) !important;
+            color: #004d40 !important;
+            box-shadow: inset 0 1px 3px rgba(0, 131, 143, 0.1), 0 1px 2px rgba(0,0,0,0.02) !important;
+            border-radius: 12px !important;
+        }
+        body.theme-frutiger-aero input:focus,
+        body.theme-frutiger-aero select:focus {
+            border-color: #00e5ff !important;
+            background: rgba(255, 255, 255, 0.9) !important;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.35) !important;
+        }
+
+        /* Elementos contenedores internos de las listas */
+        body.theme-frutiger-aero #lista-config-materias-dinamicas > div,
+        body.theme-frutiger-aero #tablero-prioridades-agenda div div,
+        body.theme-frutiger-aero #modal-promedio-box {
+            background: rgba(255, 255, 255, 0.55) !important;
+            border: 1px solid rgba(255, 255, 255, 0.7) !important;
+            border-radius: 14px !important;
+        }
+
+        /* 4. Transformación de Ventanas Emergentes (Modales de Notas, Timeline e Historial) */
+        body.theme-frutiger-aero #modal-content,
+        body.theme-frutiger-aero #modal-timeline > div,
+        body.theme-frutiger-aero #modal-historial > div {
+            background: linear-gradient(135deg, rgba(235, 254, 253, 0.96) 0%, rgba(205, 251, 246, 0.9) 100%) !important;
+            backdrop-filter: blur(24px) !important;
+            -webkit-backdrop-filter: blur(24px) !important;
+            border: 2px solid rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 25px 55px rgba(0, 96, 100, 0.22) !important;
+            border-radius: 24px !important;
+        }
+        body.theme-frutiger-aero #modal-header,
+        body.theme-frutiger-aero #modal-timeline .bg-slate-800,
+        body.theme-frutiger-aero #modal-historial .bg-emerald-700 {
+            background: linear-gradient(180deg, rgba(0, 151, 167, 0.5) 0%, rgba(0, 137, 123, 0.45) 100%) !important;
+            backdrop-filter: blur(10px) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: #ffffff !important;
+        }
+
+        /* 5. Botones de Acción Líquidos y Glossy */
+        body.theme-frutiger-aero button:not(nav button),
+        body.theme-frutiger-aero input[type="submit"] {
+            background: linear-gradient(180deg, #00e5ff 0%, #00bcd4 100%) !important;
+            color: white !important;
+            border: 1px solid rgba(255,255,255,0.3) !important;
+            box-shadow: 0 4px 14px rgba(0, 188, 212, 0.25), inset 0 1px 2px rgba(255,255,255,0.4) !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.12);
+            border-radius: 14px !important;
+            transition: all 0.25s ease !important;
+        }
+        body.theme-frutiger-aero button:not(nav button):hover,
+        body.theme-frutiger-aero input[type="submit"]:hover {
+            background: linear-gradient(180deg, #2bf0ff 0%, #00c6df 100%) !important;
+            box-shadow: 0 6px 18px rgba(0, 188, 212, 0.4) !important;
+            transform: translateY(-1px);
+        }
+        * Botones de regreso neutros */
+        body.theme-frutiger-aero .bg-slate-700,
+        body.theme-frutiger-aero button[onclick*="hub"] {
+            background: linear-gradient(180deg, #a6b9c0 0%, #78909c 100%) !important;
+            box-shadow: 0 4px 12px rgba(120, 144, 156, 0.2) !important;
+        }
+
+        /* PARCHE MAESTRO: Rompe cualquier fondo sólido (blanco, gris o slate) en el cuadro de cortes */
+        body.theme-frutiger-aero #vista-configuracion [class*="bg-white"],
+        body.theme-frutiger-aero #vista-configuracion [class*="bg-slate"],
+        body.theme-frutiger-aero #vista-configuracion [class*="bg-gray"],
+        body.theme-frutiger-aero #vista-configuracion div:not([class]),
+        body.theme-frutiger-aero [id*="corte"],
+        body.theme-frutiger-aero [class*="corte-box"],
+        body.theme-frutiger-aero [class*="estacion"] {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.35) 100%) !important;
+            backdrop-filter: blur(16px) saturate(120%) !important;
+            -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.82) !important;
+            box-shadow: 0 8px 32px 0 rgba(0, 137, 123, 0.06), inset 0 1px 1px rgba(255,255,255,1) !important;
+            border-radius: 20px !important;
+        }
+    
+        body.theme-frutiger-aero::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                /* 1. Esfera Principal Grande (130px) Verde Esmeralda */
+                radial-gradient(circle 65px at 75% 40%, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.05) 45%, rgba(29,233,182,0.2) 80%, rgba(255,255,255,0.45) 95%, transparent 100%),
+                /* 2. Nueva Esfera Grande Lateral (110px) Cian Neón Alta */
+                radial-gradient(circle 55px at 15% 20%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.05) 40%, rgba(0,229,255,0.22) 80%, rgba(255,255,255,0.5) 95%, transparent 100%),
+                /* 3. Esfera Mediana Base (90px) Cian Neón Glossy */
+                radial-gradient(circle 45px at 30% 75%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.05) 40%, rgba(0,229,255,0.25) 80%, rgba(255,255,255,0.5) 95%, transparent 100%),
+                /* 4. Nueva Esfera Mediana Baja (80px) Verde Menta */
+                radial-gradient(circle 40px at 85% 85%, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.05) 45%, rgba(16,220,130,0.18) 85%, rgba(255,255,255,0.45) 95%, transparent 100%),
+                /* 5. Esfera Satélite Cristalina Superior (60px) */
+                radial-gradient(circle 30px at 50% 15%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.4) 95%, transparent 100%),
+                /* 6. Nueva Esfera Satélite Central Chica (50px) Ultra Brillo */
+                radial-gradient(circle 25px at 60% 65%, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.02) 40%, rgba(255,255,255,0.5) 95%, transparent 100%);
+            background-size: 400px 800px;
+            /* Subida ultra-pausada y relajante de 45 segundos */
+            animation: floatBubbles 45s linear infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Animación matemática perfecta: Desplaza el render interno sin mover el contenedor, eliminando cortes abajo y saltos bruscos */
+        @keyframes floatBubbles {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 0 -800px;
+            }
+        }
+        /* Encabezado Ajustado: Cristal translúcido con sutil tinte azul/verde medio, manteniendo el brillo original */
+        body.theme-frutiger-aero nav {
+            background: linear-gradient(180deg, rgba(0, 151, 167, 0.42) 0%, rgba(0, 137, 123, 0.35) 100%) !important;
+            backdrop-filter: blur(16px) saturate(140%) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4) !important;
+            box-shadow: 0 4px 25px rgba(0, 137, 123, 0.15) !important;
+        }
+        body.theme-frutiger-aero nav button, 
+        body.theme-frutiger-aero nav select,
+        body.theme-frutiger-aero nav #navbar-anio-texto {
+            background: rgba(255, 255, 255, 0.3) !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.5) !important;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.3) !important;
+        }
+        body.theme-frutiger-aero nav button:hover, 
+        body.theme-frutiger-aero nav select:hover {
+            background: rgba(255, 255, 255, 0.5) !important;
+            color: #ffffff !important;
+            border-color: rgba(0, 229, 255, 0.6) !important;
+        }
+        body.theme-frutiger-aero nav h1,
+        body.theme-frutiger-aero nav i {
+            color: #ffffff !important;
+            text-shadow: 0 2px 8px rgba(0, 229, 255, 0.6), 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+
+        /* Tarjetas del Menú Principal (Hub Glassmorphism) */
+        body.theme-frutiger-aero #vista-hub .bg-white,
+        body.theme-frutiger-aero #vista-hub .bg-white\/60 {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.3) 100%) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.9) !important;
+            box-shadow: 0 8px 32px 0 rgba(0, 150, 136, 0.1), inset 0 1px 0px rgba(255,255,255,1) !important;
+            border-radius: 20px !important;
+        }
+        
+        body.theme-frutiger-aero #vista-hub .group:hover {
+            box-shadow: 0 15px 40px 0 rgba(0, 229, 255, 0.15), inset 0 1px 0px rgba(255,255,255,1) !important;
+            border-color: rgba(0, 229, 255, 0.4) !important;
+        }
+
+        /* Textos y Acentos del Menú Principal */
+        body.theme-frutiger-aero #vista-hub h2,
+        body.theme-frutiger-aero #vista-hub h3 {
+            color: #006064 !important;
+        }
+        body.theme-frutiger-aero #vista-hub p {
+            color: #00838f !important;
+        }
+        body.theme-frutiger-aero .bg-clip-text {
+            background-image: linear-gradient(to right, #00b4db, #0083b0) !important;
+            color: transparent !important;
+        }
+        
+        /* Neón en la Barra de Progreso y Contenedor de Alertas */
+        body.theme-frutiger-aero #carrera-barra {
+            background: linear-gradient(90deg, #00e5ff, #1de9b6) !important;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.7) !important;
+        }
+        body.theme-frutiger-aero #banco-alertas-contenedor {
+            background: linear-gradient(135deg, rgba(204, 253, 246, 0.8) 0%, rgba(204, 253, 246, 0.3) 100%) !important;
+            border-color: #5eead4 !important;
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px), radial-gradient(at 0% 0%, rgba(186, 230, 253, 0.25) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(233, 213, 255, 0.25) 0px, transparent 50%); background-size: 24px 24px, 100% 100%, 100% 100%; background-attachment: fixed;">
-    
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen theme-frutiger-aero" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px), radial-gradient(at 0% 0%, rgba(186, 230, 253, 0.25) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(233, 213, 255, 0.25) 0px, transparent 50%); background-size: 24px 24px, 100% 100%, 100% 100%; background-attachment: fixed;">    
 
     <!-- BARRA DE NAVEGACIÓN MODIFICADA CON BOTÓN SUPERIOR IZQUIERDO -->
     <nav class="bg-slate-800 text-white p-4 shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
