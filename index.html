@@ -145,15 +145,16 @@
     </main>
 
     <main id="vista-hub" class="max-w-6xl mx-auto p-4 mt-6 fade-in">
-        <header class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200/60 pb-5">
-            <div>
-                <h2 class="text-4xl sm:text-5xl font-black text-slate-800 tracking-tight">
-                    ¡Hola, <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600">Miguel!</span>
-                </h2>
-                <p id="hub-subtitulo-motivante" class="text-sm font-semibold text-slate-500 mt-2 transition-all duration-300 flex items-center gap-1.5">
-                    <i class="fa-solid fa-circle-notch fa-spin text-indigo-500 text-xs"></i> Analizando estado de postulación a la beca...
-                </p>
-            </div>
+        <header class="mb-10 text-center flex flex-col items-center justify-center border-b border-slate-200/60 pb-8 mt-4">
+            <h2 class="text-6xl sm:text-8xl font-black text-slate-800 tracking-tighter leading-none mb-4">
+                ¡Hola, <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600">Miguel!</span>
+            </h2>
+            <p id="hub-subtitulo-frase" class="text-base sm:text-2xl font-bold text-slate-500 max-w-3xl mx-auto leading-relaxed mb-6 italic">
+                Cargando enfoque estratégico diario...
+            </p>
+            <button onclick="abrirInformeExcelenciaPDF()" class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-[12px] font-black px-6 py-3.5 rounded-xl border border-indigo-700 transition-all flex items-center gap-2 shadow-[0_5px_25px_rgba(99,102,241,0.35)] hover:-translate-y-0.5 cursor-pointer whitespace-nowrap uppercase tracking-wider">
+                <i class="fa-solid fa-file-contract text-white text-lg"></i> Auditoría de Excelencia
+            </button>
         </header>
 
         <div id="banco-alertas-contenedor" class="hidden border border-amber-200/70 bg-amber-50/40 rounded-2xl p-5 shadow-[0_15px_30px_rgba(245,158,11,0.03)] relative overflow-hidden group mb-8 fade-in">
@@ -1533,18 +1534,6 @@ function renderizarDashboard() {
     if (elCardGlobal) elCardGlobal.className = `p-4 rounded-xl border flex flex-col justify-center items-center transition-all duration-300 ${estGlobal.clasesCard}`;
     if (elTextoGlobal) elTextoGlobal.innerText = estGlobal.texto;
     if (elPromedioGlobal) elPromedioGlobal.className = `text-4xl font-black mt-1 transition-colors duration-300 ${estGlobal.clasesNum}`;
-
-    // Actualización dinámica y automática del subtítulo motivante del Hub
-    const elSubtitulo = document.getElementById('hub-subtitulo-motivante');
-    if (elSubtitulo) {
-        if (promedioGlobal >= 4.85) {
-            elSubtitulo.innerHTML = `<i class="fa-solid fa-medal text-emerald-500 animate-pulse"></i> Estás operando en nivel de <span class="text-emerald-600 font-extrabold uppercase tracking-wide">Élite (${promedioGlobal.toFixed(2)})</span>. Mantén el blindaje estratégico, la corona de la beca te pertenece.`;
-        } else if (promedioGlobal >= 4.5) {
-            elSubtitulo.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-500"></i> Rendimiento competitivo <span class="text-amber-600 font-extrabold uppercase tracking-wide">(${promedioGlobal.toFixed(2)})</span>. Reajusta la disciplina para reconquistar el umbral del 4.85.`;
-        } else {
-            elSubtitulo.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-500 animate-bounce"></i> Alerta de desvío crítico <span class="text-rose-600 font-extrabold uppercase tracking-wide">(${promedioGlobal.toFixed(2)})</span>. Modifica tu estrategia de estudio inmediatamente.`;
-        }
-    }
 }
         
         // --- ESTACIÓN DE CONTROL DE PORCENTAJES ACADÉMICOS GLOBALES (MODIFICABLE) ---
@@ -2426,11 +2415,36 @@ function cerrarModal() {
             }
         }
 
+        // MOTOR DE SELECCIÓN DIARIA SOBERANA (10 FRASES DE EXCELENCIA LIBRES DE CIFRAS)
+        function aplicarFraseDiariaMenteMaestra() {
+            const bancoFrasesBeca = [
+                "🚀 Visualiza el éxito, ejecuta la estrategia y asegura tu lugar en la cima académica.",
+                "👑 La excelencia no es un evento aislado, es el hábito diario de no conformarse con menos.",
+                "🛡️ Cada bloque de estudio de hoy es un escudo que blinda tu beca del mañana.",
+                "🧭 Mantén la disciplina alta y el enfoque claro; el éxito se construye hora a hora.",
+                "⚡ Tu único rival es tu rendimiento de ayer. Supérate hoy sin excusas.",
+                "🧠 El éxito académico favorece únicamente a la mente preparada y al esfuerzo constante.",
+                "📈 Controla tus tiempos, domina tus materias y camina con paso firme hacia tu meta.",
+                "💎 La consistencia rompe cualquier obstáculo. Hoy es un gran día para demostrar de qué estás hecho.",
+                "🔋 Energía al máximo y enfoque absoluto; estás diseñando tu propio camino de honor.",
+                "🎯 Estudia con propósito, gestiona tu descanso y haz que cada entrega cuente."
+            ];
+            
+            const elSub = document.getElementById('hub-subtitulo-frase');
+            if (elSub) {
+                // Selector matemático determinista por día calendario del mes
+                const diaDelMes = new Date().getDate();
+                const indiceCalculado = diaDelMes % bancoFrasesBeca.length;
+                elSub.innerText = bancoFrasesBeca[indiceCalculado];
+            }
+        }
+
         // --- CONTROLADOR DE INICIO CON INTEGRACIÓN DE CONFORT VISUAL Y PWA ---
         window.onload = function() {
             aplicarPreferenciaBrillo();
             inicializarEstructuraPeriodos();
             automatizarFechaAsignacion();
+            aplicarFraseDiariaMenteMaestra();
             
             // Ciclo maestro de sincronización forzada cada 60 segundos (1 minuto)
             setInterval(() => {
