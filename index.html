@@ -1464,61 +1464,62 @@ function renderizarDashboard() {
     let totalCreditos = 0;
     let sumaPonderada = 0;
     
-    // Defensa extra si los datos aún no llegan
-    if (!materiasData) return;
-
-    for (let id in materiasData) {
-        try {
-            let mat = materiasData[id];
-            // Si la materia está corrompida, la omite sin frenar el bucle
-            if (!mat || !mat.nombre) continue;
-
-            let prom = calcularDefinitivaMateria(id);
-            let creditosActuales = mat.creditos || 0;
-            
-            totalCreditos += creditosActuales;
-            sumaPonderada += (prom * creditosActuales);
-
-            let tema = temasColor[mat.color] || temasColor.violet;
-            let esHex = mat.color && mat.color.startsWith('#');
-            let est = obtenerEstilosRendimiento(prom);
-
-            let borderSoft = esHex ? 'border-slate-200' : tema.borderSoft;
-            let cardBg = esHex ? 'shadow-sm bg-white hover:shadow-md transition-all cursor-pointer relative overflow-hidden' : `shadow-sm ${tema.cardBg} hover:shadow-md transition-all cursor-pointer ${tema.cardBgSoft} relative overflow-hidden`;
-            let borderAccent = esHex ? '' : tema.borderAccent;
-            let styleAccent = esHex ? `style="background-color: ${mat.color}"` : '';
-            let iconColor = esHex ? '' : tema.textAccent;
-            let styleIcon = esHex ? `style="color: ${mat.color}"` : '';
-            let borderTop = esHex ? 'border-slate-100' : tema.borderSoft;
-
-            let cardHTML = `
-                <div class="border ${borderSoft} rounded-xl p-5 ${cardBg}" onclick="abrirModal('${id}')">
-                    <div class="absolute top-0 left-0 right-0 h-1.5 ${borderAccent}" ${styleAccent}></div>
-                    <div class="flex items-start justify-between mt-2">
-                        <h3 class="font-bold text-slate-800 text-lg line-clamp-2 pr-2">
-                            <i class="fa-solid ${mat.icono || 'fa-book'} ${iconColor} mr-2" ${styleIcon}></i> ${mat.nombre}
-                        </h3>
-                    </div>
-                    <p class="text-sm text-slate-500 mb-4 mt-1"><i class="fa-solid fa-coins mr-1"></i> ${creditosActuales} Créditos</p>
-                    <div class="flex justify-between items-end mt-4 pt-4 border-t ${borderTop}">
-                        <div>
-                            <p class="text-xs font-bold uppercase text-slate-400 tracking-wider">Definitiva</p>
-                            <p class="text-3xl font-black ${est.clasesNum}">${prom.toFixed(2)}</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-xs font-bold px-2.5 py-1 rounded border ${est.clasesCard}">
-                                ${est.texto}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            grid.innerHTML += cardHTML;
-        } catch (error) {
-            console.error("Error dibujando tarjeta de materia: ", id, error);
-        }
+    // Si materiasData está vacío o no es un objeto, inicializamos para evitar el crash
+    if (!materiasData || typeof materiasData !== 'object') {
+        console.warn("materiasData no disponible, inicializando...");
+        materiasData = {};
     }
 
+    for (let id in materiasData) {
+        let mat = materiasData[id];
+        
+        // Validación estricta: Saltamos si no tiene nombre o estructura válida
+        if (!mat || !mat.nombre) continue;
+
+        let prom = calcularDefinitivaMateria(id);
+        let creditosActuales = mat.creditos || 0;
+        
+        totalCreditos += creditosActuales;
+        sumaPonderada += (prom * creditosActuales);
+
+        let tema = temasColor[mat.color] || temasColor.violet;
+        let esHex = mat.color && mat.color.startsWith('#');
+        let est = obtenerEstilosRendimiento(prom);
+
+        let borderSoft = esHex ? 'border-slate-200' : tema.borderSoft;
+        let cardBg = esHex ? 'shadow-sm bg-white hover:shadow-md transition-all cursor-pointer relative overflow-hidden' : `shadow-sm ${tema.cardBg} hover:shadow-md transition-all cursor-pointer ${tema.cardBgSoft} relative overflow-hidden`;
+        let borderAccent = esHex ? '' : tema.borderAccent;
+        let styleAccent = esHex ? `style="background-color: ${mat.color}"` : '';
+        let iconColor = esHex ? '' : tema.textAccent;
+        let styleIcon = esHex ? `style="color: ${mat.color}"` : '';
+        let borderTop = esHex ? 'border-slate-100' : tema.borderSoft;
+
+        let cardHTML = `
+            <div class="border ${borderSoft} rounded-xl p-5 ${cardBg}" onclick="abrirModal('${id}')">
+                <div class="absolute top-0 left-0 right-0 h-1.5 ${borderAccent}" ${styleAccent}></div>
+                <div class="flex items-start justify-between mt-2">
+                    <h3 class="font-bold text-slate-800 text-lg line-clamp-2 pr-2">
+                        <i class="fa-solid ${mat.icono || 'fa-book'} ${iconColor} mr-2" ${styleIcon}></i> ${mat.nombre}
+                    </h3>
+                </div>
+                <p class="text-sm text-slate-500 mb-4 mt-1"><i class="fa-solid fa-coins mr-1"></i> ${creditosActuales} Créditos</p>
+                <div class="flex justify-between items-end mt-4 pt-4 border-t ${borderTop}">
+                    <div>
+                        <p class="text-xs font-bold uppercase text-slate-400 tracking-wider">Definitiva</p>
+                        <p class="text-3xl font-black ${est.clasesNum}">${prom.toFixed(2)}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-bold px-2.5 py-1 rounded border ${est.clasesCard}">
+                            ${est.texto}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        `;
+        grid.innerHTML += cardHTML;
+    }
+
+    // Actualización de indicadores globales
     let promedioGlobal = totalCreditos > 0 ? (sumaPonderada / totalCreditos) : 0;
     
     const elPromedioGlobal = document.getElementById('promedio-global');
