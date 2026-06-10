@@ -1157,10 +1157,19 @@ const firebaseConfig = {
         };
 
         
-        // --- VARIABLES DE CONTROL MULTI-SEMESTRE ---
+       // --- VARIABLES DE CONTROL MULTI-SEMESTRE ---
         let materiasData = {};
         let listaActividades = [];
         let materiaActivaId = null;
+        
+        // Declaración global restaurada para que el cálculo matemático de notas no arroje ReferenceError
+        let configuracionCortes = { 1: 0.30, 2: 0.30, 3: 0.40 };
+        
+        // Mapa de soporte restaurado para las previsualizaciones visuales en el panel de configuración
+        const mapaColoresHexPorDefecto = {
+            violet: '#8b5cf6', rose: '#f43f5e', amber: '#f59e0b', 
+            teal: '#14b8a6', sky: '#0ea5e9', emerald: '#10b981', slate: '#64748b'
+        };
         
         let periodosLista = [];
         let periodoActivoId = "PRIMER SEMESTRE";
