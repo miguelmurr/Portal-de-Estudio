@@ -145,9 +145,15 @@
     </main>
 
     <main id="vista-hub" class="max-w-6xl mx-auto p-4 mt-6 fade-in">
-        <header class="mb-8">
-            <h2 class="text-3xl font-black text-slate-700">¡Hola, Miguel!</h2>
-            <p class="text-slate-500 mt-1">Bienvenido a tu suite de gestión académica personal.</p>
+        <header class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200/60 pb-5">
+            <div>
+                <h2 class="text-4xl sm:text-5xl font-black text-slate-800 tracking-tight">
+                    ¡Hola, <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600">Miguel!</span>
+                </h2>
+                <p id="hub-subtitulo-motivante" class="text-sm font-semibold text-slate-500 mt-2 transition-all duration-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-notch fa-spin text-indigo-500 text-xs"></i> Analizando estado de postulación a la beca...
+                </p>
+            </div>
         </header>
 
         <div id="banco-alertas-contenedor" class="hidden border border-amber-200/70 bg-amber-50/40 rounded-2xl p-5 shadow-[0_15px_30px_rgba(245,158,11,0.03)] relative overflow-hidden group mb-8 fade-in">
@@ -164,46 +170,24 @@
         </div>
 
        <!-- CUADRO GENERAL INDEPENDIENTE: Progreso del Semestre Activo (Arriba) CON BOTÓN DE AUDITORÍA -->
-        <div class="border border-slate-200/80 bg-white rounded-2xl p-6 shadow-[0_20px_40px_rgba(15,23,42,0.04)] relative overflow-hidden group mb-8">
-            <div class="absolute top-0 left-0 right-0 h-2 bg-slate-600"></div>
-            
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2 mt-2">
-                <div>
-                    <h3 class="text-xl font-bold text-slate-800">Progreso del Semestre</h3>
-                    <p class="text-sm text-slate-400 mt-0.5">Porcentaje de tiempo transcurrido en el periodo académico seleccionado (calculado día a día).</p>
+       <div class="mb-8 bg-white/60 border border-slate-200/80 p-5 rounded-2xl shadow-sm backdrop-blur-sm relative">
+            <div class="flex flex-wrap justify-between items-center gap-3">
+                <div class="flex items-center gap-2 text-xs font-black text-slate-500 uppercase tracking-widest">
+                    <i class="fa-solid fa-compass text-indigo-500"></i>
+                    <span id="hub-semestre-titulo">---</span>
+                    <span class="text-slate-300 font-normal">|</span>
+                    <span id="hub-semestre-fechas" class="font-bold text-slate-400 normal-case tracking-normal">---</span>
+                    <span id="carrera-semestre-calculado" class="hidden"></span>
                 </div>
-                <button onclick="abrirInformeExcelenciaPDF()" class="bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-[11px] font-black px-4 py-2.5 rounded-xl border border-indigo-700 transition-all flex items-center gap-2 shadow-[0_5px_15px_rgba(99,102,241,0.4)] hover:-translate-y-0.5 cursor-pointer whitespace-nowrap self-end sm:self-auto uppercase tracking-wider">
-                    <i class="fa-solid fa-file-contract text-white text-lg"></i> Auditoría Excelencia
-                </button>
-            </div>
-
-            <!-- Contenedor interno: Información del Semestre Activo -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-3.5 rounded-xl border border-slate-200/60 my-4">
-                <div class="flex items-center gap-3">
-                    <div class="bg-slate-200/50 p-2 rounded-lg text-slate-600 flex items-center justify-center w-9 h-9">
-                        <i class="fa-solid fa-calendar-days text-base"></i>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Periodo Activo</span>
-                        <h4 id="hub-semestre-titulo" class="text-xs font-bold text-slate-700 uppercase">Calculando...</h4>
-                    </div>
-                </div>
-                <div class="flex items-center sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200/40">
-                    <div class="sm:text-right">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rango de Fechas</span>
-                        <span id="hub-semestre-fechas" class="text-xs font-bold text-slate-500 bg-white px-2.5 py-0.5 rounded border border-slate-200/80 inline-block mt-0.5">Cargando...</span>
-                    </div>
+                <div class="text-xs font-mono font-black text-indigo-600 bg-indigo-50 border border-indigo-100 px-2.5 py-1 rounded-lg shadow-sm">
+                    <span id="carrera-porcentaje">0.0000%</span> completado
                 </div>
             </div>
-            
-            <!-- Barra de Progreso General -->
-            <div class="space-y-2 pt-2 border-t border-slate-100">
-                 <div class="flex justify-between items-baseline">
-                    <span id="carrera-semestre-calculado" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Calculando...</span>
-                    <span id="carrera-porcentaje" class="text-sm font-mono font-black text-slate-700">0.0000%</span>
-                </div>
-                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                    <div id="carrera-barra" class="bg-slate-600 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
+            <div class="relative w-full bg-slate-200/80 rounded-full h-1.5 mt-4 overflow-visible">
+                <div id="carrera-barra" class="bg-gradient-to-r from-sky-400 via-indigo-500 to-purple-600 h-full rounded-full transition-all duration-1000 relative" style="width: 0%">
+                    <div class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-6 h-6 bg-white border-2 border-indigo-500 rounded-full shadow-md flex items-center justify-center z-10 transition-transform hover:scale-110">
+                        <i class="fa-solid fa-rocket text-[10px] text-indigo-600"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1549,6 +1533,18 @@ function renderizarDashboard() {
     if (elCardGlobal) elCardGlobal.className = `p-4 rounded-xl border flex flex-col justify-center items-center transition-all duration-300 ${estGlobal.clasesCard}`;
     if (elTextoGlobal) elTextoGlobal.innerText = estGlobal.texto;
     if (elPromedioGlobal) elPromedioGlobal.className = `text-4xl font-black mt-1 transition-colors duration-300 ${estGlobal.clasesNum}`;
+
+    // Actualización dinámica y automática del subtítulo motivante del Hub
+    const elSubtitulo = document.getElementById('hub-subtitulo-motivante');
+    if (elSubtitulo) {
+        if (promedioGlobal >= 4.85) {
+            elSubtitulo.innerHTML = `<i class="fa-solid fa-medal text-emerald-500 animate-pulse"></i> Estás operando en nivel de <span class="text-emerald-600 font-extrabold uppercase tracking-wide">Élite (${promedioGlobal.toFixed(2)})</span>. Mantén el blindaje estratégico, la corona de la beca te pertenece.`;
+        } else if (promedioGlobal >= 4.5) {
+            elSubtitulo.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-500"></i> Rendimiento competitivo <span class="text-amber-600 font-extrabold uppercase tracking-wide">(${promedioGlobal.toFixed(2)})</span>. Reajusta la disciplina para reconquistar el umbral del 4.85.`;
+        } else {
+            elSubtitulo.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-500 animate-bounce"></i> Alerta de desvío crítico <span class="text-rose-600 font-extrabold uppercase tracking-wide">(${promedioGlobal.toFixed(2)})</span>. Modifica tu estrategia de estudio inmediatamente.`;
+        }
+    }
 }
         
         // --- ESTACIÓN DE CONTROL DE PORCENTAJES ACADÉMICOS GLOBALES (MODIFICABLE) ---
