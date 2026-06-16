@@ -253,32 +253,34 @@
             border-radius: 20px !important;
         }
 
-       /* AJUSTE: Fuerza texto blanco puro y de alta legibilidad en los bloques del horario semanal */
-        body.theme-frutiger-aero #contenedor-grid-semanal div,
-        body.theme-frutiger-aero #contenedor-grid-semanal p,
-        body.theme-frutiger-aero #contenedor-grid-semanal span,
-        body.theme-frutiger-aero #contenedor-grid-semanal h4,
-        body.theme-frutiger-aero #contenedor-grid-semanal .text-xs,
-        body.theme-frutiger-aero #contenedor-grid-semanal .text-slate-700,
-        body.theme-frutiger-aero #contenedor-grid-semanal .text-slate-500 {
+       /* AJUSTE: Fuerza texto blanco de alta legibilidad ÚNICAMENTE dentro de los bloques internos de materias */
+        body.theme-frutiger-aero [id^="columna-dia-"] div,
+        body.theme-frutiger-aero [id^="columna-dia-"] p,
+        body.theme-frutiger-aero [id^="columna-dia-"] span,
+        body.theme-frutiger-aero [id^="columna-dia-"] h4,
+        body.theme-frutiger-aero [id^="columna-dia-"] .text-xs,
+        body.theme-frutiger-aero [id^="columna-dia-"] .text-slate-700,
+        body.theme-frutiger-aero [id^="columna-dia-"] .text-slate-500 {
             color: #ffffff !important;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
             font-weight: 500 !important;
         }
 
-        /* CORRECCIÓN 1: Restablece el color cian oscuro original para los nombres de los días de la semana */
+        /* CORRECCIÓN 1: Mantiene fijos los nombres de los días de la semana con su verde cian oscuro original */
         body.theme-frutiger-aero #contenedor-grid-semanal h3 {
             color: #006064 !important;
-            text-shadow: none !important;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7) !important;
+            font-weight: 700 !important;
         }
 
-        /* CORRECCIÓN 2: Fuerza el color blanco únicamente en los títulos de las materias dentro del planificador diario */
+        /* CORRECCIÓN 2: Fuerza el color blanco en los títulos h4 de las materias dentro del planificador diario */
         body.theme-frutiger-aero #wrapper-timeline-horizontal h4 {
             color: #ffffff !important;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+            font-weight: 700 !important;
         }
 
-        /* CONFIGURACIÓN UNIFICADA DE ELEMENTOS FLUIDOS */
+        /* MOTOR DE ANIMACIÓN Y CAPA DE BURBUJAS FLUIDAS */
         body.theme-frutiger-aero::before {
             content: "";
             position: fixed;
