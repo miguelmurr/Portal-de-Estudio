@@ -253,7 +253,7 @@
             border-radius: 20px !important;
         }
 
-        /* AJUSTE: Fuerza texto blanco puro y de alta legibilidad en los bloques del horario semanal */
+       /* AJUSTE: Fuerza texto blanco puro y de alta legibilidad en los bloques del horario semanal */
         body.theme-frutiger-aero #contenedor-grid-semanal div,
         body.theme-frutiger-aero #contenedor-grid-semanal p,
         body.theme-frutiger-aero #contenedor-grid-semanal span,
@@ -265,42 +265,42 @@
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
             font-weight: 500 !important;
         }
-    
-    
+
+        /* CORRECCIÓN 1: Restablece el color cian oscuro original para los nombres de los días de la semana */
+        body.theme-frutiger-aero #contenedor-grid-semanal h3 {
+            color: #006064 !important;
+            text-shadow: none !important;
+        }
+
+        /* CORRECCIÓN 2: Fuerza el color blanco únicamente en los títulos de las materias dentro del planificador diario */
+        body.theme-frutiger-aero #wrapper-timeline-horizontal h4 {
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        /* CONFIGURACIÓN UNIFICADA DE ELEMENTOS FLUIDOS */
         body.theme-frutiger-aero::before {
             content: "";
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background-image: 
-                /* 1. Esfera Principal Grande (130px) Verde Esmeralda */
                 radial-gradient(circle 65px at 75% 40%, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.05) 45%, rgba(29,233,182,0.2) 80%, rgba(255,255,255,0.45) 95%, transparent 100%),
-                /* 2. Nueva Esfera Grande Lateral (110px) Cian Neón Alta */
                 radial-gradient(circle 55px at 15% 20%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.05) 40%, rgba(0,229,255,0.22) 80%, rgba(255,255,255,0.5) 95%, transparent 100%),
-                /* 3. Esfera Mediana Base (90px) Cian Neón Glossy */
                 radial-gradient(circle 45px at 30% 75%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.05) 40%, rgba(0,229,255,0.25) 80%, rgba(255,255,255,0.5) 95%, transparent 100%),
-                /* 4. Nueva Esfera Mediana Baja (80px) Verde Menta */
                 radial-gradient(circle 40px at 85% 85%, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.05) 45%, rgba(16,220,130,0.18) 85%, rgba(255,255,255,0.45) 95%, transparent 100%),
-                /* 5. Esfera Satélite Cristalina Superior (60px) */
                 radial-gradient(circle 30px at 50% 15%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.4) 95%, transparent 100%),
-                /* 6. Nueva Esfera Satélite Central Chica (50px) Ultra Brillo */
                 radial-gradient(circle 25px at 60% 65%, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.02) 40%, rgba(255,255,255,0.5) 95%, transparent 100%);
             background-size: 400px 800px;
-            /* Subida ultra-pausada y relajante de 45 segundos */
             animation: floatBubbles 45s linear infinite;
             pointer-events: none;
             z-index: -1;
         }
 
-        /* Animación matemática perfecta: Desplaza el render interno sin mover el contenedor, eliminando cortes abajo y saltos bruscos */
         @keyframes floatBubbles {
-            0% {
-                background-position: 0 0;
-            }
-            100% {
-                background-position: 0 -800px;
-            }
+            0% { background-position: 0 0; }
+            100% { background-position: 0 -800px; }
         }
-        /* Encabezado Ajustado: Cristal translúcido con sutil tinte azul/verde medio, manteniendo el brillo original */
+
         body.theme-frutiger-aero nav {
             background: linear-gradient(180deg, rgba(0, 151, 167, 0.42) 0%, rgba(0, 137, 123, 0.35) 100%) !important;
             backdrop-filter: blur(16px) saturate(140%) !important;
@@ -326,9 +326,7 @@
             color: #ffffff !important;
             text-shadow: 0 2px 8px rgba(0, 229, 255, 0.6), 0 1px 2px rgba(0,0,0,0.1);
         }
-        
 
-        /* Tarjetas del Menú Principal (Hub Glassmorphism) */
         body.theme-frutiger-aero #vista-hub .bg-white,
         body.theme-frutiger-aero #vista-hub .bg-white\/60 {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.3) 100%) !important;
@@ -344,7 +342,6 @@
             border-color: rgba(0, 229, 255, 0.4) !important;
         }
 
-        /* Textos y Acentos del Menú Principal */
         body.theme-frutiger-aero #vista-hub h2,
         body.theme-frutiger-aero #vista-hub h3 {
             color: #006064 !important;
@@ -357,7 +354,6 @@
             color: transparent !important;
         }
         
-        /* Neón en la Barra de Progreso y Contenedor de Alertas */
         body.theme-frutiger-aero #carrera-barra {
             background: linear-gradient(90deg, #00e5ff, #1de9b6) !important;
             box-shadow: 0 0 12px rgba(0, 229, 255, 0.7) !important;
