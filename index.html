@@ -2986,8 +2986,8 @@ function cerrarModal() {
                 } else {
                    clasesDelDia.forEach(bloque => {
                         let esOtro = bloque.materiaId === 'otro';
-                        let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (estructuraBase[bloque.materiaId]?.nombre || "Materia");
-                        let colorClase = esOtro ? 'slate' : (estructuraBase[bloque.materiaId]?.color || 'violet');
+                        let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (materiasData[bloque.materiaId]?.nombre || "Materia");
+                        let colorClase = esOtro ? 'slate' : (materiasData[bloque.materiaId]?.color || 'violet');
 
                         // Diccionario técnico de estilos sólidos para garantizar compatibilidad con Tailwind
                         const estilosSolidos = {
@@ -3204,12 +3204,13 @@ function cerrarModal() {
                 if (minRelInicio < 0) minRelInicio = 0;
                 if (minRelFin > totalMinutosTimeline) minRelFin = totalMinutosTimeline;
                 
-                let leftBlock = (minRelInicio * pixelesPorMinuto) + offsetLienzo; // Aplicar margen de desplazamiento
+                let leftBlock = (minRelInicio * pixelesPorMinuto) 
+                + offsetLienzo; // Aplicar margen de desplazamiento
                 let widthBlock = (minRelFin - minRelInicio) * pixelesPorMinuto;
                 
                 let esOtro = bloque.materiaId === 'otro';
-                let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (estructuraBase[bloque.materiaId]?.nombre || "Materia");
-                let colorClase = esOtro ? 'slate' : (estructuraBase[bloque.materiaId]?.color || 'violet');
+                let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (materiasData[bloque.materiaId]?.nombre || "Materia");
+                let colorClase = esOtro ? 'slate' : (materiasData[bloque.materiaId]?.color || 'violet');
 
                 // Mapeo unificado para tarjetas sólidas en el Gantt horizontal
                 const estilosSolidos = {
