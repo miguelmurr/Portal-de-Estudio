@@ -3079,12 +3079,6 @@ function cerrarModal() {
                         </button>
                     `;
 
-                   let btnBorrar = esPeriodoBloqueado ? '' : `
-                        <button onclick="event.stopPropagation(); eliminarBloqueHorario('${bloque.id}')" class="absolute top-1 right-1 text-white/80 hover:text-red-200 text-[10px] p-1 rounded hover:bg-black/20" title="Remover clase">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    `;
-
                     diasHTML += `
                         <div class="absolute left-1 right-1 border p-1.5 rounded-xl flex flex-col shadow-sm overflow-hidden transition-all hover:shadow-md hover:scale-[1.02] cursor-pointer z-30 ${claseColorEstilo}"
                              onclick="event.stopPropagation(); mostrarDetalleBloque('${bloque.id}');"
@@ -3093,8 +3087,8 @@ function cerrarModal() {
                                 <span class="text-[9px] font-mono font-black text-white/90 bg-black/10 px-1 rounded border border-white/20">${bloque.inicio}-${bloque.fin}</span>
                                 ${btnBorrar}
                             </div>
-                            <h4 class="font-bold text-[10px] leading-tight pr-3 mb-1 line-clamp-2" style="color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;">${nombreMostrar}</h4>
-                            <div class="text-[9px] font-medium text-white/90 leading-tight whitespace-normal break-words pr-2" style="color: rgba(255, 255, 255, 0.9) !important;"><i class="fa-solid fa-location-dot mr-1 text-white/70"></i>${bloque.ubicacion}</div>
+                            <h4 class="font-bold text-[10px] leading-tight text-white pr-3 mb-1 line-clamp-2">${nombreMostrar}</h4>
+                            <div class="text-[9px] font-medium text-white/90 leading-tight whitespace-normal break-words pr-2"><i class="fa-solid fa-location-dot mr-1 text-white/70"></i>${bloque.ubicacion}</div>
                         </div>
                     `;
                 });
@@ -3510,44 +3504,6 @@ function cerrarModal() {
                     renderizarTimelineHorizontal();
                 })
                 .catch((error) => console.error("Error al guardar desde Timeline: ", error));
-        }
-        // --- MOTOR DE NAVEGACIÓN Y CIERRE DEL TIMELINE ---
-        let diaTimelineActivo = null;
-
-        function abrirTimeline(idDia) {
-            diaTimelineActivo = idDia;
-            const nombreDia = diasNombresCortos[idDia];
-            const elNombre = document.getElementById('timeline-dia-nombre');
-            if (elNombre) elNombre.innerText = nombreDia;
-
-            // UX: Limpiar selectores nativos al cambiar de día
-            renderTimelineNativoLimpiarCampos();
-            
-            const wrapperManual = document.getElementById('wrapper-materia-manual');
-            if (wrapperManual) wrapperManual.classList.add('hidden');
-            
-            const timeMateria = document.getElementById('time-materia');
-            if (timeMateria) timeMateria.value = "";
-            
-            renderizarTimelineHorizontal();
-            document.getElementById('modal-timeline').style.display = 'flex';
-        }
-
-        function cerrarTimeline() {
-            document.getElementById('modal-timeline').style.display = 'none';
-            const formRapido = document.getElementById('form-timeline-rapido');
-            if (formRapido) formRapido.reset();
-            const wrapperManual = document.getElementById('wrapper-materia-manual');
-            if (wrapperManual) wrapperManual.classList.add('hidden');
-            renderTimelineNativoLimpiarCampos();
-            diaTimelineActivo = null;
-        }
-
-        function renderTimelineNativoLimpiarCampos() {
-            const inicio = document.getElementById('time-inicio-nativo');
-            const fin = document.getElementById('time-fin-nativo');
-            if (inicio) inicio.value = "";
-            if (fin) fin.value = "";
         }
     </script>
 </body>
