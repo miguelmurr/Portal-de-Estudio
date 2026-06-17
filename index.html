@@ -2735,7 +2735,7 @@ function cerrarModal() {
             }
         }
 
-        // --- SISTEMA INTELIGENTE DE ALERTAS INMEDIATAS ("BANCO DE NOTIFICACIONES") ---
+       // --- SISTEMA INTELIGENTE DE ALERTAS INMEDIATAS ("BANCO DE NOTIFICACIONES") ---
         function evaluarAlertasInmediatas() {
             const contenedor = document.getElementById('banco-alertas-contenedor');
             const listaAlertas = document.getElementById('banco-alertas-lista');
@@ -2743,36 +2743,36 @@ function cerrarModal() {
 
             listaAlertas.innerHTML = '';
             let alertasHTML = '';
-
             // Obtener fecha local exacta en formato YYYY-MM-DD
             const ahora = new Date();
             const anio = ahora.getFullYear();
             const mes = String(ahora.getMonth() + 1).padStart(2, '0');
             const dia = String(ahora.getDate()).padStart(2, '0');
             const fechaHoyStr = `${anio}-${mes}-${dia}`;
-
             // 1. ESCANEO DE TAREAS CRÍTICAS (Vencen hoy y no están en estado 'entregada')
             let tareasUrgentes = listaActividades.filter(t => t.fechaEntrega === fechaHoyStr && t.estado !== 'entregada');
-            
             tareasUrgentes.forEach(tarea => {
-                const infoMateria = estructuraBase[tarea.materiaId] || { nombre: "Materia" };
+                const infoMateria = materiasData[tarea.materiaId] || { nombre: "Materia" };
                 alertasHTML += `
                     <div class="flex items-center justify-between bg-white border border-slate-200/60 p-3 rounded-xl shadow-sm gap-4">
-                        <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="flex 
+        items-center gap-2.5 min-w-0">
                             <i class="fa-solid fa-triangle-exclamation text-amber-500 flex-shrink-0"></i>
                             <p class="text-xs text-slate-600 font-medium truncate">
-                                <span class="font-bold text-slate-800">SE ENTREGA HOY:</span> en <span class="font-bold">${infoMateria.nombre}</span>: ${tarea.nombre}
+                                <span class="font-bold 
+        text-slate-800">SE ENTREGA HOY:</span> en <span class="font-bold">${infoMateria.nombre}</span>: ${tarea.nombre}
                             </p>
                         </div>
                         <span class="text-[9px] bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0">Crítico</span>
+        
                     </div>
                 `;
             });
 
             // 2. ESCANEO DE EVENTOS Y CLASES (Ventana de los 20 minutos previos al inicio)
-            const diaHoySemana = ahora.getDay(); // 1=Lunes, 2=Martes...
+            const diaHoySemana = ahora.getDay();
+            // 1=Lunes, 2=Martes...
             const tiempoActualMinutos = (ahora.getHours() * 60) + ahora.getMinutes();
-
             let clasesDeHoy = listaHorarios.filter(b => parseInt(b.dia) === diaHoySemana);
 
             clasesDeHoy.forEach(bloque => {
@@ -2782,18 +2782,22 @@ function cerrarModal() {
 
                 const diferencia = tiempoClaseMinutos - tiempoActualMinutos;
 
+        
                 if (diferencia > 0 && diferencia <= 20) {
-                    const infoMateria = estructuraBase[bloque.materiaId] || { nombre: bloque.nombrePersonalizado || "Clase" };
+                    const infoMateria = materiasData[bloque.materiaId] || { nombre: bloque.nombrePersonalizado || "Clase" };
                     alertasHTML += `
-                        <div class="flex items-center justify-between bg-white border border-slate-200/60 p-3 rounded-xl shadow-sm gap-4">
+                        <div class="flex items-center justify-between bg-white border border-slate-200/60 p-3 
+        rounded-xl shadow-sm gap-4">
                             <div class="flex items-center gap-2.5 min-w-0">
                                 <i class="fa-solid fa-clock text-cyan-500 flex-shrink-0"></i>
-                                <p class="text-xs text-slate-600 font-medium truncate">
+                              
+          <p class="text-xs text-slate-600 font-medium truncate">
                                     <span class="font-bold text-slate-800">PRÓXIMA CLASE:</span> <span class="font-bold">${infoMateria.nombre}</span> comienza en <span class="font-bold text-cyan-600">${diferencia} min</span> (${bloque.inicio}) en ${bloque.ubicacion}.
-                                </p>
+        </p>
                             </div>
                             <span class="text-[9px] bg-cyan-50 text-cyan-700 border border-cyan-100 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0 animate-pulse">Entrando</span>
                         </div>
+       
                     `;
                 }
             });
