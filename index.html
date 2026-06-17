@@ -398,15 +398,17 @@
             border-color: #ef4444 !important;
         }
 
-        /* 2. Corrección para el botón Alternar de Preferencias Visuales */
-        body.theme-frutiger-aero #vista-configuracion button[onclick*="toggleFiltroBrillo"] {
+       /* 2. Corrección para los botones de Alternar en Preferencias Visuales */
+        body.theme-frutiger-aero #vista-configuracion button[onclick*="toggleFiltroBrillo"],
+        body.theme-frutiger-aero #vista-configuracion button[onclick*="toggleAnimaciones"] {
             background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(241,245,249,0.8) 100%) !important;
-            color: #334155 !important; /* Gris pizarra de alto contraste */
+            color: #334155 !important;
             border: 1px solid rgba(51, 65, 85, 0.3) !important;
             text-shadow: none !important;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
         }
-        body.theme-frutiger-aero #vista-configuracion button[onclick*="toggleFiltroBrillo"]:hover {
+        body.theme-frutiger-aero #vista-configuracion button[onclick*="toggleFiltroBrillo"]:hover,
+        body.theme-frutiger-aero #vista-configuracion button[onclick*="toggleAnimaciones"]:hover {
             background: #f1f5f9 !important;
             color: #0f172a !important;
         }
