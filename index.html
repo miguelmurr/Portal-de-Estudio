@@ -2999,7 +2999,14 @@ function cerrarModal() {
                             emerald: 'bg-emerald-600 border-emerald-700 text-white shadow-emerald-600/10',
                             slate: 'bg-slate-600 border-slate-700 text-white shadow-slate-600/10'
                         };
-                        let claseColorEstilo = estilosSolidos[colorClase] || estilosSolidos.violet;
+                        
+                        let claseColorEstilo = estilosSolidos[colorClase] || 'text-white';
+                        let estiloInlineColor = '';
+                        if (colorClase && colorClase.startsWith('#')) {
+                            estiloInlineColor = `style="background-color: ${colorClase}; border-color: ${colorClase};"`;
+                        } else if (!estilosSolidos[colorClase]) {
+                            claseColorEstilo = 'bg-purple-600 border-purple-700 text-white shadow-purple-600/10';
+                        }
            
                         // Evaluar si esta clase en específico está sucediendo en vivo
                         let esClaseEnVivo = false;
@@ -3017,16 +3024,20 @@ function cerrarModal() {
                             }
                         }
 
-                        let liveBorde = esClaseEnVivo ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-800 scale-[1.02] shadow-lg animate-pulse' : '';
-                        let liveBadge = esClaseEnVivo ? '<span class="inline-block w-2 h-2 rounded-full bg-white animate-ping mr-1"></span>' : '';
+                        let liveBorde = esClaseEnVivo ?
+                        'ring-2 ring-white ring-offset-2 ring-offset-slate-800 scale-[1.02] shadow-lg animate-pulse' : '';
+                        let liveBadge = esClaseEnVivo ?
+                        '<span class="inline-block w-2 h-2 rounded-full bg-white animate-ping mr-1"></span>' : '';
                         
-                        let btnBorrar = esPeriodoBloqueado ? '' : `
+                        let btnBorrar = esPeriodoBloqueado ?
+                        '' : `
                             <button onclick="event.stopPropagation(); eliminarBloqueHorario('${bloque.id}')" class="text-white/80 hover:text-red-200 text-[11px] p-0.5 ml-1" title="Quitar bloque">
                                 <i class="fa-solid fa-trash-can"></i>
-                            </button>
+                           
+                        </button>
                         `;
                         let bloqueHTML = `
-                            <div class="group border p-3 rounded-xl relative overflow-hidden transition-all duration-300 shadow-sm ${claseColorEstilo} ${liveBorde}">
+                            <div class="group border p-3 rounded-xl relative overflow-hidden transition-all duration-300 shadow-sm ${claseColorEstilo} ${liveBorde}" ${estiloInlineColor}>
                                 <div class="flex justify-between items-start gap-1">
                                     <h4 class="font-bold text-xs leading-tight line-clamp-2 text-white">${nombreMostrar}</h4>
                                     ${btnBorrar}
@@ -3211,24 +3222,31 @@ function cerrarModal() {
                 let esOtro = bloque.materiaId === 'otro';
                 let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (materiasData[bloque.materiaId]?.nombre || "Materia");
                 let colorClase = esOtro ? 'slate' : (materiasData[bloque.materiaId]?.color || 'violet');
-
                 // Mapeo unificado para tarjetas sólidas en el Gantt horizontal
                 const estilosSolidos = {
                     violet: 'bg-purple-600 border-purple-700 text-white shadow-purple-600/10',
                     rose: 'bg-rose-600 border-rose-700 text-white shadow-rose-600/10',
-                    amber: 'bg-amber-500 border-amber-600 text-white shadow-amber-500/10',
+                    amber: 'bg-amber-500 border-amber-600 text-white \r\nshadow-amber-500/10',
                     teal: 'bg-teal-600 border-teal-700 text-white shadow-teal-600/10',
                     sky: 'bg-sky-600 border-sky-700 text-white shadow-sky-600/10',
                     emerald: 'bg-emerald-600 border-emerald-700 text-white shadow-emerald-600/10',
                     slate: 'bg-slate-600 border-slate-700 text-white shadow-slate-600/10'
                 };
-                let claseColorEstilo = estilosSolidos[colorClase] || estilosSolidos.violet;
+                
+                let claseColorEstilo = estilosSolidos[colorClase] || 'text-white';
+                let estiloInlineColorGantt = '';
+                if (colorClase && colorClase.startsWith('#')) {
+                    estiloInlineColorGantt = `background-color: ${colorClase}; border-color: ${colorClase};`;
+                } else if (!estilosSolidos[colorClase]) {
+                    claseColorEstilo = 'bg-purple-600 border-purple-700 text-white shadow-purple-600/10';
+                }
+                
                 let esFijo = bloque.repetir !== false;
 
                 eventosHTML += `
                     <div class="absolute border p-2 rounded-xl flex flex-col justify-between shadow-sm overflow-hidden h-24 transition-all hover:shadow-md group/card cursor-pointer ${claseColorEstilo}" 
                          onclick="event.stopPropagation(); mostrarDetalleBloque('${bloque.id}');"
-                         style="left: ${leftBlock}px; width: ${widthBlock}px; top: 6px;">
+                         style="left: ${leftBlock}px; width: ${widthBlock}px; top: 6px; ${estiloInlineColorGantt}">
                         <div class="min-w-0">
                             <div class="flex justify-between items-center gap-1">
                                 <span class="text-[8px] font-mono font-black text-white bg-white/20 px-1 rounded border border-white/10">${bloque.inicio} - ${bloque.fin}</span>
