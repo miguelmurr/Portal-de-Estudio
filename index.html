@@ -364,7 +364,73 @@
             background: linear-gradient(135deg, rgba(204, 253, 246, 0.8) 0%, rgba(204, 253, 246, 0.3) 100%) !important;
             border-color: #5eead4 !important;
         }
+        /* ======================================================== */
+        /* FRUTIGER AERO - RESCATE DE CONTRASTE Y BOTONES OCULTOS   */
+        /* ======================================================== */
+
+        /* 1. Corrección para los botones de Editar y Eliminar en el Banco de Materias */
+        body.theme-frutiger-aero #lista-config-materias-dinamicas button {
+            background: rgba(255, 255, 255, 0.9) !important;
+            box-shadow: 0 2px 6px rgba(0, 137, 123, 0.08) !important;
+            text-shadow: none !important;
+            opacity: 1 !important;
+        }
+        body.theme-frutiger-aero #lista-config-materias-dinamicas button[onclick*="cargarMateria"] {
+            color: #006064 !important; /* Azul marino / cian oscuro de alta lectura */
+            border: 1px solid rgba(0, 96, 100, 0.4) !important;
+        }
+        body.theme-frutiger-aero #lista-config-materias-dinamicas button[onclick*="cargarMateria"]:hover {
+            background: #e0f7fa !important;
+            border-color: #00e5ff !important;
+        }
+        body.theme-frutiger-aero #lista-config-materias-dinamicas button[onclick*="eliminarMateria"] {
+            color: #b71c1c !important; /* Rojo carmesí oscuro */
+            border: 1px solid rgba(183, 28, 28, 0.4) !important;
+        }
+        body.theme-frutiger-aero #lista-config-materias-dinamicas button[onclick*="eliminarMateria"]:hover {
+            background: #ffebee !important;
+            border-color: #ef4444 !important;
+        }
+
+        /* 2. Corrección para el botón Alternar de Preferencias Visuales */
+        body.theme-frutiger-aero #vista-configuracion button[onclick*="toggleFiltroBrillo"] {
+            background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(241,245,249,0.8) 100%) !important;
+            color: #334155 !important; /* Gris pizarra de alto contraste */
+            border: 1px solid rgba(51, 65, 85, 0.3) !important;
+            text-shadow: none !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
+        }
+        body.theme-frutiger-aero #vista-configuracion button[onclick*="toggleFiltroBrillo"]:hover {
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+
+        /* 3. Rediseño del botón "Volver al Menú Principal" estilo Cristal Cian Líquido */
+        body.theme-frutiger-aero #vista-configuracion button[onclick*="hub"],
+        body.theme-frutiger-aero #vista-actividades button[onclick*="hub"],
+        body.theme-frutiger-aero #vista-horario button[onclick*="hub"] {
+            background: linear-gradient(180deg, #00e5ff 0%, #0097a7 100%) !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            box-shadow: 0 4px 14px rgba(0, 151, 167, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+            opacity: 1 !important;
+        }
+        body.theme-frutiger-aero #vista-configuracion button[onclick*="hub"]:hover,
+        body.theme-frutiger-aero #vista-actividades button[onclick*="hub"]:hover,
+        body.theme-frutiger-aero #vista-horario button[onclick*="hub"]:hover {
+            background: linear-gradient(180deg, #2bf0ff 0%, #00838f 100%) !important;
+            box-shadow: 0 6px 18px rgba(0, 151, 167, 0.4) !important;
+        }
+
+        /* 4. Forzar el nombre de TODOS los días de la semana a blanco dentro del Planificador Diario Modal */
+        body.theme-frutiger-aero #timeline-dia-nombre {
+            color: #ffffff !important;
+            text-shadow: 0 1px 4px rgba(0, 229, 255, 0.5), 0 1px 1px rgba(0, 0, 0, 0.3) !important;
+            font-weight: 800 !important;
+        }
     </style>
+    
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen theme-frutiger-aero" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px), radial-gradient(at 0% 0%, rgba(186, 230, 253, 0.25) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(233, 213, 255, 0.25) 0px, transparent 50%); background-size: 24px 24px, 100% 100%, 100% 100%; background-attachment: fixed;">    
 
