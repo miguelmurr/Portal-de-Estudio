@@ -2570,32 +2570,37 @@ function cerrarModal() {
             tablero.innerHTML = '';
             
             // 2. Función generadora de tarjetas visuales
-            const generarTarjeta = (t) => {
+            // 2. Función generadora de tarjetas visuales (Optimizada para contrastes críticos y fechas)
+            const generarTarjeta = (t, esCritico = false) => {
                 const tema = temasColor[t.color] || temasColor.slate;
                 const esHex = t.color.startsWith('#');
                 const accentStyle = esHex ? `style="background-color: ${t.color}"` : '';
                 const accentClass = esHex ? '' : tema.borderAccent;
                 
+                // Ajuste de contador: Si queda 1 día o menos en el delta diferencial, se fuerza el estado "HOY"
                 const badgeDias = t.diasRestantes < 0 
                     ? `<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded uppercase font-black animate-pulse">Vencida</span>` 
-                    : (t.diasRestantes === 0 ? `<span class="bg-red-500 text-white px-2 py-0.5 rounded uppercase font-black animate-bounce">HOY</span>` : `${t.diasRestantes} días`);
+                    : (t.diasRestantes <= 1 ? `<span class="bg-red-500 text-white px-2 py-0.5 rounded uppercase font-black animate-bounce">HOY</span>` : `${t.diasRestantes} días`);
 
                 const btnCheck = esPeriodoBloqueado ? '' : `<button onclick="marcarComoEntregada('${t.id}')" class="text-slate-300 hover:text-emerald-500 transition-colors mr-2"><i class="fa-solid fa-circle-check text-xl"></i></button>`;
                 const btnTrash = esPeriodoBloqueado ? '' : `<button onclick="eliminarActividad('${t.id}')" class="text-slate-200 hover:text-red-400 transition-colors"><i class="fa-solid fa-trash-can text-sm"></i></button>`;
 
+                // Tonalidad rojiza premium automática aplicada al fondo si la tarjeta entra al flujo crítico
+                const bgClaseTarjeta = esCritico ? 'bg-rose-50/80 border-rose-200/90 text-rose-950' : 'bg-white border-slate-200 text-slate-800';
+
                 return `
-                <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between relative overflow-hidden group">
+                <div class="${bgClaseTarjeta} border rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between relative overflow-hidden group">
                     <div class="absolute left-0 top-0 bottom-0 w-1.5 ${accentClass}" ${accentStyle}></div>
                     <div class="flex-grow pl-3 pr-4">
-                        <h5 class="text-sm font-bold text-slate-800 line-clamp-1">${t.nombre}</h5>
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 truncate">${t.materiaNombre}</p>
+                        <h5 class="text-sm font-bold line-clamp-1">${t.nombre}</h5>
+                        <p class="text-[10px] font-black opacity-60 uppercase tracking-widest mt-1 truncate">${t.materiaNombre}</p>
                     </div>
                     <div class="flex items-center gap-4 flex-shrink-0">
-                        <div class="text-[10px] font-bold text-slate-500 text-right">
+                        <div class="text-[10px] font-bold opacity-75 text-right">
                             <span class="block uppercase tracking-widest opacity-70">Corte ${t.corte}</span>
                             <span class="mt-0.5 block">${badgeDias}</span>
                         </div>
-                        <div class="flex items-center border-l border-slate-100 pl-3">
+                        <div class="flex items-center border-l border-slate-200/60 pl-3">
                             ${btnCheck}
                             ${btnTrash}
                         </div>
@@ -2603,12 +2608,12 @@ function cerrarModal() {
                 </div>`;
             };
 
-            // 3. Renderizado Condicional de Cuadrantes
+            // 3. Renderizado Condicional de Cuadrantes (Se pasa el flag true al mapa del cuadrante crítico)
             if (zonas.inmediatas.length > 0) {
                 tablero.innerHTML += `
                     <div class="mb-5">
                         <h4 class="text-xs font-black text-rose-600 uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fa-solid fa-fire"></i> Acción Inmediata (Crítico)</h4>
-                        <div class="space-y-2 bg-rose-50/50 p-2.5 rounded-2xl border border-rose-100">${zonas.inmediatas.map(generarTarjeta).join('')}</div>
+                        <div class="space-y-2 bg-rose-50/50 p-2.5 rounded-2xl border border-rose-100">${zonas.inmediatas.map(t => generarTarjeta(t, true)).join('')}</div>
                     </div>`;
             }
 
