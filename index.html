@@ -296,9 +296,17 @@
             z-index: -1;
         }
 
-        @keyframes floatBubbles {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 -800px; }
+       @keyframes floatBubbles {
+            0% { background-position: 0 0;
+}
+            100% { background-position: 0 -800px;
+}
+        }
+
+        /* Regla de optimización de rendimiento: Congelación total de entornos dinámicos */
+        body.theme-frutiger-aero.pausar-animaciones,
+        body.theme-frutiger-aero.pausar-animaciones::before {
+            animation-play-state: paused !important;
         }
 
         body.theme-frutiger-aero nav {
@@ -472,14 +480,25 @@
                     <h3 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">
                         <i class="fa-solid fa-circle-half-stroke mr-2 text-indigo-600"></i> Preferencias Visuales
                     </h3>
-                    <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <div class="min-w-0 pr-2">
-                            <p class="text-sm font-bold text-slate-700">Atenuación Lumínica</p>
-                            <p class="text-[11px] text-slate-400 mt-0.5 leading-tight">Activa la capa protectora ocular estilo gafas de sol.</p>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="min-w-0 pr-2">
+                                <p class="text-sm font-bold text-slate-700">Atenuación Lumínica</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5 leading-tight">Activa la capa protectora ocular estilo gafas de sol.</p>
+                            </div>
+                            <button type="button" onclick="toggleFiltroBrillo()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer flex-shrink-0">
+                                <i class="fa-solid fa-eye-low-vision"></i> Alternar
+                            </button>
                         </div>
-                        <button type="button" onclick="toggleFiltroBrillo()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer flex-shrink-0">
-                            <i class="fa-solid fa-eye-low-vision"></i> Alternar
-                        </button>
+                        <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="min-w-0 pr-2">
+                                <p class="text-sm font-bold text-slate-700">Rendimiento de Fondo</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5 leading-tight">Congela las palmeras y burbujas dinámicas para ahorrar recursos.</p>
+                            </div>
+                            <button type="button" onclick="toggleAnimaciones()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer flex-shrink-0">
+                                <i class="fa-solid fa-bolt"></i> Alternar
+                            </button>
+                        </div>
                     </div>
                 </section>
 
@@ -2750,6 +2769,18 @@ function cerrarModal() {
             }
         }
 
+        function toggleAnimaciones() {
+            const congelado = document.body.classList.toggle('pausar-animaciones');
+            localStorage.setItem('rendimientoAnimaciones', congelado ? 'pausadas' : 'activas');
+        }
+
+        function aplicarPreferenciaAnimaciones() {
+            const preferencia = localStorage.getItem('rendimientoAnimaciones');
+            if (preferencia === 'pausadas') {
+                document.body.classList.add('pausar-animaciones');
+            }
+        }
+
        // --- SISTEMA INTELIGENTE DE ALERTAS INMEDIATAS ("BANCO DE NOTIFICACIONES") ---
         function evaluarAlertasInmediatas() {
             const contenedor = document.getElementById('banco-alertas-contenedor');
@@ -2883,8 +2914,9 @@ function cerrarModal() {
         }
 
         // --- CONTROLADOR DE INICIO CON INTEGRACIÓN DE CONFORT VISUAL Y PWA ---
-        window.onload = function() {
+      window.onload = function() {
             aplicarPreferenciaBrillo();
+            aplicarPreferenciaAnimaciones();
             inicializarEstructuraPeriodos();
             automatizarFechaAsignacion();
             aplicarFraseDiariaMenteMaestra();
