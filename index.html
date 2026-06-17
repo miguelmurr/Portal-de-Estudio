@@ -3511,6 +3511,44 @@ function cerrarModal() {
                 })
                 .catch((error) => console.error("Error al guardar desde Timeline: ", error));
         }
+        // --- MOTOR DE NAVEGACIÓN Y CIERRE DEL TIMELINE ---
+        let diaTimelineActivo = null;
+
+        function abrirTimeline(idDia) {
+            diaTimelineActivo = idDia;
+            const nombreDia = diasNombresCortos[idDia];
+            const elNombre = document.getElementById('timeline-dia-nombre');
+            if (elNombre) elNombre.innerText = nombreDia;
+
+            // UX: Limpiar selectores nativos al cambiar de día
+            renderTimelineNativoLimpiarCampos();
+            
+            const wrapperManual = document.getElementById('wrapper-materia-manual');
+            if (wrapperManual) wrapperManual.classList.add('hidden');
+            
+            const timeMateria = document.getElementById('time-materia');
+            if (timeMateria) timeMateria.value = "";
+            
+            renderizarTimelineHorizontal();
+            document.getElementById('modal-timeline').style.display = 'flex';
+        }
+
+        function cerrarTimeline() {
+            document.getElementById('modal-timeline').style.display = 'none';
+            const formRapido = document.getElementById('form-timeline-rapido');
+            if (formRapido) formRapido.reset();
+            const wrapperManual = document.getElementById('wrapper-materia-manual');
+            if (wrapperManual) wrapperManual.classList.add('hidden');
+            renderTimelineNativoLimpiarCampos();
+            diaTimelineActivo = null;
+        }
+
+        function renderTimelineNativoLimpiarCampos() {
+            const inicio = document.getElementById('time-inicio-nativo');
+            const fin = document.getElementById('time-fin-nativo');
+            if (inicio) inicio.value = "";
+            if (fin) fin.value = "";
+        }
     </script>
 </body>
 </html>
