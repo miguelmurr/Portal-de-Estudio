@@ -3083,12 +3083,12 @@ function cerrarModal() {
                         <div class="absolute left-1 right-1 border p-1.5 rounded-xl flex flex-col shadow-sm overflow-hidden transition-all hover:shadow-md hover:scale-[1.02] cursor-pointer z-30 ${claseColorEstilo}"
                              onclick="event.stopPropagation(); mostrarDetalleBloque('${bloque.id}');"
                              style="top: ${topBloque}px; height: ${heightBloque}px; ${estiloInlineColor}">
-                            <div class="flex justify-between items-start w-full">
-                                <span class="text-[9px] font-mono font-black text-white/90 bg-black/10 px-1 rounded border border-white/20 mb-0.5">${bloque.inicio}-${bloque.fin}</span>
+                            <div class="flex justify-between items-start w-full mb-1">
+                                <span class="text-[9px] font-mono font-black text-white/90 bg-black/10 px-1 rounded border border-white/20">${bloque.inicio}-${bloque.fin}</span>
                                 ${btnBorrar}
                             </div>
-                            <h4 class="font-bold text-[10px] leading-tight line-clamp-2 text-white mt-1 pr-3">${nombreMostrar}</h4>
-                            <div class="text-[9px] font-medium text-white/80 mt-auto truncate"><i class="fa-solid fa-location-dot mr-1"></i>${bloque.ubicacion}</div>
+                            <h4 class="font-bold text-[10px] leading-tight text-white pr-3 mb-1 line-clamp-2">${nombreMostrar}</h4>
+                            <div class="text-[9px] font-medium text-white/90 leading-tight whitespace-normal break-words pr-2"><i class="fa-solid fa-location-dot mr-1 text-white/70"></i>${bloque.ubicacion}</div>
                         </div>
                     `;
                 });
