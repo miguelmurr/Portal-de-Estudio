@@ -1331,71 +1331,71 @@
             </button>
         </div>
 
-       <!-- SECCIÓN 1: FORMULARIO DE REGISTRO DE BLOQUES OPTIMIZADO 12H -->
-        <section class="bg-white rounded-2xl shadow-md p-6 mb-8 border border-slate-200">
-            <h2 class="text-xl font-bold text-slate-700 mb-4 border-b pb-2">
-                 <i class="fa-solid fa-calendar-plus mr-2 text-sky-600"></i> Asignar Bloque de Clase
-            </h2>
-            <form id="form-horario" onsubmit="agregarBloqueHorario(event)" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 items-end text-xs">
-                <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Materia</label>
-                    <select id="hor-materia" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
-                        <option value="" disabled selected>Selecciona materia</option>
-                        <option value="comunicacion">Comunicación Oral y Escrita</option>
-                        <option value="ciudadana">Formación Ciudadana 1</option>
-                        <option value="matematicas">Fundamentos en Matemáticas</option>
-                        <option value="digital">Entorno Digital</option>
-                        <option value="mercadeo">Fundamentos de Mercadeo</option>
-                        <option value="economia">Fundamentos de Economía</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Día de la Semana</label>
-                    <select id="hor-dia" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
-                        <option value="" disabled selected>Selecciona día</option>
-                        <option value="1">Lunes</option>
-                        <option value="2">Martes</option>
-                        <option value="3">Miércoles</option>
-                        <option value="4">Jueves</option>
-                        <option value="5">Viernes</option>
-                        <option value="6">Sábado</option>
-                    </select>
-                </div>
-                
-                <!-- INPUT NATIVO TIME PICKER: HORA INICIO -->
-                <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Hora Inicio</label>
-                    <input type="time" id="hor-inicio-nativo" required 
-                        class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 text-center focus:ring-2 focus:ring-sky-200 transition-all cursor-pointer">
-                </div>
-
-                <!-- INPUT NATIVO TIME PICKER: HORA SALIDA -->
-                <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Hora Salida (Hasta)</label>
-                    <input type="time" id="hor-fin-nativo" required 
-                        class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 text-center focus:ring-2 focus:ring-sky-200 transition-all cursor-pointer">
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-500 uppercase mb-1">Ubicación / Salón</label>
-                    <input type="text" id="hor-ubicacion" placeholder="Ej: Aula 302 / Teams" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-slate-700 focus:ring-2 focus:ring-sky-200 font-semibold">
-                </div>
-                <div>
-                    <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white p-2.5 h-[38px] rounded-xl font-bold shadow transition-colors w-full uppercase tracking-wider text-[11px]">
-                        <i class="fa-solid fa-plus mr-1"></i> Fijar Bloque
-                    </button>
-                </div>
-            </form>
-        </section>
-        <!-- SECCIÓN 2: GRID DE LA AGENDA SEMANAL COMPLETA -->
-       <div class="flex justify-between items-center mb-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 gap-4">
             <h2 class="text-xl font-bold text-slate-700">
                 <i class="fa-solid fa-calendar-week mr-2 text-slate-600"></i> Mi Agenda Universitaria Semanal
             </h2>
-            <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md uppercase tracking-wider"><i class="fa-solid fa-pointer mr-1 text-sky-500"></i> Haz clic en un día para ver Timeline</span>
+            <button onclick="toggleFormularioHorario()" class="bg-sky-600 hover:bg-sky-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow transition-colors flex items-center">
+                <i class="fa-solid fa-book-open mr-2"></i> Nuevo Bloque de Clase
+            </button>
         </div>
-        
-       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4" id="contenedor-grid-semanal">
+
+        <div id="contenedor-formulario-horario" class="hidden mb-6 fade-in">
+            <section class="bg-white rounded-2xl shadow-md p-6 border-l-4 border-l-sky-500 border-t border-r border-b border-slate-200">
+                <h2 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">
+                    <i class="fa-solid fa-calendar-plus mr-2 text-sky-600"></i> Asignar Bloque a la Semana
+                </h2>
+                <form id="form-horario" onsubmit="agregarBloqueHorario(event)" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 items-end text-xs">
+                    <div>
+                        <label class="block font-bold text-slate-500 uppercase mb-1">Materia</label>
+                        <select id="hor-materia" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
+                            <option value="" disabled selected>Selecciona materia</option>
+                            <option value="comunicacion">Comunicación Oral y Escrita</option>
+                            <option value="ciudadana">Formación Ciudadana 1</option>
+                            <option value="matematicas">Fundamentos en Matemáticas</option>
+                            <option value="digital">Entorno Digital</option>
+                            <option value="mercadeo">Fundamentos de Mercadeo</option>
+                            <option value="economia">Fundamentos de Economía</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-500 uppercase mb-1">Día</label>
+                        <select id="hor-dia" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 focus:ring-2 focus:ring-sky-200">
+                            <option value="" disabled selected>Selecciona día</option>
+                            <option value="1">Lunes</option><option value="2">Martes</option><option value="3">Miércoles</option><option value="4">Jueves</option><option value="5">Viernes</option><option value="6">Sábado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-500 uppercase mb-1">Hora Inicio</label>
+                        <input type="time" id="hor-inicio-nativo" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 text-center focus:ring-2 focus:ring-sky-200 transition-all cursor-pointer">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-500 uppercase mb-1">Hora Salida</label>
+                        <input type="time" id="hor-fin-nativo" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none font-semibold text-slate-700 text-center focus:ring-2 focus:ring-sky-200 transition-all cursor-pointer">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-500 uppercase mb-1">Ubicación / Salón</label>
+                        <input type="text" id="hor-ubicacion" placeholder="Ej: Aula 302 / Teams" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-slate-700 focus:ring-2 focus:ring-sky-200 font-semibold">
+                    </div>
+                    <div>
+                        <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white p-2.5 h-[38px] rounded-xl font-bold shadow transition-colors w-full uppercase tracking-wider text-[11px]">
+                            <i class="fa-solid fa-check mr-1"></i> Fijar Bloque
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex flex-col h-[70vh]">
+            <div class="p-2 bg-slate-100 border-b border-slate-200 flex text-xs font-black text-slate-500 uppercase tracking-wider text-center sticky top-0 z-50">
+                <div class="w-16 flex-shrink-0 flex items-center justify-center border-r border-slate-200"><i class="fa-regular fa-clock"></i></div>
+                <div class="flex-grow grid grid-cols-6 divide-x divide-slate-200/60">
+                    <div class="py-1">Lunes</div><div class="py-1">Martes</div><div class="py-1">Miércoles</div><div class="py-1">Jueves</div><div class="py-1">Viernes</div><div class="py-1">Sábado</div>
+                </div>
             </div>
+            <div id="contenedor-grid-semanal" class="overflow-y-auto relative flex-grow bg-slate-50" style="scrollbar-width: thin; scroll-behavior: smooth;">
+                </div>
+        </div>
     </main>
 
     <div id="modal-timeline" class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm hidden justify-center items-center z-50 p-4 fade-in">
@@ -2904,6 +2904,15 @@ function cerrarModal() {
                 }
             }, 60000);
         };
+        // Alternador visual para ocultar/mostrar el formulario
+        function toggleFormularioHorario() {
+            const formulario = document.getElementById('contenedor-formulario-horario');
+            if (formulario.classList.contains('hidden')) {
+                formulario.classList.remove('hidden');
+            } else {
+                formulario.classList.add('hidden');
+            }
+        }
         // =================================================================
         // MOTOR LÓGICO DEL HORARIO SEMANAL DE CLASES (PASO 3)
         // =================================================================
@@ -2966,118 +2975,158 @@ function cerrarModal() {
             }
         }
 
-        function renderizarEstructuraHorario() {
+       function renderizarEstructuraHorario() {
             const contenedor = document.getElementById('contenedor-grid-semanal');
+            if (!contenedor) return;
             contenedor.innerHTML = '';
 
             const ahora = new Date();
-            const diaActualSemana = ahora.getDay(); // 1 = Lunes, 2 = Martes...
+            const diaActualSemana = ahora.getDay();
+            
+            // Configuración del Lienzo (6:00 AM a 10:00 PM = 16 Horas)
+            const horaInicioBase = 6; 
+            const horaFinBase = 22;   
+            const pxPorMinuto = 1.5; // Escala vertical (Aumenta o disminuye para estirar)
+            const totalMinutos = (horaFinBase - horaInicioBase) * 60;
+            const alturaTotal = totalMinutos * pxPorMinuto;
 
-            // Dibujar las columnas de Lunes (1) a Sábado (6)
-            for (let d = 1; d <= 6; d++) {
-                let clasesDelDia = listaHorarios.filter(b => parseInt(b.dia) === d);
-                
-                // Ordenar cronológicamente por hora de inicio
-                clasesDelDia.sort((a, b) => a.inicio.localeCompare(b.inicio));
+            // Div contenedor maestro
+            const lienzo = document.createElement('div');
+            lienzo.className = "relative flex w-full min-w-[700px]"; // Ancho mínimo para que no colapse en móviles
+            lienzo.style.height = `${alturaTotal}px`;
 
-                let esHoy = (d === diaActualSemana);
-                let bgColumna = esHoy ? 'bg-slate-50/80 border-sky-400 shadow-[0_15px_30px_rgba(15,23,42,0.03)]' : 'bg-white border-slate-200/60 shadow-[0_10px_20px_rgba(0,0,0,0.01)]';
-                let badgeHoy = esHoy ? '<span class="text-[9px] bg-sky-500 text-white px-1.5 py-0.5 rounded-full font-black uppercase tracking-wider animate-pulse">Hoy</span>' : '';
-                let columnaHTML = `
-                    <div onclick="abrirTimeline('${d}')" class="border-2 ${bgColumna} rounded-2xl p-4 flex flex-col gap-3 min-h-[300px] transition-all cursor-pointer hover:border-sky-300 hover:shadow-md group relative">
-                        <div class="flex justify-between items-center border-b pb-2 mb-1 border-slate-100">
-                            <h3 class="font-bold text-slate-700 text-sm tracking-wide uppercase group-hover:text-sky-600 transition-colors">${diasNombresCortos[d]}</h3>
-                            ${badgeHoy}
-                        </div>
-                        <div class="flex flex-col gap-3 flex-grow overflow-y-auto" id="columna-dia-${d}">
-                            </div>
-                    </div>
-                `;
-                contenedor.innerHTML += columnaHTML;
+            // FASE 1: Columna de Horas y Cuadrícula de Fondo (Regla cada 15 min)
+            let lineasHTML = `<div class="w-16 flex-shrink-0 border-r border-slate-200 relative bg-slate-50/50 z-10">`;
+            let gridFondoHTML = `<div class="absolute top-0 left-16 right-0 bottom-0 pointer-events-none z-0">`;
 
-                const contenedorDia = document.getElementById(`columna-dia-${d}`);
+            for (let min = 0; min <= totalMinutos; min += 15) {
+                let topPos = min * pxPorMinuto;
+                let currentMinTotal = (horaInicioBase * 60) + min;
+                let h = Math.floor(currentMinTotal / 60);
+                let m = currentMinTotal % 60;
+                let ampm = h >= 12 ? 'PM' : 'AM';
+                let h12 = h % 12 === 0 ? 12 : h % 12;
+                let minStr = m.toString().padStart(2, '0');
 
-                if (clasesDelDia.length === 0) {
-                    contenedorDia.innerHTML = `
-                        <div class="flex flex-col items-center justify-center text-center p-4 border border-dashed border-slate-200 rounded-xl bg-slate-50/50 my-auto py-8">
-                            <i class="fa-solid fa-bed text-slate-300 text-lg mb-1.5"></i>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Libre</span>
-                        </div>
-                    `;
+                if (min % 60 === 0) {
+                    // Hora Exacta (Línea sólida)
+                    lineasHTML += `<div class="absolute w-full text-right pr-2 text-[10px] font-black text-slate-500" style="top: ${topPos - 7}px;">${h12}:00 ${ampm}</div>`;
+                    gridFondoHTML += `<div class="absolute w-full border-t border-slate-300" style="top: ${topPos}px;"></div>`;
+                } else if (min % 30 === 0) {
+                    // Media Hora (Línea punteada)
+                    lineasHTML += `<div class="absolute w-full text-right pr-2 text-[8px] font-bold text-slate-400/70" style="top: ${topPos - 6}px;">${minStr}</div>`;
+                    gridFondoHTML += `<div class="absolute w-full border-t border-slate-200 border-dashed" style="top: ${topPos}px;"></div>`;
                 } else {
-                   clasesDelDia.forEach(bloque => {
-                        let esOtro = bloque.materiaId === 'otro';
-                        let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (materiasData[bloque.materiaId]?.nombre || "Materia");
-                        let colorClase = esOtro ? 'slate' : (materiasData[bloque.materiaId]?.color || 'violet');
-
-                        // Diccionario técnico de estilos sólidos para garantizar compatibilidad con Tailwind
-                        const estilosSolidos = {
-                            violet: 'bg-purple-600 border-purple-700 text-white shadow-purple-600/10',
-                            rose: 'bg-rose-600 border-rose-700 text-white shadow-rose-600/10',
-                            amber: 'bg-amber-500 border-amber-600 text-white shadow-amber-500/10',
-                            teal: 'bg-teal-600 border-teal-700 text-white shadow-teal-600/10',
-                            sky: 'bg-sky-600 border-sky-700 text-white shadow-sky-600/10',
-                            emerald: 'bg-emerald-600 border-emerald-700 text-white shadow-emerald-600/10',
-                            slate: 'bg-slate-600 border-slate-700 text-white shadow-slate-600/10'
-                        };
-                        
-                        let claseColorEstilo = estilosSolidos[colorClase] || 'text-white';
-                        let estiloInlineColor = '';
-                        if (colorClase && colorClase.startsWith('#')) {
-                            estiloInlineColor = `style="background-color: ${colorClase}; border-color: ${colorClase};"`;
-                        } else if (!estilosSolidos[colorClase]) {
-                            claseColorEstilo = 'bg-purple-600 border-purple-700 text-white shadow-purple-600/10';
-                        }
-           
-                        // Evaluar si esta clase en específico está sucediendo en vivo
-                        let esClaseEnVivo = false;
-                        if (esHoy) {
-                            let horaClase = parseInt(bloque.inicio.split(':')[0]);
-                            let minClase = parseInt(bloque.inicio.split(':')[1]);
-                            let horaActual = ahora.getHours();
-                            let minActual = ahora.getMinutes();
-                            
-                            let tiempoClase = (horaClase * 60) + minClase;
-                            let tiempoActual = (horaActual * 60) + minActual;
-                            
-                            if (tiempoActual >= tiempoClase && tiempoActual < (tiempoClase + 120)) {
-                                esClaseEnVivo = true;
-                            }
-                        }
-
-                        let liveBorde = esClaseEnVivo ?
-                        'ring-2 ring-white ring-offset-2 ring-offset-slate-800 scale-[1.02] shadow-lg animate-pulse' : '';
-                        let liveBadge = esClaseEnVivo ?
-                        '<span class="inline-block w-2 h-2 rounded-full bg-white animate-ping mr-1"></span>' : '';
-                        
-                        let btnBorrar = esPeriodoBloqueado ?
-                        '' : `
-                            <button onclick="event.stopPropagation(); eliminarBloqueHorario('${bloque.id}')" class="text-white/80 hover:text-red-200 text-[11px] p-0.5 ml-1" title="Quitar bloque">
-                                <i class="fa-solid fa-trash-can"></i>
-                           
-                        </button>
-                        `;
-                        let bloqueHTML = `
-                            <div class="group border p-3 rounded-xl relative overflow-hidden transition-all duration-300 shadow-sm ${claseColorEstilo} ${liveBorde}" ${estiloInlineColor}>
-                                <div class="flex justify-between items-start gap-1">
-                                    <h4 class="font-bold text-xs leading-tight line-clamp-2 text-white">${nombreMostrar}</h4>
-                                    ${btnBorrar}
-                                </div>
-                                <div class="mt-2 space-y-1 text-[10px] font-semibold text-white/80">
-                                    <div class="flex items-center gap-1">
-                                        <i class="fa-regular fa-clock text-[9px] text-white/70"></i> <span>${bloque.inicio}</span>
-                                        <span class="ml-auto flex items-center text-[9px] font-black uppercase tracking-wider text-white bg-white/20 px-1.5 py-0.5 rounded shadow-sm">${liveBadge}${esClaseEnVivo ? 'En Vivo' : ''}</span>
-                                    </div>
-                                    <div class="flex items-center gap-1 text-white/70 font-medium">
-                                        <i class="fa-solid fa-location-dot text-[9px] text-white/60"></i> <span class="line-clamp-1">${bloque.ubicacion}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        contenedorDia.innerHTML += bloqueHTML;
-                    });
+                    // Cuartos de hora (Líneas súper tenues)
+                    gridFondoHTML += `<div class="absolute w-full border-t border-slate-100 border-dotted" style="top: ${topPos}px;"></div>`;
                 }
             }
+            lineasHTML += `</div>`;
+            gridFondoHTML += `</div>`;
+
+            // FASE 2: Inyección de Días y Bloques Flotantes Absolutos
+            let diasHTML = `<div class="flex-grow grid grid-cols-6 relative z-20">`;
+
+            for (let d = 1; d <= 6; d++) {
+                let esHoy = (d === diaActualSemana);
+                let bgDestaque = esHoy ? 'bg-sky-500/5 shadow-[inset_0_0_20px_rgba(14,165,233,0.05)]' : '';
+                let clasesDelDia = listaHorarios.filter(b => parseInt(b.dia) === d);
+
+                // Columna clickeable para abrir timeline detallado
+                diasHTML += `<div class="relative w-full border-r border-slate-200/50 hover:bg-slate-200/30 transition-colors cursor-pointer ${bgDestaque}" onclick="abrirTimeline('${d}')">`;
+
+                clasesDelDia.forEach(bloque => {
+                    if(!bloque.inicio || !bloque.fin) return;
+                    let [hIni, mIni] = bloque.inicio.split(':').map(Number);
+                    let [hFin, mFin] = bloque.fin.split(':').map(Number);
+                    
+                    let minAbsInicio = (hIni * 60) + mIni;
+                    let minAbsFin = (hFin * 60) + mFin;
+                    let minRelInicio = minAbsInicio - (horaInicioBase * 60);
+                    let duracion = minAbsFin - minAbsInicio;
+
+                    // Cuidado de desbordes matemáticos
+                    if (minRelInicio < 0) minRelInicio = 0;
+                    if (duracion < 0) duracion = 30; // Min preventivo
+
+                    let topBloque = minRelInicio * pxPorMinuto;
+                    let heightBloque = duracion * pxPorMinuto;
+
+                    let esOtro = bloque.materiaId === 'otro';
+                    let nombreMostrar = esOtro ? bloque.nombrePersonalizado : (materiasData[bloque.materiaId]?.nombre || "Materia");
+                    let colorClase = esOtro ? 'slate' : (materiasData[bloque.materiaId]?.color || 'violet');
+
+                    const estilosSolidos = {
+                        violet: 'bg-purple-600 border-purple-700 text-white shadow-purple-600/20',
+                        rose: 'bg-rose-600 border-rose-700 text-white shadow-rose-600/20',
+                        amber: 'bg-amber-500 border-amber-600 text-white shadow-amber-500/20',
+                        teal: 'bg-teal-600 border-teal-700 text-white shadow-teal-600/20',
+                        sky: 'bg-sky-600 border-sky-700 text-white shadow-sky-600/20',
+                        emerald: 'bg-emerald-600 border-emerald-700 text-white shadow-emerald-600/20',
+                        slate: 'bg-slate-600 border-slate-700 text-white shadow-slate-600/20'
+                    };
+
+                    let claseColorEstilo = estilosSolidos[colorClase] || 'text-white';
+                    let estiloInlineColor = '';
+                    if (colorClase && colorClase.startsWith('#')) {
+                        estiloInlineColor = `background-color: ${colorClase}; border-color: ${colorClase};`;
+                    } else if (!estilosSolidos[colorClase]) {
+                        claseColorEstilo = 'bg-purple-600 border-purple-700 text-white shadow-purple-600/20';
+                    }
+
+                    let btnBorrar = esPeriodoBloqueado ? '' : `
+                        <button onclick="event.stopPropagation(); eliminarBloqueHorario('${bloque.id}')" class="absolute top-1 right-1 text-white/80 hover:text-red-200 text-[10px] p-1 rounded hover:bg-black/20" title="Remover clase">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    `;
+
+                    diasHTML += `
+                        <div class="absolute left-1 right-1 border p-1.5 rounded-xl flex flex-col shadow-sm overflow-hidden transition-all hover:shadow-md hover:scale-[1.02] cursor-pointer z-30 ${claseColorEstilo}"
+                             onclick="event.stopPropagation(); mostrarDetalleBloque('${bloque.id}');"
+                             style="top: ${topBloque}px; height: ${heightBloque}px; ${estiloInlineColor}">
+                            <div class="flex justify-between items-start w-full">
+                                <span class="text-[9px] font-mono font-black text-white/90 bg-black/10 px-1 rounded border border-white/20 mb-0.5">${bloque.inicio}-${bloque.fin}</span>
+                                ${btnBorrar}
+                            </div>
+                            <h4 class="font-bold text-[10px] leading-tight line-clamp-2 text-white mt-1 pr-3">${nombreMostrar}</h4>
+                            <div class="text-[9px] font-medium text-white/80 mt-auto truncate"><i class="fa-solid fa-location-dot mr-1"></i>${bloque.ubicacion}</div>
+                        </div>
+                    `;
+                });
+                diasHTML += `</div>`;
+            }
+            diasHTML += `</div>`;
+
+            // FASE 3: Línea de tiempo actual ("Brújula Roja en Vivo")
+            let lineaActualHTML = '';
+            if (diaActualSemana >= 1 && diaActualSemana <= 6) {
+                let horaActual = ahora.getHours();
+                let minActual = ahora.getMinutes();
+                let minActualRel = ((horaActual * 60) + minActual) - (horaInicioBase * 60);
+
+                if (minActualRel >= 0 && minActualRel <= totalMinutos) {
+                    let topLinea = minActualRel * pxPorMinuto;
+                    lineaActualHTML = `
+                        <div class="absolute left-16 right-0 z-40 pointer-events-none flex items-center" style="top: ${topLinea - 4}px;">
+                            <div class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_red]"></div>
+                            <div class="h-[1.5px] bg-red-500 flex-grow shadow-[0_0_8px_red]"></div>
+                        </div>
+                    `;
+                    // Auto-scroll a la hora actual al cargar la página
+                    setTimeout(() => {
+                        contenedor.scrollTop = Math.max(0, topLinea - (contenedor.clientHeight / 2));
+                    }, 200);
+                }
+            }
+
+            lienzo.innerHTML = lineasHTML + gridFondoHTML + diasHTML + lineaActualHTML;
+            
+            // Permitir scroll horizontal en móviles si la pantalla es muy pequeña
+            const envoltorioResponsive = document.createElement('div');
+            envoltorioResponsive.className = "overflow-x-auto w-full h-full";
+            envoltorioResponsive.appendChild(lienzo);
+            
+            contenedor.appendChild(envoltorioResponsive);
         }
 
         function evaluarClaseActualHub() {
