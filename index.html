@@ -2569,8 +2569,7 @@ function cerrarModal() {
 
             tablero.innerHTML = '';
             
-            // 2. Función generadora de tarjetas visuales
-            // 2. Función generadora de tarjetas visuales (Optimizada para contrastes críticos y fechas)
+           // 2. Función generadora de tarjetas visuales (Soporte de Cristal Rojizo Integral)
             const generarTarjeta = (t, esCritico = false) => {
                 const tema = temasColor[t.color] || temasColor.slate;
                 const esHex = t.color.startsWith('#');
@@ -2585,18 +2584,25 @@ function cerrarModal() {
                 const btnCheck = esPeriodoBloqueado ? '' : `<button onclick="marcarComoEntregada('${t.id}')" class="text-slate-300 hover:text-emerald-500 transition-colors mr-2"><i class="fa-solid fa-circle-check text-xl"></i></button>`;
                 const btnTrash = esPeriodoBloqueado ? '' : `<button onclick="eliminarActividad('${t.id}')" class="text-slate-200 hover:text-red-400 transition-colors"><i class="fa-solid fa-trash-can text-sm"></i></button>`;
 
-                // Tonalidad rojiza premium automática aplicada al fondo si la tarjeta entra al flujo crítico
-                const bgClaseTarjeta = esCritico ? 'bg-rose-50/80 border-rose-200/90 text-rose-950' : 'bg-white border-slate-200 text-slate-800';
+                // Control de clases y estilos inline para evadir el override del CSS general
+                let claseTarjeta = 'bg-white border-slate-200 text-slate-800';
+                let estiloInlineTarjeta = '';
+
+                if (esCritico) {
+                    // Genera un cristal líquido pulido con tinte rosa/rojizo de alta fidelidad Frutiger Aero
+                    claseTarjeta = 'text-rose-950 border-rose-300/70 shadow-sm';
+                    estiloInlineTarjeta = `style="background: linear-gradient(135deg, rgba(254, 226, 226, 0.88) 0%, rgba(254, 205, 211, 0.55) 100%) !important; backdrop-filter: blur(16px) saturate(130%) !important; -webkit-backdrop-filter: blur(16px) saturate(130%) !important; border: 1px solid rgba(251, 113, 133, 0.45) !important; box-shadow: 0 8px 32px 0 rgba(225, 29, 72, 0.06), inset 0 1px 1px rgba(255,255,255,0.6) !important;"`;
+                }
 
                 return `
-                <div class="${bgClaseTarjeta} border rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between relative overflow-hidden group">
+                <div class="${claseTarjeta} border rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between relative overflow-hidden group" ${estiloInlineTarjeta}>
                     <div class="absolute left-0 top-0 bottom-0 w-1.5 ${accentClass}" ${accentStyle}></div>
                     <div class="flex-grow pl-3 pr-4">
                         <h5 class="text-sm font-bold line-clamp-1">${t.nombre}</h5>
                         <p class="text-[10px] font-black opacity-60 uppercase tracking-widest mt-1 truncate">${t.materiaNombre}</p>
                     </div>
                     <div class="flex items-center gap-4 flex-shrink-0">
-                        <div class="text-[10px] font-bold opacity-75 text-right">
+                        <div class="text-[10px] font-bold opacity-80 text-right">
                             <span class="block uppercase tracking-widest opacity-70">Corte ${t.corte}</span>
                             <span class="mt-0.5 block">${badgeDias}</span>
                         </div>
@@ -2608,7 +2614,7 @@ function cerrarModal() {
                 </div>`;
             };
 
-            // 3. Renderizado Condicional de Cuadrantes (Se pasa el flag true al mapa del cuadrante crítico)
+            // 3. Renderizado Condicional de Cuadrantes (Pasando el flag true para volver toda la tarjeta rojiza)
             if (zonas.inmediatas.length > 0) {
                 tablero.innerHTML += `
                     <div class="mb-5">
@@ -2616,7 +2622,6 @@ function cerrarModal() {
                         <div class="space-y-2 bg-rose-50/50 p-2.5 rounded-2xl border border-rose-100">${zonas.inmediatas.map(t => generarTarjeta(t, true)).join('')}</div>
                     </div>`;
             }
-
             if (zonas.estrategicas.length > 0) {
                 tablero.innerHTML += `
                     <div class="mb-5">
