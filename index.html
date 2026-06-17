@@ -429,8 +429,15 @@
             text-shadow: 0 1px 4px rgba(0, 229, 255, 0.5), 0 1px 1px rgba(0, 0, 0, 0.3) !important;
             font-weight: 800 !important;
         }
+
+        /* Neutralizar empaquetado de secciones de texto internas para que el rojizo crítico sea 100% uniforme */
+        body.theme-frutiger-aero #tablero-prioridades-agenda .tarjeta-critica div {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+        }
     </style>
-    
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen theme-frutiger-aero" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px), radial-gradient(at 0% 0%, rgba(186, 230, 253, 0.25) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(233, 213, 255, 0.25) 0px, transparent 50%); background-size: 24px 24px, 100% 100%, 100% 100%; background-attachment: fixed;">    
 
@@ -2569,7 +2576,7 @@ function cerrarModal() {
 
             tablero.innerHTML = '';
             
-           // 2. Función generadora de tarjetas visuales (Soporte de Cristal Rojizo Integral)
+           // 2. Función generadora de tarjetas visuales (Soporte de Cristal Rojizo Completamente Uniforme)
             const generarTarjeta = (t, esCritico = false) => {
                 const tema = temasColor[t.color] || temasColor.slate;
                 const esHex = t.color.startsWith('#');
@@ -2584,14 +2591,14 @@ function cerrarModal() {
                 const btnCheck = esPeriodoBloqueado ? '' : `<button onclick="marcarComoEntregada('${t.id}')" class="text-slate-300 hover:text-emerald-500 transition-colors mr-2"><i class="fa-solid fa-circle-check text-xl"></i></button>`;
                 const btnTrash = esPeriodoBloqueado ? '' : `<button onclick="eliminarActividad('${t.id}')" class="text-slate-200 hover:text-red-400 transition-colors"><i class="fa-solid fa-trash-can text-sm"></i></button>`;
 
-                // Control de clases y estilos inline para evadir el override del CSS general
+                // Manejo dinámico de clases y estilos inline para romper el override de las herencias generales
                 let claseTarjeta = 'bg-white border-slate-200 text-slate-800';
                 let estiloInlineTarjeta = '';
 
                 if (esCritico) {
-                    // Genera un cristal líquido pulido con tinte rosa/rojizo de alta fidelidad Frutiger Aero
-                    claseTarjeta = 'text-rose-950 border-rose-300/70 shadow-sm';
-                    estiloInlineTarjeta = `style="background: linear-gradient(135deg, rgba(254, 226, 226, 0.88) 0%, rgba(254, 205, 211, 0.55) 100%) !important; backdrop-filter: blur(16px) saturate(130%) !important; -webkit-backdrop-filter: blur(16px) saturate(130%) !important; border: 1px solid rgba(251, 113, 133, 0.45) !important; box-shadow: 0 8px 32px 0 rgba(225, 29, 72, 0.06), inset 0 1px 1px rgba(255,255,255,0.6) !important;"`;
+                    // Se inyecta 'tarjeta-critica' para activar la transparencia total de los div internos en CSS
+                    claseTarjeta = 'tarjeta-critica text-rose-950 border-rose-300/70 shadow-sm';
+                    estiloInlineTarjeta = `style="background: linear-gradient(135deg, rgba(254, 226, 226, 0.94) 0%, rgba(254, 205, 211, 0.65) 100%) !important; backdrop-filter: blur(16px) saturate(130%) !important; -webkit-backdrop-filter: blur(16px) saturate(130%) !important; border: 1px solid rgba(251, 113, 133, 0.5) !important; box-shadow: 0 8px 32px 0 rgba(225, 29, 72, 0.06), inset 0 1px 1px rgba(255,255,255,0.6) !important;"`;
                 }
 
                 return `
@@ -2614,7 +2621,7 @@ function cerrarModal() {
                 </div>`;
             };
 
-            // 3. Renderizado Condicional de Cuadrantes (Pasando el flag true para volver toda la tarjeta rojiza)
+            // 3. Renderizado Condicional de Cuadrantes (Pasando el flag 'true' para forzar el tratamiento crítico)
             if (zonas.inmediatas.length > 0) {
                 tablero.innerHTML += `
                     <div class="mb-5">
