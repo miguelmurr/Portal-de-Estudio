@@ -193,10 +193,11 @@
             border-radius: 14px !important;
         }
 
-        /* 4. Transformación de Ventanas Emergentes (Modales de Notas, Timeline e Historial) */
+       /* 4. Transformación de Ventanas Emergentes (Modales de Notas, Timeline, Historial y Edición de Materia) */
         body.theme-frutiger-aero #modal-content,
         body.theme-frutiger-aero #modal-timeline > div,
-        body.theme-frutiger-aero #modal-historial > div {
+        body.theme-frutiger-aero #modal-historial > div,
+        body.theme-frutiger-aero #modal-editar-materia > div {
             background: linear-gradient(135deg, rgba(235, 254, 253, 0.96) 0%, rgba(205, 251, 246, 0.9) 100%) !important;
             backdrop-filter: blur(24px) !important;
             -webkit-backdrop-filter: blur(24px) !important;
@@ -206,7 +207,8 @@
         }
         body.theme-frutiger-aero #modal-header,
         body.theme-frutiger-aero #modal-timeline .bg-slate-800,
-        body.theme-frutiger-aero #modal-historial .bg-emerald-700 {
+        body.theme-frutiger-aero #modal-historial .bg-emerald-700,
+        body.theme-frutiger-aero #modal-editar-materia .bg-sky-700 {
             background: linear-gradient(180deg, rgba(0, 151, 167, 0.5) 0%, rgba(0, 137, 123, 0.45) 100%) !important;
             backdrop-filter: blur(10px) !important;
             border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
@@ -504,30 +506,7 @@
                     </div>
                 </section>
 
-                <section class="bg-white rounded-2xl shadow-md p-6 border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">
-                        <i class="fa-solid fa-percent mr-2 text-amber-600"></i> Estación de Cortes
-                    </h3>
-                    <form id="form-config-cortes" onsubmit="guardarConfiguracionCortesGlobal(event)" class="space-y-4 text-xs">
-                        <div>
-                            <label class="block font-bold text-slate-500 uppercase mb-1">Cantidad de Cortes del Periodo</label>
-                            <select id="cfg-cantidad-cortes" onchange="generarInputsCortesDinamicos(this.value)" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-bold text-slate-700 cursor-pointer">
-                                <option value="1">1 Corte</option>
-                                <option value="2">2 Cortes</option>
-                                <option value="3">3 Cortes</option>
-                                <option value="4">4 Cortes</option>
-                                <option value="5">5 Cortes</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Contenedor dinámico de campos de porcentaje -->
-                        <div id="contenedor-inputs-cortes-dinamicos" class="space-y-3"></div>
-
-                        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-2.5 rounded-xl font-bold uppercase tracking-wider transition-colors shadow-sm text-[11px]">
-                            <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Distribución
-                        </button>
-                    </form>
-                </section>
+               
             </div>
 
             <div class="lg:col-span-2">
@@ -1232,14 +1211,8 @@
             <form id="form-actividad" onsubmit="agregarNuevaActividad(event)" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-end">
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Materia</label>
-                    <select id="reg-materia" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-amber-200 text-sm font-semibold text-slate-700">
+                    <select id="reg-materia" onchange="actualizarSelectCortesRegistro()" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-amber-200 text-sm font-semibold text-slate-700">
                         <option value="" disabled selected>Selecciona una materia</option>
-                        <option value="comunicacion">Comunicación Oral y Escrita</option>
-                        <option value="ciudadana">Formación Ciudadana 1</option>
-                        <option value="matematicas">Fundamentos en Matemáticas</option>
-                        <option value="digital">Entorno Digital</option>
-                        <option value="mercadeo">Fundamentos de Mercadeo</option>
-                        <option value="economia">Fundamentos de Economía</option>
                     </select>
                 </div>
                 <div>
@@ -1250,9 +1223,6 @@
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Corte Académico</label>
                     <select id="reg-corte" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-amber-200 text-sm font-semibold text-slate-700">
                         <option value="" disabled selected>Selecciona un corte</option>
-                        <option value="1">Corte 1</option>
-                        <option value="2">Corte 2</option>
-                        <option value="3">Corte 3</option>
                     </select>
                 </div>
                 <div>
@@ -1541,6 +1511,57 @@
             </div>
         </div>
     </div>
+    <div id="modal-editar-materia" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50 p-4 fade-in">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto transition-all duration-300 flex flex-col">
+            <div class="p-4 bg-sky-700 text-white flex justify-between items-center sticky top-0 z-10">
+                <h3 class="text-base font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-sliders"></i> Ajustes de la Asignatura
+                </h3>
+                <button onclick="cerrarModalEditarMateria()" class="text-white hover:text-sky-200 text-2xl transition font-black leading-none">&times;</button>
+            </div>
+            
+            <form id="form-modal-editar-materia" onsubmit="guardarMateriaEditada(event)" class="p-5 space-y-4 text-xs">
+                <input type="hidden" id="edit-materia-id">
+                
+                <div>
+                    <label class="block font-bold text-slate-500 uppercase mb-1">Nombre Asignatura</label>
+                    <input type="text" id="edit-materia-nombre" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-semibold text-slate-700">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-500 uppercase mb-1">Créditos</label>
+                        <input type="number" id="edit-materia-creditos" min="1" max="10" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none text-sm font-bold text-slate-700 text-center">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-500 uppercase mb-1">Tono de Tinta</label>
+                        <input type="color" id="edit-materia-color" class="w-full h-[38px] p-1 bg-slate-50 border border-slate-200 rounded-lg outline-none cursor-pointer">
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200 pt-4">
+                    <div class="flex items-center justify-between bg-slate-100/80 p-3 rounded-xl border border-slate-200/50 mb-2">
+                        <div>
+                            <p class="text-xs font-bold text-slate-700">Estructura Evaluativa</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5">Define los cortes de esta materia</p>
+                        </div>
+                        <div class="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden p-0.5">
+                            <button type="button" onclick="modificarCantidadCortesMateria(-1)" class="w-7 h-7 flex items-center justify-center font-black bg-slate-100 hover:bg-slate-200 rounded text-slate-700 transition-colors text-xs cursor-pointer">-</button>
+                            <span id="edit-materia-cantidad-texto" class="w-8 text-center font-mono font-black text-sm text-slate-700">3</span>
+                            <button type="button" onclick="modificarCantidadCortesMateria(1)" class="w-7 h-7 flex items-center justify-center font-black bg-slate-100 hover:bg-slate-200 rounded text-slate-700 transition-colors text-xs cursor-pointer">+</button>
+                        </div>
+                    </div>
+                    
+                    <div id="edit-contenedor-cortes-dinamicos" class="space-y-2 max-h-[25vh] overflow-y-auto pr-1 py-1"></div>
+                </div>
+
+                <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
+                    <button type="button" onclick="cerrarModalEditarMateria()" class="bg-slate-700 text-white px-4 py-2 rounded-xl text-[11px] font-bold tracking-wide uppercase transition-colors cursor-pointer">Cancelar</button>
+                    <button type="submit" class="text-white px-4 py-2 rounded-xl text-[11px] font-bold tracking-wide uppercase transition-colors shadow-sm cursor-pointer"><i class="fa-solid fa-floppy-disk mr-1"></i> Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script>
         // =================================================================
@@ -1570,13 +1591,13 @@ const firebaseConfig = {
             emerald: { cardBg: 'shadow-[0_15px_30px_rgba(15,23,42,0.03)] hover:shadow-[0_25px_50px_rgba(15,23,42,0.07)] hover:border-emerald-400/60 hover:-translate-y-0.5 transition-all duration-300', cardBgSoft: 'bg-white', modalBgSoft: 'bg-emerald-50/90', borderSoft: 'border-emerald-200/60', borderAccent: 'bg-emerald-600/60', borderStrong: 'bg-emerald-600/30', textAccent: 'text-emerald-600/80', modalHeader: 'bg-emerald-800/90', modalBtn: 'bg-emerald-600/80 hover:bg-emerald-700', focusRing: 'focus:ring-emerald-200/60 focus:border-emerald-400/60' }
         };
 
-        const estructuraBase = {
-            comunicacion: { nombre: "Comunicación Oral y Escrita", creditos: 4, color: "violet", icono: "fa-comments", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
-            ciudadana: { nombre: "Formación Ciudadana 1", creditos: 3, color: "rose", icono: "fa-handshake-angle", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
-            matematicas: { nombre: "Fundamentos en Matemáticas", creditos: 3, color: "amber", icono: "fa-calculator", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
-            digital: { nombre: "Entorno Digital", creditos: 3, color: "teal", icono: "fa-laptop-code", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
-            mercadeo: { nombre: "Fundamentos de Mercadeo", creditos: 3, color: "sky", icono: "fa-bullhorn", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } },
-            economia: { nombre: "Fundamentos de Economía", creditos: 2, color: "emerald", icono: "fa-chart-line", notas: { p1: 0, t1: 0, p2: 0, t2: 0, ef: 0, pf: 0 } }
+const estructuraBase = {
+            comunicacion: { nombre: "Comunicación Oral y Escrita", creditos: 4, color: "violet", icono: "fa-comments", cortes: { "1": 0.30, "2": 0.30, "3": 0.40 } },
+            ciudadana: { nombre: "Formación Ciudadana 1", creditos: 3, color: "rose", icono: "fa-handshake-angle", cortes: { "1": 0.30, "2": 0.30, "3": 0.40 } },
+            matematicas: { nombre: "Fundamentos en Matemáticas", creditos: 3, color: "amber", icono: "fa-calculator", cortes: { "1": 0.30, "2": 0.30, "3": 0.40 } },
+            digital: { nombre: "Entorno Digital", creditos: 3, color: "teal", icono: "fa-laptop-code", cortes: { "1": 0.30, "2": 0.30, "3": 0.40 } },
+            mercadeo: { nombre: "Fundamentos de Mercadeo", creditos: 3, color: "sky", icono: "fa-bullhorn", cortes: { "1": 0.30, "2": 0.30, "3": 0.40 } },
+            economia: { nombre: "Fundamentos de Economía", creditos: 2, color: "emerald", icono: "fa-chart-line", cortes: { "1": 0.30, "2": 0.30, "3": 0.40 } }
         };
 
         
@@ -1820,15 +1841,22 @@ const firebaseConfig = {
                 renderizarDashboard();
             });
 
-            // 2. Escucha en tiempo real para materias (CON FUSIÓN PROTECTORA)
+         // 2. Escucha en tiempo real para materias (CON FUSIÓN PROTECTORA)
             unsubscribeMaterias = db.collection('usuario_miguel').doc(docMateriasId).onSnapshot((doc) => {
                 if (doc.exists) {
-                    // Si Firestore tiene datos, úsalos; si falta algo, completa con la base.
                     materiasData = { ...JSON.parse(JSON.stringify(estructuraBase)), ...doc.data() };
                 } else {
                     materiasData = JSON.parse(JSON.stringify(estructuraBase));
                     db.collection('usuario_miguel').doc(docMateriasId).set(materiasData);
                 }
+                
+                // Capa de resguardo: Asegura la existencia de cortes por asignatura
+                for (let id in materiasData) {
+                    if (!materiasData[id].cortes || Object.keys(materiasData[id].cortes).length === 0) {
+                        materiasData[id].cortes = { "1": 0.30, "2": 0.30, "3": 0.40 };
+                    }
+                }
+                
                 renderizarDashboard();
                 actualizarSelectoresMateriasFormularios();
             });
@@ -1866,14 +1894,19 @@ const firebaseConfig = {
 
         // --- MOTOR DE CÁLCULO PONDERADO POR CORTES (PASO A y B) ---
 function calcularDefinitivaMateria(idMateria) {
-    let corte1 = calcularPromedioCorte(idMateria, 1).promedio;
-    let corte2 = calcularPromedioCorte(idMateria, 2).promedio;
-    let corte3 = calcularPromedioCorte(idMateria, 3).promedio;
+    const mat = materiasData[idMateria];
+    if (!mat) return 0;
     
-    // Multiplicación milimétrica por los pesos de la estación de control
-    let notaDefinitiva = (corte1 * configuracionCortes[1]) + 
-                         (corte2 * configuracionCortes[2]) + 
-                         (corte3 * configuracionCortes[3]);
+    // Obtener los cortes específicos de la asignatura o usar el resguardo estándar de tres cortes
+    let cortesObj = mat.cortes || { "1": 0.30, "2": 0.30, "3": 0.40 };
+    let notaDefinitiva = 0;
+    
+    // Procesar iterativamente cada corte configurado en el mapa individual de la materia
+    for (let c in cortesObj) {
+        let promCorte = calcularPromedioCorte(idMateria, parseInt(c)).promedio;
+        notaDefinitiva += promCorte * (parseFloat(cortesObj[c]) || 0);
+    }
+    
     return notaDefinitiva;
 }
 
@@ -1976,13 +2009,6 @@ function renderizarDashboard() {
 
         // Función maestra para preparar y limpiar todo el panel de configuración general
 function inicializarCamposConfiguracionPanel() {
-    const cantidadCortes = Object.keys(configuracionCortes).length || 3;
-    const selectorCortes = document.getElementById('cfg-cantidad-cortes');
-    if (selectorCortes) selectorCortes.value = cantidadCortes;
-
-    // Construir los inputs de porcentaje según la cantidad guardada
-    generarInputsCortesDinamicos(cantidadCortes);
-
     // Resetear por completo el formulario de añadir/editar materias
     const idInput = document.getElementById('cfg-materia-id');
     const nombreInput = document.getElementById('cfg-materia-nombre');
@@ -2000,26 +2026,7 @@ function inicializarCamposConfiguracionPanel() {
     renderizarMateriasConfigPanel();
 }
 
-// Generador dinámico en el DOM para los campos numéricos de la estación de cortes
-function generarInputsCortesDinamicos(cantidad) {
-    const contenedor = document.getElementById('contenedor-inputs-cortes-dinamicos');
-    if (!contenedor) return;
-    contenedor.innerHTML = '';
-    cantidad = parseInt(cantidad);
 
-    for (let c = 1; c <= cantidad; c++) {
-        // Multiplicar por 100 para mostrar como entero el valor flotante guardado en base de datos
-        let valorGuardado = configuracionCortes[c] !== undefined ? Math.round(configuracionCortes[c] * 100) : '';
-        
-        contenedor.innerHTML += `
-            <div>
-                <label class="block font-bold text-slate-400 uppercase mb-1">Porcentaje Corte ${c} (%)</label>
-                <input type="number" id="cfg-corte-${c}" min="0" max="100" value="${valorGuardado}" required 
-                    class="w-full p-2 bg-white border border-slate-200 rounded-lg outline-none text-sm font-bold text-slate-700 text-center focus:ring-2 focus:ring-amber-100">
-            </div>
-        `;
-    }
-}
         
 function renderizarMateriasConfigPanel() {
     const contenedor = document.getElementById('lista-config-materias-dinamicas');
@@ -2060,19 +2067,127 @@ function renderizarMateriasConfigPanel() {
     }
 }
 
+// Variable global de control temporal para los cortes del modal activo
+let cantidadCortesModalMateria = 3;
+
 function cargarMateriaParaEditar(idMateria) {
     const mat = materiasData[idMateria];
     if (!mat) return;
 
-    document.getElementById('cfg-materia-id').value = idMateria;
-    document.getElementById('cfg-materia-nombre').value = mat.nombre;
-    document.getElementById('cfg-materia-creditos').value = mat.creditos;
+    // Rellenar campos de la materia en el modal
+    document.getElementById('edit-materia-id').value = idMateria;
+    document.getElementById('edit-materia-nombre').value = mat.nombre;
+    document.getElementById('edit-materia-creditos').value = mat.creditos;
     
-    let colorHex = mat.color.startsWith('#') ? mat.color : (mapaColoresHexPorDefecto[mat.color] || '#64748b');
-    document.getElementById('cfg-materia-color').value = colorHex;
+    let colorHex = mat.color.startsWith('#') ?
+        mat.color : (mapaColoresHexPorDefecto[mat.color] || '#64748b');
+    document.getElementById('edit-materia-color').value = colorHex;
 
-    document.getElementById('btn-submit-materia-cfg').innerHTML = `<i class="fa-solid fa-floppy-disk mr-1"></i> Actualizar Materia`;
-    document.getElementById('cfg-materia-nombre').focus();
+    // Extraer y cuantificar la estructura de cortes local
+    let cortesObj = mat.cortes || { "1": 0.30, "2": 0.30, "3": 0.40 };
+    cantidadCortesModalMateria = Object.keys(cortesObj).length;
+    document.getElementById('edit-materia-cantidad-texto').innerText = cantidadCortesModalMateria;
+
+    // Dibujar los inputs numéricos proporcionales
+    renderizarInputsCortesModalMateria(cortesObj);
+
+    // Desplegar modal en pantalla
+    document.getElementById('modal-editar-materia').style.display = 'flex';
+}
+
+function renderizarInputsCortesModalMateria(cortesObj = null) {
+    const contenedor = document.getElementById('edit-contenedor-cortes-dinamicos');
+    if (!contenedor) return;
+    contenedor.innerHTML = '';
+
+    const idMateria = document.getElementById('edit-materia-id').value;
+
+    for (let c = 1; c <= cantidadCortesModalMateria; c++) {
+        let porcentajeCorte = 0;
+        
+        if (cortesObj && cortesObj[c] !== undefined) {
+            porcentajeCorte = Math.round(cortesObj[c] * 100);
+        } else if (materiasData[idMateria] && materiasData[idMateria].cortes && materiasData[idMateria].cortes[c] !== undefined) {
+            porcentajeCorte = Math.round(materiasData[idMateria].cortes[c] * 100);
+        } else {
+            porcentajeCorte = 0; // Inicializador nulo para cortes de expansión
+        }
+
+        contenedor.innerHTML += `
+            <div class="flex items-center justify-between bg-slate-50/50 p-2 border border-slate-200/60 rounded-xl gap-4">
+                <span class="font-bold text-slate-500 uppercase text-[10px]">Porcentaje Corte ${c}</span>
+                <div class="relative flex items-center flex-shrink-0">
+                    <input type="number" id="edit-corte-val-${c}" min="0" max="100" value="${porcentajeCorte}" required 
+                        class="w-20 p-2 pr-6 bg-white border border-slate-200 rounded-lg outline-none text-xs font-bold text-slate-700 text-center focus:ring-2 focus:ring-sky-100">
+                    <span class="absolute right-2 text-[10px] font-bold text-slate-400">%</span>
+                </div>
+            </div>
+        `;
+    }
+}
+
+function modificarCantidadCortesMateria(delta) {
+    let nuevaCantidad = cantidadCortesModalMateria + delta;
+    if (nuevaCantidad < 1) {
+        alert("Estructura inválida: Cada asignatura debe poseer al menos 1 corte académico.");
+        return;
+    }
+    if (nuevaCantidad > 5) {
+        alert("Límite del sistema: No se permiten estructuras superiores a 5 cortes por materia.");
+        return;
+    }
+    cantidadCortesModalMateria = nuevaCantidad;
+    document.getElementById('edit-materia-cantidad-texto').innerText = cantidadCortesModalMateria;
+    renderizarInputsCortesModalMateria();
+}
+
+function cerrarModalEditarMateria() {
+    document.getElementById('modal-editar-materia').style.display = 'none';
+    document.getElementById('form-modal-editar-materia').reset();
+}
+
+function guardarMateriaEditada(e) {
+    e.preventDefault();
+    if (esPeriodoBloqueado) {
+        alert("Acción denegada: El periodo actual está congelado.");
+        return;
+    }
+
+    const idMateria = document.getElementById('edit-materia-id').value;
+    const nombreInput = document.getElementById('edit-materia-nombre').value.trim();
+    const creditosInput = parseInt(document.getElementById('edit-materia-creditos').value);
+    const colorInput = document.getElementById('edit-materia-color').value;
+
+    let nuevosCortes = {};
+    let sumaVerificacion = 0;
+
+    for (let c = 1; c <= cantidadCortesModalMateria; c++) {
+        const inputVal = parseInt(document.getElementById(`edit-corte-val-${c}`).value) || 0;
+        sumaVerificacion += inputVal;
+        nuevosCortes[c] = inputVal / 100;
+    }
+
+    if (sumaVerificacion !== 100) {
+        alert(`Error de distribución: La suma ponderada de los cortes para esta asignatura debe dar exactamente el 100%. (Suma detectada actualmente: ${sumaVerificacion}%)`);
+        return;
+    }
+
+    if (materiasData[idMateria]) {
+        materiasData[idMateria].nombre = nombreInput;
+        materiasData[idMateria].creditos = creditosInput;
+        materiasData[idMateria].color = colorInput;
+        materiasData[idMateria].cortes = nuevosCortes;
+
+        const docMateriasId = (periodoActivoId === "PRIMER SEMESTRE") ? "materias" : "materias_" + periodoActivoId.replace(/ /g, "_");
+        db.collection('usuario_miguel').doc(docMateriasId).set(materiasData)
+            .then(() => {
+                alert("Asignatura y matriz de cortes resguardados con éxito.");
+                cerrarModalEditarMateria();
+                inicializarCamposConfiguracionPanel();
+                actualizarSelectoresMateriasFormularios();
+            })
+            .catch(error => console.error("Error crítico al actualizar datos locales de materia: ", error));
+    }
 }
 
 function guardarMateriaConfig(e) {
@@ -2088,17 +2203,21 @@ function guardarMateriaConfig(e) {
     const colorInput = document.getElementById('cfg-materia-color').value;
 
     let idMateria = idInput || 'mat_' + Date.now().toString();
-    let iconoPrevio = (materiasData[idMateria] && materiasData[idMateria].icono) ? materiasData[idMateria].icono : 'fa-book';
+    let iconoPrevio = (materiasData[idMateria] && materiasData[idMateria].icono) ?
+        materiasData[idMateria].icono : 'fa-book';
+    
+    // Conserva los cortes existentes o inicializa la distribución estándar de resguardo
+    let cortesPrevios = (materiasData[idMateria] && materiasData[idMateria].cortes) ?
+        materiasData[idMateria].cortes : { "1": 0.30, "2": 0.30, "3": 0.40 };
 
     materiasData[idMateria] = {
         nombre: nombreInput,
         creditos: creditosInput,
         color: colorInput,
-        icono: iconoPrevio
+        icono: iconoPrevio,
+        cortes: cortesPrevios
     };
-
     const docMateriasId = (periodoActivoId === "PRIMER SEMESTRE") ? "materias" : "materias_" + periodoActivoId.replace(/ /g, "_");
-
     db.collection('usuario_miguel').doc(docMateriasId).set(materiasData)
         .then(() => {
             alert(idInput ? "Materia actualizada con éxito." : "Nueva materia añadida al periodo.");
@@ -2136,41 +2255,6 @@ function eliminarMateriaConfig(idMateria) {
         .catch(error => console.error("Error al remover asignatura: ", error));
 }
 
-function guardarConfiguracionCortesGlobal(e) {
-    e.preventDefault();
-    if (esPeriodoBloqueado) {
-        alert("Acción denegada: El periodo actual está congelado.");
-        return;
-    }
-
-    const cantidadCortes = parseInt(document.getElementById('cfg-cantidad-cortes').value) || 3;
-    let nuevoObjetoCortes = {};
-    let sumaVerificacion = 0;
-
-    // Recorrer dinámicamente según la cantidad elegida
-    for (let c = 1; c <= cantidadCortes; c++) {
-        const inputVal = parseInt(document.getElementById(`cfg-corte-${c}`).value) || 0;
-        sumaVerificacion += inputVal;
-        nuevoObjetoCortes[c] = inputVal / 100;
-    }
-
-    if (sumaVerificacion !== 100) {
-        alert(`Error de distribución: La suma de todos los cortes configurados debe dar exactamente igual al 100%. (Suma detectada actualmente: ${sumaVerificacion}%)`);
-        return;
-    }
-
-    // Actualizar el puntero en memoria global de la suite
-    configuracionCortes = nuevoObjetoCortes;
-
-    const docCortesId = "config_cortes_" + periodoActivoId.replace(/ /g, "_");
-    
-    db.collection('usuario_miguel').doc(docCortesId).set(configuracionCortes)
-        .then(() => {
-            alert("Estación de control actualizada. Estructura de cortes modificada con éxito.");
-            renderizarDashboard();
-        })
-        .catch(error => console.error("Error al guardar estación de cortes: ", error));
-}
 
 function actualizarSelectoresMateriasFormularios() {
     // Lista de IDs de los elementos select estáticos en la Agenda, Horario y Timeline
@@ -2209,6 +2293,29 @@ function actualizarSelectoresMateriasFormularios() {
             if (valorPreexistente === "otro") optOtro.selected = true;
             selectEl.appendChild(optOtro);
         }
+    });
+}
+
+function actualizarSelectCortesRegistro() {
+    const materiaId = document.getElementById('reg-materia').value;
+    const selectCorte = document.getElementById('reg-corte');
+    if (!selectCorte) return;
+
+    // Resetear el selector a su estado neutro inicial
+    selectCorte.innerHTML = '<option value="" disabled selected>Selecciona un corte</option>';
+
+    if (!materiaId || !materiasData[materiaId]) return;
+
+    // Extraer los cortes específicos guardados en la asignatura
+    let cortesObj = materiasData[materiaId].cortes || { "1": 0.30, "2": 0.30, "3": 0.40 };
+    const listaCortes = Object.keys(cortesObj).map(Number).sort((a, b) => a - b);
+
+    // Poblar de forma milimétrica el select del HTML
+    listaCortes.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.innerText = `Corte ${c} (${Math.round(cortesObj[c] * 100)}%)`;
+        selectCorte.appendChild(opt);
     });
 }
 
@@ -2272,15 +2379,14 @@ function renderizarMenuCortes() {
     }
     
     document.getElementById('alerta-porcentaje-contenedor').innerHTML = '';
-    
     let cortesHTML = `<div class="grid grid-cols-1 gap-4 mt-2">`;
     
-    // Extraer de forma dinámica las llaves del objeto de configuración de cortes
-    const cortesActivosLista = Object.keys(configuracionCortes).map(Number).sort((a, b) => a - b);
-
+    // Extraer de forma dinámica las llaves del objeto de configuración de cortes específico de la materia activa
+    let cortesObj = mat.cortes || { "1": 0.30, "2": 0.30, "3": 0.40 };
+    const cortesActivosLista = Object.keys(cortesObj).map(Number).sort((a, b) => a - b);
     cortesActivosLista.forEach(c => {
         const calc = calcularPromedioCorte(materiaActivaId, c);
-        const pesoCortePercent = ((configuracionCortes[c] || 0) * 100).toFixed(0);
+        const pesoCortePercent = ((cortesObj[c] || 0) * 100).toFixed(0);
         
         let estiloBordeCorte = esHex ? `style="border-color: ${mat.color}40"` : '';
         let claseBordeCorte = esHex ? '' : tema.borderStrong;
@@ -2506,9 +2612,10 @@ function cerrarModal() {
             listaActividades.push(nuevaTarea);
             const docActividadesId = (periodoActivoId === "PRIMER SEMESTRE") ? "actividades" : "actividades_" + periodoActivoId.replace(/ /g, "_");
             
-            db.collection('usuario_miguel').doc(docActividadesId).set({ lista: listaActividades })
+           db.collection('usuario_miguel').doc(docActividadesId).set({ lista: listaActividades })
                 .then(() => {
                     document.getElementById('form-actividad').reset();
+                    actualizarSelectCortesRegistro();
                     automatizarFechaAsignacion();
                 })
                 .catch((error) => console.error("Error al guardar actividad: ", error));
