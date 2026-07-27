@@ -2748,7 +2748,7 @@ function cerrarModal() {
             };
 
             // 3. Renderizado Condicional de Cuadrantes (Pasando el flag 'true' para forzar el tratamiento crítico)
-            if (zonas.inmediatas.length > 0) {
+   if (zonas.inmediatas.length > 0) {
                 tablero.innerHTML += `
                     <div class="mb-5">
                         <h4 class="text-xs font-black text-rose-600 uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fa-solid fa-fire"></i> Acción Inmediata (Crítico)</h4>
@@ -2759,7 +2759,7 @@ function cerrarModal() {
                 tablero.innerHTML += `
                     <div class="mb-5">
                         <h4 class="text-xs font-black text-amber-600 uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fa-solid fa-chess-knight"></i> Estratégicas (Alto Impacto)</h4>
-                        <div class="space-y-2 bg-amber-50/50 p-2.5 rounded-2xl border border-amber-100">${zonas.estrategicas.map(generarTarjeta).join('')}</div>
+                        <div class="space-y-2 bg-amber-50/50 p-2.5 rounded-2xl border border-amber-100">${zonas.estrategicas.map(t => generarTarjeta(t, false)).join('')}</div>
                     </div>`;
             }
 
@@ -2768,10 +2768,9 @@ function cerrarModal() {
                 tablero.innerHTML += `
                     <div class="mb-2">
                         <h4 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2"><i class="fa-solid fa-inbox"></i> Flujo de Rutina</h4>
-                        <div class="space-y-2 p-2.5 bg-slate-50 border border-slate-100 rounded-2xl">${secundarias.map(generarTarjeta).join('')}</div>
+                        <div class="space-y-2 p-2.5 bg-slate-50 border border-slate-100 rounded-2xl">${secundarias.map(t => generarTarjeta(t, false)).join('')}</div>
                     </div>`;
             }
-
             if (tareasPendientes.length === 0) {
                 tablero.innerHTML = `
                     <div class="flex flex-col items-center justify-center h-48 text-center px-4 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
